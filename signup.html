@@ -64,6 +64,25 @@
                 </div>
             </div>
 
+            <!-- 队长选择区域 -->
+            <div class="captain-selection">
+                <h3>选择队长</h3>
+                <div class="captain-buttons">
+                    <div class="team-captain">
+                        <h4>白队队长</h4>
+                        <select id="whiteCaptain" class="captain-select">
+                            <option value="">请选择队长</option>
+                        </select>
+                    </div>
+                    <div class="team-captain">
+                        <h4>蓝队队长</h4>
+                        <select id="blueCaptain" class="captain-select">
+                            <option value="">请选择队长</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- 球员列表 -->
             <div class="player-lists">
                 <!-- 主力球员名单 -->
@@ -88,12 +107,164 @@
         <div class="submit-section">
             <button type="button" class="btn-primary" id="submitTeams">保存分队</button>
         </div>
+
+        <!-- 添加确认弹窗 -->
+        <div id="confirmModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>确认分队结果</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="team-preview">
+                        <div class="team-column">
+                            <h4>白队</h4>
+                            <ul id="whiteTeamPreview" class="team-preview-list"></ul>
+                        </div>
+                        <div class="team-column">
+                            <h4>蓝队</h4>
+                            <ul id="blueTeamPreview" class="team-preview-list"></ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="closeConfirmModal()">返回修改</button>
+                    <button class="btn-primary" onclick="confirmTeams()">确认</button>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- 页脚 -->
     <footer class="footer">
         <p>© 2024 足球队报名与数据统计系统</p>
     </footer>
+
+    <!-- 添加样式 -->
+    <style>
+    .captain-selection {
+        margin: 2rem 0;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .captain-buttons {
+        display: flex;
+        justify-content: space-around;
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+
+    .team-captain {
+        flex: 1;
+        text-align: center;
+    }
+
+    .captain-select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-top: 0.5rem;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 2rem;
+        width: 90%;
+        max-width: 800px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .team-preview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 1rem 0;
+    }
+
+    .team-preview-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .team-preview-list li {
+        padding: 0.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-secondary {
+        padding: 0.5rem 1rem;
+        background-color: #6c757d;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    .team-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #1E88E5;
+    }
+
+    .captain-info {
+        color: #1E88E5;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .captain-selection {
+        background-color: #e3f2fd;  /* 更亮的蓝色背景 */
+        border: 2px solid #1E88E5;  /* 添加边框 */
+    }
+
+    .captain-selection h3 {
+        color: #1E88E5;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .team-captain h4 {
+        color: #1E88E5;
+    }
+
+    .captain-select {
+        border: 2px solid #1E88E5;
+        font-size: 1rem;
+        color: #1E88E5;
+    }
+
+    .captain-select option {
+        padding: 0.5rem;
+    }
+    </style>
 
     <script>
         // 主力球员数据
@@ -130,6 +301,9 @@
 
             // 绑定保存按钮事件
             document.getElementById('submitTeams').addEventListener('click', saveTeams);
+            
+            // 初始化队长选择
+            initializeCaptainSelects();
         }
 
         // 创建球员列表项
@@ -194,6 +368,8 @@
             
             if (playerToRemove) {
                 playerToRemove.remove();
+                // 更新队长选择下拉框
+                updateCaptainSelects();
             }
         }
 
@@ -204,13 +380,13 @@
             
             // 检查是否已经在队伍中
             const existingPlayer = Array.from(teamList.children).find(li => 
-                li.textContent.trim().startsWith(playerName)
+                li.textContent.trim().replace('(C)', '').replace('×', '').trim() === playerName
             );
             
             if (!existingPlayer) {
                 const teamLi = document.createElement('li');
                 teamLi.innerHTML = `
-                    ${playerName}
+                    <span class="player-name">${playerName}</span>
                     <button class="delete-btn" title="移除">×</button>
                 `;
                 teamList.appendChild(teamLi);
@@ -219,6 +395,12 @@
                 const deleteBtn = teamLi.querySelector('.delete-btn');
                 deleteBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    
+                    // 如果是队长，清除队长选择
+                    const captainSelect = teamId === 'whiteTeam' ? 'whiteCaptain' : 'blueCaptain';
+                    if (document.getElementById(captainSelect).value === playerName) {
+                        document.getElementById(captainSelect).value = '';
+                    }
                     
                     // 找到原始球员列表中的对应球员
                     const playerLists = document.querySelectorAll('.player-grid');
@@ -235,19 +417,148 @@
                     
                     // 移除队伍中的球员
                     teamLi.remove();
+                    // 更新队长选择下拉框
+                    updateCaptainSelects();
                 });
+
+                // 更新队长选择下拉框
+                updateCaptainSelects();
+            }
+        }
+
+        // 更新队长选择下拉框
+        function updateCaptainSelects() {
+            const whiteCaptainSelect = document.getElementById('whiteCaptain');
+            const blueCaptainSelect = document.getElementById('blueCaptain');
+            
+            // 保存当前选中的队长
+            const currentWhiteCaptain = whiteCaptainSelect.value;
+            const currentBlueCaptain = blueCaptainSelect.value;
+            
+            // 获取当前队伍成员
+            const whiteTeamMembers = Array.from(document.getElementById('whiteTeam').children)
+                .map(li => li.querySelector('.player-name').textContent.replace('(C)', '').trim());
+            const blueTeamMembers = Array.from(document.getElementById('blueTeam').children)
+                .map(li => li.querySelector('.player-name').textContent.replace('(C)', '').trim());
+            
+            // 更新白队队长选项
+            whiteCaptainSelect.innerHTML = '<option value="">请选择队长</option>' +
+                whiteTeamMembers.map(player => `<option value="${player}">${player}</option>`).join('');
+            
+            // 更新蓝队队长选项
+            blueCaptainSelect.innerHTML = '<option value="">请选择队长</option>' +
+                blueTeamMembers.map(player => `<option value="${player}">${player}</option>`).join('');
+            
+            // 恢复之前选中的队长
+            if (currentWhiteCaptain && whiteTeamMembers.includes(currentWhiteCaptain)) {
+                whiteCaptainSelect.value = currentWhiteCaptain;
+            }
+            if (currentBlueCaptain && blueTeamMembers.includes(currentBlueCaptain)) {
+                blueCaptainSelect.value = currentBlueCaptain;
+            }
+        }
+
+        // 添加队长选择事件处理
+        function initializeCaptainSelects() {
+            const whiteCaptainSelect = document.getElementById('whiteCaptain');
+            const blueCaptainSelect = document.getElementById('blueCaptain');
+            
+            whiteCaptainSelect.addEventListener('change', function() {
+                updateCaptainDisplay('whiteTeam', this.value);
+            });
+            
+            blueCaptainSelect.addEventListener('change', function() {
+                updateCaptainDisplay('blueTeam', this.value);
+            });
+        }
+
+        // 更新队长显示
+        function updateCaptainDisplay(teamId, captainName) {
+            const teamList = document.getElementById(teamId);
+            
+            // 移除所有队长标记
+            teamList.querySelectorAll('.player-name').forEach(span => {
+                span.textContent = span.textContent.replace('(C)', '').trim();
+            });
+            
+            // 添加新队长标记
+            if (captainName) {
+                const captainLi = Array.from(teamList.children).find(li => 
+                    li.querySelector('.player-name').textContent.trim() === captainName
+                );
+                if (captainLi) {
+                    const nameSpan = captainLi.querySelector('.player-name');
+                    nameSpan.textContent = `${captainName}(C)`;
+                }
             }
         }
 
         // 保存分队结果
         function saveTeams() {
-            const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => 
-                li.textContent.trim().replace('×', '').trim()
-            );
-            const blueTeam = Array.from(document.getElementById('blueTeam').children).map(li => 
-                li.textContent.trim().replace('×', '').trim()
-            );
+            const whiteCaptain = document.getElementById('whiteCaptain').value;
+            const blueCaptain = document.getElementById('blueCaptain').value;
+            
+            // 获取队伍成员，如果是队长则添加(C)标记
+            const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => {
+                const name = li.textContent.trim().replace('×', '').trim();
+                return whiteCaptain && name === whiteCaptain ? `${name}(C)` : name;
+            });
+            
+            const blueTeam = Array.from(document.getElementById('blueTeam').children).map(li => {
+                const name = li.textContent.trim().replace('×', '').trim();
+                return blueCaptain && name === blueCaptain ? `${name}(C)` : name;
+            });
+            
+            // 显示确认弹窗
+            showConfirmModal(whiteTeam, blueTeam, whiteCaptain, blueCaptain);
+        }
 
+        // 显示确认弹窗
+        function showConfirmModal(whiteTeam, blueTeam, whiteCaptain, blueCaptain) {
+            const modal = document.getElementById('confirmModal');
+            const whitePreview = document.getElementById('whiteTeamPreview');
+            const bluePreview = document.getElementById('blueTeamPreview');
+            
+            // 显示白队名单
+            whitePreview.innerHTML = `
+                <div class="team-header">
+                    ${whiteCaptain ? `<div class="captain-info">队长：${whiteCaptain}</div>` : ''}
+                </div>
+                ${whiteTeam.map(player => `<li>${player}</li>`).join('')}
+            `;
+            
+            // 显示蓝队名单
+            bluePreview.innerHTML = `
+                <div class="team-header">
+                    ${blueCaptain ? `<div class="captain-info">队长：${blueCaptain}</div>` : ''}
+                </div>
+                ${blueTeam.map(player => `<li>${player}</li>`).join('')}
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // 关闭确认弹窗
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        // 确认分队
+        function confirmTeams() {
+            const whiteCaptain = document.getElementById('whiteCaptain').value;
+            const blueCaptain = document.getElementById('blueCaptain').value;
+            
+            // 获取队伍成员，如果是队长则添加(C)标记
+            const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => {
+                const name = li.textContent.trim().replace('×', '').trim();
+                return whiteCaptain && name === whiteCaptain ? `${name}(C)` : name;
+            });
+            
+            const blueTeam = Array.from(document.getElementById('blueTeam').children).map(li => {
+                const name = li.textContent.trim().replace('×', '').trim();
+                return blueCaptain && name === blueCaptain ? `${name}(C)` : name;
+            });
+            
             // 保存到 localStorage
             const matchData = {
                 date: document.getElementById('matchDate').value,
@@ -255,11 +566,27 @@
                 type: document.getElementById('matchType').value,
                 venue: document.getElementById('matchVenue').value,
                 whiteTeam: whiteTeam,
-                blueTeam: blueTeam
+                blueTeam: blueTeam,
+                whiteCaptain: whiteCaptain || '',
+                blueCaptain: blueCaptain || ''
             };
 
             localStorage.setItem('currentMatch', JSON.stringify(matchData));
             alert('分队结果已保存！');
+            
+            // 关闭弹窗
+            closeConfirmModal();
+            
+            // 跳转到记录页面
+            window.location.href = 'record.html';
+        }
+
+        // 点击弹窗外部关闭
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
         }
 
         // 初始化页面

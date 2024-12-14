@@ -17,50 +17,157 @@ body {
 /* 导航栏样式 */
 .navbar {
     background-color: #1E88E5;
-    padding: 1rem 2rem;
+    padding: 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
-    z-index: 100;
+    align-items: stretch;
+    height: 60px;
 }
 
 .nav-brand {
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: bold;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0 2rem;
+    white-space: nowrap;
 }
 
 .nav-menu {
-    display: flex;
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 2rem;
+    display: flex;
+    align-items: stretch;
+    height: 100%;
 }
 
-.nav-menu li {
-    margin: 0;
-    padding: 0;
+.nav-menu > li {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
 }
 
 .nav-menu a {
     color: white;
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-    font-size: 1rem;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s;
+    white-space: nowrap;
+    position: relative;
+}
+
+.nav-menu a:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.nav-menu a.active {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* 下拉菜单样式 */
+.dropdown {
+    position: relative;
+    height: 100%;
+}
+
+.dropdown > span {
+    color: white;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.dropdown > span::after {
+    content: '▼';
+    font-size: 0.8em;
+    margin-left: 0.5rem;
+    transition: transform 0.3s;
+}
+
+.dropdown:hover > span {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.dropdown:hover > span::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    min-width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-radius: 0 0 4px 4px;
+    z-index: 1001;
+}
+
+.dropdown:hover .dropdown-content {
     display: block;
 }
 
-.nav-menu a:hover,
-.nav-menu a.active {
-    background-color: rgba(255,255,255,0.2);
+.dropdown-content a {
+    color: #333;
+    padding: 0.8rem 1.5rem;
+    border-bottom: 1px solid #eee;
+    display: block;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #f5f5f5;
+    color: #1E88E5;
+}
+
+.dropdown-content a.active {
+    background-color: #e3f2fd;
+    color: #1E88E5;
+}
+
+/* 响应式导航栏 */
+@media screen and (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .nav-brand {
+        padding: 1rem;
+        justify-content: center;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-menu > li {
+        width: 100%;
+    }
+
+    .nav-menu a {
+        padding: 1rem;
+        justify-content: center;
+    }
 }
 
 /* 主容器样式 */
