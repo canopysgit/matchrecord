@@ -30,8 +30,8 @@
                 </div>
                 <div class="form-group">
                     <label for="matchTimeSlot">比赛时间</label>
-                    <select id="matchTimeSlot" name="matchTimeSlot">
-                        <option value="">请选择时间段</option>
+                    <select id="matchTimeSlot" name="matchTimeSlot" required>
+                        <option value="" disabled>请选择时间段</option>
                         <option value="14:00-16:00">14:00-16:00</option>
                         <option value="16:00-18:00" selected>16:00-18:00</option>
                     </select>
@@ -449,7 +449,7 @@
             blueCaptainSelect.innerHTML = '<option value="">请选择队长</option>' +
                 blueTeamMembers.map(player => `<option value="${player}">${player}</option>`).join('');
             
-            // 恢复之前选中的队长
+            // 复之前选中的队长
             if (currentWhiteCaptain && whiteTeamMembers.includes(currentWhiteCaptain)) {
                 whiteCaptainSelect.value = currentWhiteCaptain;
             }
@@ -495,6 +495,39 @@
 
         // 保存分队结果
         function saveTeams() {
+            // 检查比赛日期和时间
+            const matchDate = document.getElementById('matchDate').value;
+            const matchTime = document.getElementById('matchTimeSlot').value;
+            
+            console.log('比赛日期:', matchDate); // 调试信息
+            console.log('比赛时间:', matchTime); // 调试信息
+            
+            if (!matchDate) {
+                console.log('日期为空'); // 调试信息
+                alert('请选择比赛日期！');
+                document.getElementById('matchDate').focus();
+                return;
+            }
+            
+            if (!matchTime) {
+                console.log('时间为空'); // 调试信息
+                alert('请选择比赛时间！');
+                document.getElementById('matchTimeSlot').focus();
+                return;
+            }
+
+            // 检查是否有队员被选中
+            const whiteTeamCount = document.getElementById('whiteTeam').children.length;
+            const blueTeamCount = document.getElementById('blueTeam').children.length;
+            
+            console.log('白队人数:', whiteTeamCount); // 调试信息
+            console.log('蓝队人数:', blueTeamCount); // 调试信息
+            
+            if (whiteTeamCount === 0 && blueTeamCount === 0) {
+                alert('请至少选择一名队员！');
+                return;
+            }
+
             const whiteCaptain = document.getElementById('whiteCaptain').value;
             const blueCaptain = document.getElementById('blueCaptain').value;
             
@@ -572,12 +605,11 @@
             };
 
             localStorage.setItem('currentMatch', JSON.stringify(matchData));
-            alert('分队结果已保存！');
             
             // 关闭弹窗
             closeConfirmModal();
             
-            // 跳转到记录页面
+            // 直接跳转到记录页面
             window.location.href = 'record.html';
         }
 
