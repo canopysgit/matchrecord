@@ -107,96 +107,163 @@
         // 外援球员数据
         const guestPlayers = ["大雄", "贺楠", "小段", "青格勒"];
 
-        // 生成球员列表HTML
-        function generatePlayerHtml(playerName) {
-            return `
-                <li>
-                    <span class="player-name">${playerName}</span>
-                    <div class="button-group">
-                        <button class="team-btn white" data-team="whiteTeam">白</button>
-                        <button class="team-btn blue" data-team="blueTeam">蓝</button>
-                    </div>
-                </li>
-            `;
-        }
-
         // 初始化球员列表
         function initializePlayers() {
             const mainPlayerList = document.getElementById('mainPlayerList');
             const guestPlayerList = document.getElementById('guestPlayerList');
 
-            mainPlayerList.innerHTML = mainPlayers.map(generatePlayerHtml).join('');
-            guestPlayerList.innerHTML = guestPlayers.map(generatePlayerHtml).join('');
+            // 清空现有内容
+            mainPlayerList.innerHTML = '';
+            guestPlayerList.innerHTML = '';
 
-            // 绑定按钮事件
-            document.querySelectorAll('.team-btn').forEach(bindTeamButtonEvents);
+            // 添加主力球员
+            mainPlayers.forEach(playerName => {
+                const li = createPlayerListItem(playerName);
+                mainPlayerList.appendChild(li);
+            });
+
+            // 添加外援球员
+            guestPlayers.forEach(playerName => {
+                const li = createPlayerListItem(playerName);
+                guestPlayerList.appendChild(li);
+            });
+
+            // 绑定保存按钮事件
+            document.getElementById('submitTeams').addEventListener('click', saveTeams);
         }
 
-        // 绑定队伍按钮事件
-        function bindTeamButtonEvents(button) {
-            button.addEventListener('click', function() {
-                const playerLi = this.closest('li');
-                const playerName = playerLi.querySelector('.player-name').textContent;
-                const team = this.getAttribute('data-team');
-                const otherTeam = team === 'whiteTeam' ? 'blueTeam' : 'whiteTeam';
-                
-                // 更新按钮状态
-                const whiteBtn = playerLi.querySelector('.team-btn.white');
-                const blueBtn = playerLi.querySelector('.team-btn.blue');
-                
-                // 如果点击的是已选中的按钮，则取消选择
-                if (this.classList.contains('selected')) {
-                    this.classList.remove('selected');
-                    // 从队伍中移除
-                    const teamList = document.getElementById(team);
-                    const teamLi = Array.from(teamList.children).find(li => li.textContent.includes(playerName));
-                    if (teamLi) {
-                        teamLi.remove();
-                    }
-                    return;
-                }
-                
-                // 移除之前的选中状态
-                whiteBtn.classList.remove('selected');
-                blueBtn.classList.remove('selected');
-                this.classList.add('selected');
-                
-                // 从另一个队伍中移除（如果存在）
-                document.querySelectorAll(`#${otherTeam} li`).forEach(li => {
-                    if (li.textContent.includes(playerName)) {
-                        li.remove();
-                    }
+        // 创建球员列表项
+        function createPlayerListItem(playerName) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="player-name">${playerName}</span>
+                <div class="button-group">
+                    <button class="team-btn white" data-team="whiteTeam">白</button>
+                    <button class="team-btn blue" data-team="blueTeam">蓝</button>
+                </div>
+            `;
+            
+            // 绑定按钮事件
+            const buttons = li.querySelectorAll('.team-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    handleTeamButtonClick(this, playerName);
                 });
+            });
+            
+            return li;
+        }
 
-                // 添加到选中的队伍
-                const teamList = document.getElementById(team);
-                let teamLi = Array.from(teamList.children).find(li => li.textContent.includes(playerName));
+        // 处理队伍按钮点击
+        function handleTeamButtonClick(button, playerName) {
+            const playerLi = button.closest('li');
+            const team = button.getAttribute('data-team');
+            const otherTeam = team === 'whiteTeam' ? 'blueTeam' : 'whiteTeam';
+            
+            // 更新按钮状态
+            const whiteBtn = playerLi.querySelector('.team-btn.white');
+            const blueBtn = playerLi.querySelector('.team-btn.blue');
+            
+            // 如果点击的是已选中的按钮，则取消选择
+            if (button.classList.contains('selected')) {
+                button.classList.remove('selected');
+                removePlayerFromTeam(playerName, team);
+                return;
+            }
+            
+            // 移除之前的选中状态
+            whiteBtn.classList.remove('selected');
+            blueBtn.classList.remove('selected');
+            button.classList.add('selected');
+            
+            // 从另一个队伍中移除
+            removePlayerFromTeam(playerName, otherTeam);
+
+            // 添加到选中的队伍
+            addPlayerToTeam(playerName, team, playerLi);
+        }
+
+        // 从队伍中移除球员
+        function removePlayerFromTeam(playerName, teamId) {
+            const teamList = document.getElementById(teamId);
+            if (!teamList) return;
+            
+            const playerToRemove = Array.from(teamList.children).find(li => 
+                li.textContent.trim().startsWith(playerName)
+            );
+            
+            if (playerToRemove) {
+                playerToRemove.remove();
+            }
+        }
+
+        // 添加球员到队伍
+        function addPlayerToTeam(playerName, teamId, originalLi) {
+            const teamList = document.getElementById(teamId);
+            if (!teamList) return;
+            
+            // 检查是否已经在队伍中
+            const existingPlayer = Array.from(teamList.children).find(li => 
+                li.textContent.trim().startsWith(playerName)
+            );
+            
+            if (!existingPlayer) {
+                const teamLi = document.createElement('li');
+                teamLi.innerHTML = `
+                    ${playerName}
+                    <button class="delete-btn" title="移除">×</button>
+                `;
+                teamList.appendChild(teamLi);
                 
-                if (!teamLi) {
-                    teamLi = document.createElement('li');
-                    teamLi.innerHTML = `
-                        ${playerName}
-                        <button class="delete-btn" title="移除">×</button>
-                    `;
-                    teamList.appendChild(teamLi);
+                // 绑定删除按钮事件
+                const deleteBtn = teamLi.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     
-                    // 绑定删除按钮事件
-                    teamLi.querySelector('.delete-btn').addEventListener('click', function() {
-                        // 找到原始球员并移除选中状态
-                        const originalPlayerLi = document.querySelector(`.player-grid li:has(.player-name:contains("${playerName}"))`);
+                    // 找到原始球员列表中的对应球员
+                    const playerLists = document.querySelectorAll('.player-grid');
+                    playerLists.forEach(list => {
+                        const originalPlayerLi = Array.from(list.children).find(li => 
+                            li.querySelector('.player-name').textContent === playerName
+                        );
                         if (originalPlayerLi) {
                             originalPlayerLi.querySelectorAll('.team-btn').forEach(btn => {
                                 btn.classList.remove('selected');
                             });
                         }
-                        teamLi.remove();
                     });
-                }
-            });
+                    
+                    // 移除队伍中的球员
+                    teamLi.remove();
+                });
+            }
+        }
+
+        // 保存分队结果
+        function saveTeams() {
+            const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => 
+                li.textContent.trim().replace('×', '').trim()
+            );
+            const blueTeam = Array.from(document.getElementById('blueTeam').children).map(li => 
+                li.textContent.trim().replace('×', '').trim()
+            );
+
+            // 保存到 localStorage
+            const matchData = {
+                date: document.getElementById('matchDate').value,
+                time: document.getElementById('matchTimeSlot').value,
+                type: document.getElementById('matchType').value,
+                venue: document.getElementById('matchVenue').value,
+                whiteTeam: whiteTeam,
+                blueTeam: blueTeam
+            };
+
+            localStorage.setItem('currentMatch', JSON.stringify(matchData));
+            alert('分队结果已保存！');
         }
 
         // 初始化页面
-        initializePlayers();
+        document.addEventListener('DOMContentLoaded', initializePlayers);
     </script>
 </body>
 </html> 

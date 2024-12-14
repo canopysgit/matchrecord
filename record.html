@@ -39,7 +39,9 @@
             <div class="teams-grid">
                 <div class="team-column">
                     <h3>白队名单</h3>
-                    <ul id="whiteTeamList" class="team-list"></ul>
+                    <ul id="whiteTeamList" class="team-list">
+                        <!-- 这里的列表项会通过 JavaScript 动态生成 -->
+                    </ul>
                     <!-- 白队统计结果 -->
                     <div id="whiteFinalStats" class="final-stats-display" style="display: none;">
                         <h4>数据统计</h4>
@@ -48,7 +50,9 @@
                 </div>
                 <div class="team-column">
                     <h3>蓝队名单</h3>
-                    <ul id="blueTeamList" class="team-list"></ul>
+                    <ul id="blueTeamList" class="team-list">
+                        <!-- 这里的列表项会通过 JavaScript 动态生成 -->
+                    </ul>
                     <!-- 蓝队统计结果 -->
                     <div id="blueFinalStats" class="final-stats-display" style="display: none;">
                         <h4>数据统计</h4>
@@ -103,7 +107,7 @@
                     <button class="close-btn" onclick="closeFinalStatsModal()">×</button>
                 </div>
                 <div class="modal-body">
-                    <!-- 比分展�� -->
+                    <!-- 比分展示 -->
                     <div class="final-score-display">
                         <h4>比赛结果</h4>
                         <div class="final-score">
@@ -232,8 +236,25 @@
     }
 
     .team-list li {
-        padding: 0.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
         border-bottom: 1px solid #dee2e6;
+    }
+
+    .delete-player {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 0 0.5rem;
+        transition: color 0.3s;
+    }
+
+    .delete-player:hover {
+        color: #c82333;
     }
 
     /* 数据记录样式 */
@@ -600,8 +621,52 @@
 
     // 显示队伍名单
     function displayTeamList(elementId, players) {
+        console.log('显示队伍名单');
+        console.log('elementId:', elementId);
+        console.log('players:', players);
+        
         const list = document.getElementById(elementId);
-        list.innerHTML = players.map(player => `<li>${player}</li>`).join('');
+        if (!list) {
+            console.error('找不到元素:', elementId);
+            return;
+        }
+        
+        const teamType = elementId === 'whiteTeamList' ? 'white' : 'blue';
+        console.log('队伍类型:', teamType);
+        
+        // 清空现有内容
+        list.innerHTML = '';
+        
+        // 为每个球员创建列表项
+        players.forEach(player => {
+            console.log('创建队员列表项:', player);
+            
+            const li = document.createElement('li');
+            
+            // 创建球员名字的 span 元素
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = player;
+            nameSpan.className = 'player-name-span'; // 添加类名便于调试
+            
+            // 创建删除按钮
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-player';
+            deleteBtn.textContent = '×';
+            
+            // 直接添加事件监听器
+            deleteBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // 阻止事件冒泡
+                console.log('点击删除按钮');
+                console.log('删除队员:', player);
+                console.log('所属队伍:', teamType);
+                removePlayer(player, teamType);
+            });
+            
+            // 组装列表项
+            li.appendChild(nameSpan);
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+        });
     }
 
     // 初始化数据记录区域
@@ -650,11 +715,16 @@
         closeModal();
     }
 
-    // 点击弹窗外部关闭
+    // 修改 window.onclick 事件处理函数
     window.onclick = function(event) {
-        const modal = document.getElementById('statsModal');
-        if (event.target === modal) {
-            modal.style.display = 'none';
+        const statsModal = document.getElementById('statsModal');
+        const finalStatsModal = document.getElementById('finalStatsModal');
+        
+        // 点击弹窗外部时关闭对应的弹窗
+        if (event.target === statsModal) {
+            statsModal.style.display = 'none';
+        } else if (event.target === finalStatsModal) {
+            finalStatsModal.style.display = 'none';
         }
     }
 
@@ -731,14 +801,6 @@
         document.getElementById('finalStatsModal').style.display = 'none';
     }
 
-    // 点击弹窗外部关闭
-    window.onclick = function(event) {
-        const finalStatsModal = document.getElementById('finalStatsModal');
-        if (event.target === finalStatsModal) {
-            finalStatsModal.style.display = 'none';
-        }
-    }
-
     // 保存最终统计数据
     function saveFinalStats() {
         // 获取比分
@@ -811,6 +873,69 @@
         
         content.innerHTML = html;
         container.style.display = 'block';
+    }
+
+    // 修改 removePlayer 函数，添加更多调试信息
+    function removePlayer(playerName, teamType) {
+        console.log('开始删除队员操作');
+        console.log('队员名字:', playerName);
+        console.log('队伍类型:', teamType);
+        
+        try {
+            // 从 localStorage 获取当前比赛数据
+            const matchData = JSON.parse(localStorage.getItem('currentMatch'));
+            console.log('当前比赛数据:', matchData);
+            
+            if (!matchData) {
+                alert('没有找到比赛数据！');
+                console.error('No match data found in localStorage');
+                return;
+            }
+            
+            // 根据队伍类型选择对应的数组
+            const teamArray = teamType === 'white' ? 'whiteTeam' : 'blueTeam';
+            console.log('操作的队伍数组:', teamArray);
+            console.log('删除前的队员列表:', matchData[teamArray]);
+            
+            // 确保数组存在
+            if (!Array.isArray(matchData[teamArray])) {
+                alert('队伍数据格式错误！');
+                console.error('Team array not found:', teamArray);
+                return;
+            }
+            
+            // 记录原始长度
+            const originalLength = matchData[teamArray].length;
+            
+            // 从数组中移除该队员
+            matchData[teamArray] = matchData[teamArray].filter(name => {
+                console.log('比较:', name, playerName, name !== playerName);
+                return name !== playerName;
+            });
+            
+            console.log('删除后的队员列表:', matchData[teamArray]);
+            
+            // 确认是否成功移除
+            if (matchData[teamArray].length < originalLength) {
+                // 更新 localStorage
+                localStorage.setItem('currentMatch', JSON.stringify(matchData));
+                
+                // 重新显示队伍名单
+                displayTeamList(`${teamType}TeamList`, matchData[teamArray]);
+                
+                // 重新初始化数据记录区域
+                initializeStatsSection(`${teamType}TeamStats`, matchData[teamArray]);
+                
+                alert('队员删除成功！');
+                console.log('Player removed successfully');
+            } else {
+                alert('删除队员失败！');
+                console.error('Failed to remove player:', playerName);
+            }
+        } catch (error) {
+            alert('发生错误：' + error.message);
+            console.error('Error in removePlayer:', error);
+        }
     }
     </script>
 </body>
