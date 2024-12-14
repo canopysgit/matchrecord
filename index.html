@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>足球队报名与数据统计系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="nav-brand">⚽ 足球队管理系统</div>
+        <ul class="nav-menu">
+            <li><a href="index.html" class="active">首页</a></li>
+            <li><a href="signup.html">比赛报名</a></li>
+            <li><a href="record.html">记录数据</a></li>
+            <li><a href="results.html">比赛结果</a></li>
+            <li><a href="stats.html">射手榜/助攻榜</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主要内容区 -->
+    <main class="container">
+        <!-- 本周报名模块 -->
+        <section class="signup-section">
+            <h2>本周比赛报名</h2>
+            <div class="signup-card">
+                <div class="signup-info">
+                    <p>比赛时间：2024年1月20日 周六 15:00</p>
+                    <p>已报名人数：<span id="signupCount">0</span>人</p>
+                    <p>报名截止时间：2024年1月19日 20:00</p>
+                </div>
+                <a href="signup.html" class="btn-primary">立即报名</a>
+            </div>
+        </section>
+
+        <!-- 最新比赛数据 -->
+        <section class="latest-match">
+            <h2>最新比赛数据</h2>
+            <div class="match-card">
+                <div class="match-header">
+                    <span class="match-date">2024年1月13日</span>
+                    <span class="match-result">我队 3 - 1 对手</span>
+                </div>
+                <div class="match-stats">
+                    <div class="stats-item">
+                        <h3>进球</h3>
+                        <ul id="goalsList">
+                            <li>暂无数据</li>
+                        </ul>
+                    </div>
+                    <div class="stats-item">
+                        <h3>助攻</h3>
+                        <ul id="assistsList">
+                            <li>暂无数据</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据排行榜 -->
+        <section class="rankings">
+            <h2>进球助攻总榜</h2>
+            <div class="rankings-container">
+                <div class="ranking-card">
+                    <h3>进球榜 TOP5</h3>
+                    <ul id="goalsRanking">
+                        <li>暂无数据</li>
+                    </ul>
+                </div>
+                <div class="ranking-card">
+                    <h3>助攻榜 TOP5</h3>
+                    <ul id="assistsRanking">
+                        <li>暂无数据</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2024 足球队报名与数据统计系统</p>
+    </footer>
+</body>
+</html> 

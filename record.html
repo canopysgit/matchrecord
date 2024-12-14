@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记录比赛 - 足球队报名与数据统计系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="nav-brand">⚽ 足球队管理系统</div>
+        <ul class="nav-menu">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="signup.html">比赛报名</a></li>
+            <li><a href="record.html" class="active">记录数据</a></li>
+            <li><a href="results.html">比赛结果</a></li>
+            <li><a href="stats.html">射手榜/助攻榜</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主要内容区 -->
+    <main class="container">
+        <!-- 比赛信息展示 -->
+        <section class="match-info-display">
+            <h2>本场比赛信息</h2>
+            <div class="match-info-card">
+                <div class="match-info-row">
+                    <span class="info-item"><strong>比赛日期：</strong><span id="displayMatchDate"></span></span>
+                    <span class="info-item"><strong>比赛时间：</strong><span id="displayMatchTime"></span></span>
+                    <span class="info-item"><strong>比赛性质：</strong><span id="displayMatchType"></span></span>
+                    <span class="info-item"><strong>比赛场地：</strong><span id="displayMatchVenue"></span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 队伍名单展示 -->
+        <section class="teams-display">
+            <div class="teams-grid">
+                <div class="team-column">
+                    <h3>白队名单</h3>
+                    <ul id="whiteTeamList" class="team-list"></ul>
+                    <!-- 白队统计结果 -->
+                    <div id="whiteFinalStats" class="final-stats-display" style="display: none;">
+                        <h4>数据统计</h4>
+                        <div class="stats-content"></div>
+                    </div>
+                </div>
+                <div class="team-column">
+                    <h3>蓝队名单</h3>
+                    <ul id="blueTeamList" class="team-list"></ul>
+                    <!-- 蓝队统计结果 -->
+                    <div id="blueFinalStats" class="final-stats-display" style="display: none;">
+                        <h4>数据统计</h4>
+                        <div class="stats-content"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 比赛结果记录 -->
+        <section class="match-result-section">
+            <h2>比赛结果</h2>
+            <div class="match-result-card">
+                <div class="score-input">
+                    <div class="team-score">
+                        <span class="team-name">白队</span>
+                        <input type="number" id="whiteTeamScore" min="0" value="0">
+                    </div>
+                    <span class="score-separator">:</span>
+                    <div class="team-score">
+                        <input type="number" id="blueTeamScore" min="0" value="0">
+                        <span class="team-name">蓝队</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据记录区域 -->
+        <section class="stats-record">
+            <h2>比赛数据记录</h2>
+            <div class="stats-grid">
+                <div class="team-stats">
+                    <h3>白队数据</h3>
+                    <div id="whiteTeamStats" class="player-stats-list"></div>
+                </div>
+                <div class="team-stats">
+                    <h3>蓝队数据</h3>
+                    <div id="blueTeamStats" class="player-stats-list"></div>
+                </div>
+            </div>
+            <!-- 确认数据统计按钮 -->
+            <div class="confirm-stats-section">
+                <button class="confirm-stats-btn" onclick="showFinalStats()">确认数据统计</button>
+            </div>
+        </section>
+
+        <!-- 最终统计结果弹窗 -->
+        <div id="finalStatsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>本场比赛数据统计</h3>
+                    <button class="close-btn" onclick="closeFinalStatsModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    <!-- 比分展�� -->
+                    <div class="final-score-display">
+                        <h4>比赛结果</h4>
+                        <div class="final-score">
+                            <span class="team-name">白队</span>
+                            <span id="finalWhiteScore">0</span>
+                            <span class="score-separator">:</span>
+                            <span id="finalBlueScore">0</span>
+                            <span class="team-name">蓝队</span>
+                        </div>
+                    </div>
+                    <div class="final-stats-grid">
+                        <div class="final-team-stats">
+                            <h4>白队数据统计</h4>
+                            <div class="stats-category">
+                                <h5>进球</h5>
+                                <ul id="whiteTeamGoals" class="stats-list"></ul>
+                            </div>
+                            <div class="stats-category">
+                                <h5>助攻</h5>
+                                <ul id="whiteTeamAssists" class="stats-list"></ul>
+                            </div>
+                        </div>
+                        <div class="final-team-stats">
+                            <h4>蓝队数据统计</h4>
+                            <div class="stats-category">
+                                <h5>进球</h5>
+                                <ul id="blueTeamGoals" class="stats-list"></ul>
+                            </div>
+                            <div class="stats-category">
+                                <h5>助攻</h5>
+                                <ul id="blueTeamAssists" class="stats-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="confirm-btn" onclick="saveFinalStats()">确认</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 数据输入弹窗 -->
+    <div id="statsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>记录数据</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label id="modalLabel"></label>
+                    <input type="number" id="statsInput" min="0" value="0">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="saveStats()" class="confirm-btn">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2024 足球队报名与数据统计系统</p>
+    </footer>
+
+    <style>
+    /* 比赛信息展示样式 */
+    .match-info-display {
+        margin-bottom: 2rem;
+    }
+
+    .match-info-card {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .match-info-row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        flex: 1;
+        min-width: 200px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-item strong {
+        color: #1E88E5;
+        white-space: nowrap;
+    }
+
+    /* 队伍展示样式 */
+    .teams-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .team-column {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .team-column h3 {
+        color: #1E88E5;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #1E88E5;
+    }
+
+    .team-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .team-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    /* 数据记录样式 */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .team-stats {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .team-stats h3 {
+        color: #1E88E5;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #1E88E5;
+    }
+
+    .player-stats-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .player-stats-item {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: white;
+        border-radius: 4px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .player-name {
+        flex: 1;
+        font-weight: bold;
+    }
+
+    .stats-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .stats-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+
+    .goal-btn {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .assist-btn {
+        background-color: #2196F3;
+        color: white;
+    }
+
+    .stats-count {
+        background-color: rgba(255,255,255,0.2);
+        padding: 0.2rem 0.5rem;
+        border-radius: 3px;
+    }
+
+    /* 弹窗样式 */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        position: relative;
+        background-color: white;
+        margin: 15% auto;
+        padding: 2rem;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .input-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+    }
+
+    .modal-footer {
+        text-align: right;
+    }
+
+    .confirm-btn {
+        padding: 0.8rem 1.5rem;
+        background-color: #1E88E5;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .confirm-btn:hover {
+        background-color: #1976D2;
+    }
+
+    /* 确认数据统计按钮样式 */
+    .confirm-stats-section {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .confirm-stats-btn {
+        padding: 1rem 2rem;
+        background-color: #43A047;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+    }
+
+    .confirm-stats-btn:hover {
+        background-color: #388E3C;
+    }
+
+    /* 最终统计结果样式 */
+    .final-stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .final-team-stats {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+    }
+
+    .final-team-stats h4 {
+        color: #1E88E5;
+        margin: 0 0 1rem 0;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #1E88E5;
+    }
+
+    .stats-category {
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-category h5 {
+        color: #666;
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+    }
+
+    .stats-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .stats-list li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+        color: #333;
+    }
+
+    .stats-list li:last-child {
+        border-bottom: none;
+    }
+
+    /* 比赛结果样式 */
+    .match-result-section {
+        margin: 2rem 0;
+    }
+
+    .match-result-card {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .score-input {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .team-score {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .team-score input {
+        width: 60px;
+        padding: 0.5rem;
+        font-size: 1.5rem;
+        text-align: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .score-separator {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #666;
+    }
+
+    .team-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1E88E5;
+    }
+
+    /* 最终比分展示样式 */
+    .final-score-display {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .final-score-display h4 {
+        color: #1E88E5;
+        margin: 0 0 1rem 0;
+    }
+
+    .final-score {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.5rem;
+    }
+
+    .final-score .score-separator {
+        margin: 0 1rem;
+    }
+
+    /* 统计结果展示样式 */
+    .final-stats-display {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #1E88E5;
+    }
+
+    .final-stats-display h4 {
+        color: #1E88E5;
+        margin: 0 0 1rem 0;
+    }
+
+    .stats-content {
+        font-size: 0.9rem;
+    }
+
+    .stats-content .stats-category {
+        margin-bottom: 1rem;
+    }
+
+    .stats-content .stats-category:last-child {
+        margin-bottom: 0;
+    }
+
+    .stats-content h5 {
+        color: #666;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .stats-content ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .stats-content li {
+        padding: 0.3rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .stats-content li:last-child {
+        border-bottom: none;
+    }
+    </style>
+
+    <script>
+    let currentPlayer = null;
+    let currentAction = null;
+
+    // 页面加载时获取并显示比赛信息
+    document.addEventListener('DOMContentLoaded', function() {
+        // 从 localStorage 获取比赛数据
+        const matchData = JSON.parse(localStorage.getItem('currentMatch'));
+        
+        if (matchData) {
+            // 显示比赛信息
+            document.getElementById('displayMatchDate').textContent = formatDate(matchData.date);
+            document.getElementById('displayMatchTime').textContent = matchData.time;
+            document.getElementById('displayMatchType').textContent = matchData.type;
+            document.getElementById('displayMatchVenue').textContent = matchData.venue;
+
+            // 显示队伍名单
+            displayTeamList('whiteTeamList', matchData.whiteTeam);
+            displayTeamList('blueTeamList', matchData.blueTeam);
+
+            // 初始化数据记录区域
+            initializeStatsSection('whiteTeamStats', matchData.whiteTeam);
+            initializeStatsSection('blueTeamStats', matchData.blueTeam);
+        } else {
+            // 如果没有数据，显示提示信息
+            document.querySelector('.match-info-card').innerHTML = 
+                '<div class="no-data">没有比赛信息，请先在周报名页面选择球员</div>';
+        }
+    });
+
+    // 显示队伍名单
+    function displayTeamList(elementId, players) {
+        const list = document.getElementById(elementId);
+        list.innerHTML = players.map(player => `<li>${player}</li>`).join('');
+    }
+
+    // 初始化数据记录区域
+    function initializeStatsSection(elementId, players) {
+        const container = document.getElementById(elementId);
+        container.innerHTML = players.map(player => `
+            <div class="player-stats-item">
+                <span class="player-name">${player}</span>
+                <div class="stats-buttons">
+                    <button class="stats-btn goal-btn" onclick="openStatsModal('${player}', 'goal')">
+                        进球 <span class="stats-count" id="${player}-goals">0</span>
+                    </button>
+                    <button class="stats-btn assist-btn" onclick="openStatsModal('${player}', 'assist')">
+                        助攻 <span class="stats-count" id="${player}-assists">0</span>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // 打开数据输入弹窗
+    function openStatsModal(player, action) {
+        currentPlayer = player;
+        currentAction = action;
+        const modal = document.getElementById('statsModal');
+        const label = document.getElementById('modalLabel');
+        const input = document.getElementById('statsInput');
+        
+        label.textContent = `${player} 的${action === 'goal' ? '进球' : '助攻'}数：`;
+        input.value = document.getElementById(`${player}-${action}s`).textContent;
+        
+        modal.style.display = 'block';
+    }
+
+    // 关闭弹窗
+    function closeModal() {
+        document.getElementById('statsModal').style.display = 'none';
+    }
+
+    // 保存数据
+    function saveStats() {
+        const input = document.getElementById('statsInput');
+        const value = parseInt(input.value) || 0;
+        const countElement = document.getElementById(`${currentPlayer}-${currentAction}s`);
+        countElement.textContent = value;
+        closeModal();
+    }
+
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+        const modal = document.getElementById('statsModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // 格式化日期
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+    }
+
+    // 显示最终统计结果
+    function showFinalStats() {
+        const modal = document.getElementById('finalStatsModal');
+        
+        // 获取并显示比分
+        const whiteScore = document.getElementById('whiteTeamScore').value;
+        const blueScore = document.getElementById('blueTeamScore').value;
+        document.getElementById('finalWhiteScore').textContent = whiteScore;
+        document.getElementById('finalBlueScore').textContent = blueScore;
+        
+        // 收集白队数据
+        const whiteTeamData = collectTeamStats('whiteTeamStats');
+        displayFinalStats('whiteTeamGoals', 'whiteTeamAssists', whiteTeamData);
+        
+        // 收集蓝队数据
+        const blueTeamData = collectTeamStats('blueTeamStats');
+        displayFinalStats('blueTeamGoals', 'blueTeamAssists', blueTeamData);
+        
+        modal.style.display = 'block';
+    }
+
+    // 收集队伍统计数据
+    function collectTeamStats(teamStatsId) {
+        const stats = {
+            goals: [],
+            assists: []
+        };
+        
+        const playerItems = document.getElementById(teamStatsId).children;
+        Array.from(playerItems).forEach(item => {
+            const playerName = item.querySelector('.player-name').textContent;
+            const goals = parseInt(item.querySelector('[id$="-goals"]').textContent);
+            const assists = parseInt(item.querySelector('[id$="-assists"]').textContent);
+            
+            if (goals > 0) {
+                stats.goals.push({ name: playerName, count: goals });
+            }
+            if (assists > 0) {
+                stats.assists.push({ name: playerName, count: assists });
+            }
+        });
+        
+        return stats;
+    }
+
+    // 显示最终统计数据
+    function displayFinalStats(goalsListId, assistsListId, data) {
+        // 显示进球数据
+        const goalsList = document.getElementById(goalsListId);
+        goalsList.innerHTML = data.goals
+            .sort((a, b) => b.count - a.count)
+            .map(item => `<li>${item.name} ${item.count}个</li>`)
+            .join('') || '<li>无</li>';
+        
+        // 显示助攻数据
+        const assistsList = document.getElementById(assistsListId);
+        assistsList.innerHTML = data.assists
+            .sort((a, b) => b.count - a.count)
+            .map(item => `<li>${item.name} ${item.count}个</li>`)
+            .join('') || '<li>无</li>';
+    }
+
+    // 关闭最终统计弹窗
+    function closeFinalStatsModal() {
+        document.getElementById('finalStatsModal').style.display = 'none';
+    }
+
+    // 点击弹窗外部关闭
+    window.onclick = function(event) {
+        const finalStatsModal = document.getElementById('finalStatsModal');
+        if (event.target === finalStatsModal) {
+            finalStatsModal.style.display = 'none';
+        }
+    }
+
+    // 保存最终统计数据
+    function saveFinalStats() {
+        // 获取比分
+        const whiteScore = document.getElementById('whiteTeamScore').value;
+        const blueScore = document.getElementById('blueTeamScore').value;
+        
+        // 收集统计数据
+        const whiteTeamData = collectTeamStats('whiteTeamStats');
+        const blueTeamData = collectTeamStats('blueTeamStats');
+        
+        // 在白队名单下显示统计结果
+        displayTeamFinalStats('whiteFinalStats', whiteTeamData, whiteScore);
+        
+        // 在蓝队名单下显示统计结果
+        displayTeamFinalStats('blueFinalStats', blueTeamData, blueScore);
+        
+        // 保存数据到 localStorage
+        const matchStats = {
+            date: new Date().toISOString(),
+            score: {
+                white: whiteScore,
+                blue: blueScore
+            },
+            stats: {
+                white: whiteTeamData,
+                blue: blueTeamData
+            }
+        };
+        
+        // 获取已有的统计历史
+        const statsHistory = JSON.parse(localStorage.getItem('matchStatsHistory') || '[]');
+        statsHistory.push(matchStats);
+        localStorage.setItem('matchStatsHistory', JSON.stringify(statsHistory));
+        
+        // 关闭弹窗
+        closeFinalStatsModal();
+    }
+
+    // 在队伍名单下显示统计结果
+    function displayTeamFinalStats(containerId, data, score) {
+        const container = document.getElementById(containerId);
+        const content = container.querySelector('.stats-content');
+        
+        let html = `<div class="stats-category">
+            <h5>比分</h5>
+            <ul><li>${score} 分</li></ul>
+        </div>`;
+        
+        if (data.goals.length > 0) {
+            html += `<div class="stats-category">
+                <h5>进球</h5>
+                <ul>
+                    ${data.goals.sort((a, b) => b.count - a.count)
+                        .map(item => `<li>${item.name} ${item.count}个</li>`)
+                        .join('')}
+                </ul>
+            </div>`;
+        }
+        
+        if (data.assists.length > 0) {
+            html += `<div class="stats-category">
+                <h5>助攻</h5>
+                <ul>
+                    ${data.assists.sort((a, b) => b.count - a.count)
+                        .map(item => `<li>${item.name} ${item.count}个</li>`)
+                        .join('')}
+                </ul>
+            </div>`;
+        }
+        
+        content.innerHTML = html;
+        container.style.display = 'block';
+    }
+    </script>
+</body>
+</html> 
