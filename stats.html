@@ -32,7 +32,10 @@
 
         <!-- 2024年度统计内容 -->
         <div id="stats2024" class="year-content active">
-            <iframe src="stats-2024.html" frameborder="0"></iframe>
+            <div class="stats-container">
+                <!-- 这里将由 JavaScript 动态生成内容 -->
+                <div class="stats-content"></div>
+            </div>
         </div>
 
         <!-- 历史总榜内容 -->
@@ -70,19 +73,10 @@
         <p>© 2024 足球队报名与数据统计系统</p>
     </footer>
 
+    <script src="js/stats.js"></script>
     <script>
-        // 年度切换功能
-        document.querySelectorAll('.year-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // 移除所有active类
-                document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.year-content').forEach(c => c.classList.remove('active'));
-                
-                // 添加active类到当前按钮和对应内容
-                this.classList.add('active');
-                document.getElementById('stats' + this.dataset.year).classList.add('active');
-            });
-        });
+        // 初始化
+        const playerStats = new PlayerStats();
     </script>
 </body>
 </html> 
