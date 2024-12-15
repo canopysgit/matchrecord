@@ -2,6 +2,9 @@ class PlayerStats {
     constructor() {
         this.initializePlayersIfNeeded();
         this.players = this.loadPlayers();
+        this.currentBoard = 'attendance'; // 当前显示的榜单：attendance/goals/assists
+        this.currentType = 'total';       // 当前显示的类型：total/internal/external
+        this.sortDirection = 'desc';      // 排序方向
         this.init();
     }
 
@@ -22,8 +25,8 @@ class PlayerStats {
                         external: 0
                     },
                     stats: {
-                        goals: 0,
-                        assists: 0
+                        internal: { goals: 0, assists: 0 },
+                        external: { goals: 0, assists: 0 }
                     }
                 }))
             };
@@ -39,68 +42,84 @@ class PlayerStats {
 
     // 初始化
     init() {
+        this.renderBoards();
         this.renderTabs();
         this.renderPlayerList();
         this.bindEvents();
+    }
+
+    // 渲染榜单选择
+    renderBoards() {
+        const boardsHtml = `
+            <div class="stats-boards">
+                <button class="board-btn active" data-board="attendance">
+                    <span data-board="attendance">出勤榜</span>
+                </button>
+                <button class="board-btn" data-board="goals">
+                    <span data-board="goals">射手榜</span>
+                </button>
+                <button class="board-btn" data-board="assists">
+                    <span data-board="assists">助攻榜</span>
+                </button>
+            </div>
+        `;
+        document.querySelector('.stats-content').insertAdjacentHTML('beforebegin', boardsHtml);
     }
 
     // 渲染标签页
     renderTabs() {
         const tabsHtml = `
             <div class="stats-tabs">
-                <button class="tab-btn active" data-tab="total">总榜</button>
-                <button class="tab-btn" data-tab="internal">内战</button>
-                <button class="tab-btn" data-tab="external">外战</button>
+                <button class="tab-btn active" data-tab="total">
+                    <span data-tab="total">总榜</span>
+                </button>
+                <button class="tab-btn" data-tab="internal">
+                    <span data-tab="internal">内战</span>
+                </button>
+                <button class="tab-btn" data-tab="external">
+                    <span data-tab="external">外战</span>
+                </button>
             </div>
         `;
         document.querySelector('.stats-content').insertAdjacentHTML('beforebegin', tabsHtml);
     }
 
     // 渲染球员列表
-    renderPlayerList(tabType = 'total') {
+    renderPlayerList() {
         const container = document.querySelector('.stats-content');
+        const boardTitle = this.getBoardTitle();
+        
         const html = `
             <div class="stats-table">
                 <div class="table-header">
-                    <div class="col">球员</div>
-                    <div class="col">出勤次数</div>
-                    <div class="col">进球</div>
-                    <div class="col">助攻</div>
+                    <div class="col">排名</div>
+                    <div class="col sortable" data-sort="name">
+                        球员 ${this.getSortIcon('name')}
+                    </div>
+                    <div class="col sortable" data-sort="value">
+                        ${boardTitle} ${this.getSortIcon('value')}
+                    </div>
                 </div>
-                ${this.players.mainPlayers.map(player => this.renderPlayerRow(player, tabType)).join('')}
+                ${this.getSortedPlayers().map((player, index) => 
+                    this.renderPlayerRow(player, index + 1)
+                ).join('')}
             </div>
         `;
         container.innerHTML = html;
+        this.bindSortEvents();
     }
 
     // 渲染单个球员行
-    renderPlayerRow(player, tabType) {
-        // 计算显示的数据
-        const stats = this.calculatePlayerStats(player, tabType);
-
+    renderPlayerRow(player, rank) {
+        const value = this.getPlayerValue(player);
         return `
-            <div class="player-row" data-player="${player.name}">
+            <div class="player-row ${rank <= 3 ? 'top-' + rank : ''}">
+                <div class="col rank">${rank}</div>
                 <div class="col">${player.name}</div>
-                <div class="col attendance">
-                    <span class="value">${stats.attendance}</span>
-                    ${tabType !== 'total' ? `
-                        <button class="edit-btn" onclick="playerStats.editAttendance('${player.name}', '${tabType}')">
-                            编辑
-                        </button>
-                    ` : ''}
-                </div>
-                <div class="col stats">
-                    <span class="value">${stats.goals}</span>
-                    ${tabType !== 'total' ? `
-                        <button class="edit-btn" onclick="playerStats.editStats('${player.name}', '${tabType}', 'goals')">
-                            编辑
-                        </button>
-                    ` : ''}
-                </div>
-                <div class="col stats">
-                    <span class="value">${stats.assists}</span>
-                    ${tabType !== 'total' ? `
-                        <button class="edit-btn" onclick="playerStats.editStats('${player.name}', '${tabType}', 'assists')">
+                <div class="col">
+                    <span class="value">${value}</span>
+                    ${this.currentType !== 'total' ? `
+                        <button class="edit-btn" onclick="playerStats.editValue('${player.name}')">
                             编辑
                         </button>
                     ` : ''}
@@ -109,92 +128,104 @@ class PlayerStats {
         `;
     }
 
-    // 计算球员统计数据
-    calculatePlayerStats(player, tabType) {
-        if (tabType === 'total') {
-            return {
-                attendance: player.attendance.internal + player.attendance.external,
-                goals: (player.stats.internal?.goals || 0) + (player.stats.external?.goals || 0),
-                assists: (player.stats.internal?.assists || 0) + (player.stats.external?.assists || 0)
-            };
+    // 获取球员在当前榜单的数值
+    getPlayerValue(player) {
+        if (this.currentBoard === 'attendance') {
+            if (this.currentType === 'total') {
+                return player.attendance.internal + player.attendance.external;
+            }
+            return player.attendance[this.currentType] || 0;
+        } else {
+            if (this.currentType === 'total') {
+                return (player.stats.internal?.[this.currentBoard] || 0) + 
+                       (player.stats.external?.[this.currentBoard] || 0);
+            }
+            return player.stats[this.currentType]?.[this.currentBoard] || 0;
         }
-        return {
-            attendance: player.attendance[tabType] || 0,
-            goals: player.stats[tabType]?.goals || 0,
-            assists: player.stats[tabType]?.assists || 0
+    }
+
+    // 获取排序后的球员列表
+    getSortedPlayers() {
+        return [...this.players.mainPlayers].sort((a, b) => {
+            if (this.sortField === 'name') {
+                return this.sortDirection === 'desc' 
+                    ? b.name.localeCompare(a.name)
+                    : a.name.localeCompare(b.name);
+            }
+            
+            const valueA = this.getPlayerValue(a);
+            const valueB = this.getPlayerValue(b);
+            return this.sortDirection === 'desc' ? valueB - valueA : valueA - valueB;
+        });
+    }
+
+    // 编辑数值
+    editValue(playerName) {
+        if (this.currentType === 'total') return;
+        
+        const player = this.findPlayer(playerName);
+        const currentValue = this.getPlayerValue(player);
+        const boardText = this.getBoardTitle();
+
+        const newValue = prompt(
+            `请输入 ${playerName} 的${this.getTypeText(this.currentType)}${boardText}:`, 
+            currentValue
+        );
+
+        if (newValue !== null && !isNaN(newValue)) {
+            if (this.currentBoard === 'attendance') {
+                player.attendance[this.currentType] = parseInt(newValue);
+            } else {
+                if (!player.stats[this.currentType]) {
+                    player.stats[this.currentType] = { goals: 0, assists: 0 };
+                }
+                player.stats[this.currentType][this.currentBoard] = parseInt(newValue);
+            }
+            this.saveData();
+            this.renderPlayerList();
+        }
+    }
+
+    // 绑定事件
+    bindEvents() {
+        // 榜单切换
+        document.querySelector('.stats-boards').addEventListener('click', (e) => {
+            // 检查点击的是按钮或者按钮内的span
+            const btn = e.target.closest('.board-btn');
+            if (btn) {
+                document.querySelectorAll('.board-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.currentBoard = btn.dataset.board;
+                this.renderPlayerList();
+            }
+        });
+
+        // 类型切换
+        document.querySelector('.stats-tabs').addEventListener('click', (e) => {
+            // 检查点击的是按钮或者按钮内的span
+            const btn = e.target.closest('.tab-btn');
+            if (btn) {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                this.currentType = btn.dataset.tab;
+                this.renderPlayerList();
+            }
+        });
+    }
+
+    // 获取榜单标题
+    getBoardTitle() {
+        const titles = {
+            attendance: '出勤次数',
+            goals: '进球数',
+            assists: '助攻数'
         };
-    }
-
-    // 编辑出勤次数
-    editAttendance(playerName, type) {
-        if (type === 'total') return; // 总榜不允许编辑
-        
-        const player = this.findPlayer(playerName);
-        const currentValue = player.attendance[type] || 0;
-
-        const newValue = prompt(`请输入 ${playerName} 的${this.getTypeText(type)}出勤次数:`, currentValue);
-        if (newValue !== null && !isNaN(newValue)) {
-            player.attendance[type] = parseInt(newValue);
-            this.saveData();
-            this.renderPlayerList(type);
-        }
-    }
-
-    // 编辑统计数据
-    editStats(playerName, type, statType) {
-        if (type === 'total') return; // 总榜不允许编辑
-        
-        const player = this.findPlayer(playerName);
-        if (!player.stats[type]) {
-            player.stats[type] = { goals: 0, assists: 0 };
-        }
-        const currentValue = player.stats[type][statType] || 0;
-
-        const newValue = prompt(`请输入 ${playerName} 的${type}${this.getStatText(statType)}:`, currentValue);
-        if (newValue !== null && !isNaN(newValue)) {
-            player.stats[type][statType] = parseInt(newValue);
-            this.saveData();
-            this.renderPlayerList(type);
-        }
-    }
-
-    // 添加新球员
-    showAddPlayerModal() {
-        const name = prompt('请输入新球员姓名:');
-        if (name) {
-            this.players.mainPlayers.push({
-                name,
-                attendance: { internal: 0, external: 0 },
-                stats: { goals: 0, assists: 0 }
-            });
-            this.saveData();
-            this.renderPlayerList('total');
-        }
-    }
-
-    // 删除球员
-    deletePlayer(playerName) {
-        if (confirm(`确定要删除 ${playerName} 的数据吗？`)) {
-            this.players.mainPlayers = this.players.mainPlayers.filter(p => p.name !== playerName);
-            this.saveData();
-            this.renderPlayerList('total');
-        }
+        return titles[this.currentBoard];
     }
 
     // 保存数据
     saveData() {
         localStorage.setItem('playerStats', JSON.stringify(this.players));
-    }
-
-    // 绑定事件
-    bindEvents() {
-        document.querySelector('.stats-tabs').addEventListener('click', (e) => {
-            if (e.target.classList.contains('tab-btn')) {
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-                e.target.classList.add('active');
-                this.renderPlayerList(e.target.dataset.tab);
-            }
-        });
     }
 
     // 查找球员
@@ -212,12 +243,26 @@ class PlayerStats {
         return types[type];
     }
 
-    // 获取统计类型文本
-    getStatText(type) {
-        const types = {
-            goals: '进球数',
-            assists: '助攻数'
-        };
-        return types[type];
+    // 添加排序相关方法
+    getSortIcon(field) {
+        if (this.sortField !== field) return '↕️';
+        return this.sortDirection === 'desc' ? '↓' : '↑';
+    }
+
+    bindSortEvents() {
+        document.querySelectorAll('.sortable').forEach(header => {
+            header.addEventListener('click', (e) => {
+                const field = e.target.closest('.sortable').dataset.sort;
+                
+                if (field === this.sortField) {
+                    this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
+                } else {
+                    this.sortField = field;
+                    this.sortDirection = 'desc';
+                }
+                
+                this.renderPlayerList();
+            });
+        });
     }
 } 
