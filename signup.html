@@ -269,10 +269,11 @@
     <script>
         // 主力球员数据
         const mainPlayers = [
-            "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", "马指", "邵林",
-            "一陶", "尚枫", "朱门", "小鹤", "陈光", "井", "杨超", "金昊", "张健", "小常",
-            "赵军", "扇子", "毛毛", "威威", "蔡湑", "袁祎", "李蒙", "宣宇", "康进", "旭东",
-            "田爽", "贾楠", "麦克", "勋哥", "小杰", "马蒂", "肖凯"
+            "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", 
+            "马指", "邵林", "一陶", "尚枫", "朱门", "小鹤", "陈光", "井", 
+            "杨超", "金昊", "张健", "小常", "赵军", "扇子", "毛毛", "威威", 
+            "蔡湑", "袁祎", "李蒙", "宣宇", "康进", "旭东", "田爽", "贾楠", 
+            "麦克", "勋哥", "小杰", "马蒂", "肖凯", "文征"
         ];
 
         // 外援球员数据
@@ -306,7 +307,7 @@
             initializeCaptainSelects();
         }
 
-        // 创���球员列表项
+        // 创建球员列表项
         function createPlayerListItem(playerName) {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -338,7 +339,7 @@
             const whiteBtn = playerLi.querySelector('.team-btn.white');
             const blueBtn = playerLi.querySelector('.team-btn.blue');
             
-            // 如果点���的是已选中的按钮，则取消选择
+            // 如果是已选中的按钮，则取消选择
             if (button.classList.contains('selected')) {
                 button.classList.remove('selected');
                 removePlayerFromTeam(playerName, team);

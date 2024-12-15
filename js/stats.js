@@ -1,24 +1,59 @@
 class PlayerStats {
     constructor() {
+        this.defaultPlayers = [
+            "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", 
+            "马指", "邵林", "一陶", "尚枫", "朱门", "小鹤", "陈光", "井", 
+            "杨超", "金昊", "张健", "小常", "赵军", "扇子", "毛毛", "威威", 
+            "蔡湑", "袁祎", "李蒙", "宣宇", "康进", "旭东", "田爽", "贾楠", 
+            "麦克", "勋哥", "小杰", "马蒂", "肖凯", "文征"
+        ];
         this.initializePlayersIfNeeded();
         this.players = this.loadPlayers();
-        this.currentBoard = 'attendance'; // 当前显示的榜单：attendance/goals/assists
-        this.currentType = 'total';       // 当前显示的类型：total/internal/external
-        this.sortDirection = 'desc';      // 排序方向
+        this.currentBoard = 'attendance';
+        this.currentType = 'total';
+        this.sortField = 'value';
+        this.sortDirection = 'desc';
         this.init();
     }
 
     // 初始化默认球员数据
     initializePlayersIfNeeded() {
-        if (!localStorage.getItem('playerStats')) {
-            const defaultPlayers = {
-                mainPlayers: [
-                    "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", 
-                    "马指", "邵林", "一陶", "尚枫", "朱门", "小鹤", "陈光", "井", 
-                    "杨超", "金昊", "张健", "小常", "赵军", "扇子", "毛毛", "威威", 
-                    "蔡湑", "袁祎", "李蒙", "宣宇", "康进", "旭东", "田爽", "贾楠", 
-                    "麦克", "勋哥", "小杰", "马蒂", "肖凯"
-                ].map(name => ({
+        let needsUpdate = false;
+        const storedData = localStorage.getItem('playerStats');
+        
+        if (!storedData) {
+            needsUpdate = true;
+        } else {
+            // 检查是否需要更��现有数据
+            const currentData = JSON.parse(storedData);
+            const currentPlayers = currentData.mainPlayers.map(p => p.name);
+            const missingPlayers = this.defaultPlayers.filter(name => !currentPlayers.includes(name));
+            
+            if (missingPlayers.length > 0) {
+                // 有新球员需要添加
+                missingPlayers.forEach(name => {
+                    currentData.mainPlayers.push({
+                        name,
+                        attendance: {
+                            internal: 0,
+                            external: 0
+                        },
+                        stats: {
+                            internal: { goals: 0, assists: 0 },
+                            external: { goals: 0, assists: 0 }
+                        }
+                    });
+                });
+                localStorage.setItem('playerStats', JSON.stringify(currentData));
+                console.log('已添加新球员:', missingPlayers);
+                return;
+            }
+        }
+
+        if (needsUpdate) {
+            // 完全初始化新数据
+            const defaultData = {
+                mainPlayers: this.defaultPlayers.map(name => ({
                     name,
                     attendance: {
                         internal: 0,
@@ -30,7 +65,7 @@ class PlayerStats {
                     }
                 }))
             };
-            localStorage.setItem('playerStats', JSON.stringify(defaultPlayers));
+            localStorage.setItem('playerStats', JSON.stringify(defaultData));
         }
     }
 
@@ -190,7 +225,6 @@ class PlayerStats {
     bindEvents() {
         // 榜单切换
         document.querySelector('.stats-boards').addEventListener('click', (e) => {
-            // 检查点击的是按钮或者按钮内的span
             const btn = e.target.closest('.board-btn');
             if (btn) {
                 document.querySelectorAll('.board-btn').forEach(b => b.classList.remove('active'));
@@ -202,7 +236,6 @@ class PlayerStats {
 
         // 类型切换
         document.querySelector('.stats-tabs').addEventListener('click', (e) => {
-            // 检查点击的是按钮或者按钮内的span
             const btn = e.target.closest('.tab-btn');
             if (btn) {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -243,12 +276,13 @@ class PlayerStats {
         return types[type];
     }
 
-    // 添加排序相关方法
+    // 获取排序图标
     getSortIcon(field) {
         if (this.sortField !== field) return '↕️';
         return this.sortDirection === 'desc' ? '↓' : '↑';
     }
 
+    // 绑定排序事件
     bindSortEvents() {
         document.querySelectorAll('.sortable').forEach(header => {
             header.addEventListener('click', (e) => {

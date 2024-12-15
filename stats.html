@@ -24,48 +24,10 @@
         <!-- 年度选择区域 -->
         <section class="year-selector-section">
             <h2>数据统计</h2>
-            <div class="year-selector">
-                <button class="year-btn active" data-year="2024">2024年度</button>
-                <button class="year-btn" data-year="all">历史总榜</button>
+            <div class="stats-content">
+                <!-- 这里将由 JavaScript 动态生成内容 -->
             </div>
         </section>
-
-        <!-- 2024年度统计内容 -->
-        <div id="stats2024" class="year-content active">
-            <div class="stats-container">
-                <!-- 这里将由 JavaScript 动态生成内容 -->
-                <div class="stats-content"></div>
-            </div>
-        </div>
-
-        <!-- 历史总榜内容 -->
-        <div id="statsAll" class="year-content">
-            <!-- 统计数据卡片区域 -->
-            <section class="stats-cards">
-                <article class="stats-card">
-                    <h3>总访问量</h3>
-                    <p class="stats-number">12,345</p>
-                </article>
-                
-                <article class="stats-card">
-                    <h3>今日访问</h3>
-                    <p class="stats-number">123</p>
-                </article>
-
-                <article class="stats-card">
-                    <h3>活跃用户</h3>
-                    <p class="stats-number">456</p>
-                </article>
-            </section>
-
-            <!-- 图表展示区域 -->
-            <section class="stats-charts">
-                <div class="chart-container">
-                    <h3>访问趋势</h3>
-                    <canvas id="visitsChart"></canvas>
-                </div>
-            </section>
-        </div>
     </main>
 
     <!-- 页脚 -->
@@ -75,8 +37,10 @@
 
     <script src="js/stats.js"></script>
     <script>
-        // 初始化
-        const playerStats = new PlayerStats();
+        // 确保在 DOM 加载完成后再初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            window.playerStats = new PlayerStats();
+        });
     </script>
 </body>
 </html> 
