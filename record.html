@@ -341,15 +341,16 @@
         height: 100%;
         background-color: rgba(0,0,0,0.5);
         z-index: 1000;
+        overflow-y: auto;
     }
 
     .modal-content {
         position: relative;
         background-color: white;
-        margin: 15% auto;
+        margin: 5vh auto;
         padding: 2rem;
         width: 90%;
-        max-width: 500px;
+        max-width: 800px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
@@ -388,7 +389,12 @@
     }
 
     .modal-footer {
-        text-align: right;
+        position: sticky;
+        bottom: 0;
+        background-color: white;
+        padding: 1rem 0;
+        border-top: 1px solid #eee;
+        margin-top: 1rem;
     }
 
     .confirm-btn {
@@ -587,6 +593,13 @@
     .stats-content li:last-child {
         border-bottom: none;
     }
+
+    /* 添加最终统计弹窗的特殊样式 */
+    #finalStatsModal .modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: 5vh auto;
+    }
     </style>
 
     <script>
@@ -727,7 +740,7 @@
         const statsModal = document.getElementById('statsModal');
         const finalStatsModal = document.getElementById('finalStatsModal');
         
-        // 点击弹窗外部时关闭对应的��窗
+        // 点击弹窗外部时关闭对应的弹窗
         if (event.target === statsModal) {
             statsModal.style.display = 'none';
         } else if (event.target === finalStatsModal) {
@@ -810,14 +823,14 @@
         const goalsList = document.getElementById(goalsListId);
         goalsList.innerHTML = data.goals
             .sort((a, b) => b.count - a.count)
-            .map(item => `<li>${item.name} ${item.count}个</li>`)
+            .map(item => `<li>${item.player} ${item.count}球</li>`)
             .join('') || '<li>无</li>';
         
         // 显示助攻数据
         const assistsList = document.getElementById(assistsListId);
         assistsList.innerHTML = data.assists
             .sort((a, b) => b.count - a.count)
-            .map(item => `<li>${item.name} ${item.count}个</li>`)
+            .map(item => `<li>${item.player} ${item.count}次</li>`)
             .join('') || '<li>无</li>';
     }
 
@@ -907,7 +920,7 @@
         }
     }
 
-    // 在队伍名单下显示统计结���
+    // 在队伍名单下显示统计结果
     function displayTeamFinalStats(containerId, data, score) {
         const container = document.getElementById(containerId);
         const content = container.querySelector('.stats-content');
@@ -960,7 +973,7 @@
                 return;
             }
             
-            // 根据队伍类型选择对应的��组
+            // 根据队伍类型选择对应的组
             const teamArray = teamType === 'white' ? 'whiteTeam' : 'blueTeam';
             console.log('操作的队伍数组:', teamArray);
             console.log('删除前的队员列表:', matchData[teamArray]);
