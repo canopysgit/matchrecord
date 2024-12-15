@@ -595,27 +595,34 @@
 
     // 页面加载时获取并显示比赛信息
     document.addEventListener('DOMContentLoaded', function() {
-        // 从 localStorage 获取比赛数据
-        const matchData = JSON.parse(localStorage.getItem('currentMatch'));
-        
-        if (matchData) {
+        try {
+            // 从 localStorage 获取比赛数据
+            const matchData = JSON.parse(localStorage.getItem('currentMatch'));
+            console.log('获取到的比赛数据:', matchData); // 调试信息
+            
+            if (!matchData) {
+                alert('没有找到比赛数据，请先在报名页面选择球员');
+                window.location.href = 'signup.html';
+                return;
+            }
+
             // 显示比赛信息
-            document.getElementById('displayMatchDate').textContent = formatDate(matchData.date);
-            document.getElementById('displayMatchTime').textContent = matchData.time;
-            document.getElementById('displayMatchType').textContent = matchData.type;
-            document.getElementById('displayMatchVenue').textContent = matchData.venue;
+            document.getElementById('displayMatchDate').textContent = formatDate(matchData.basicInfo.date);
+            document.getElementById('displayMatchTime').textContent = matchData.basicInfo.time;
+            document.getElementById('displayMatchType').textContent = matchData.basicInfo.type;
+            document.getElementById('displayMatchVenue').textContent = matchData.basicInfo.venue;
 
             // 显示队伍名单
-            displayTeamList('whiteTeamList', matchData.whiteTeam);
-            displayTeamList('blueTeamList', matchData.blueTeam);
+            displayTeamList('whiteTeamList', matchData.teams.white.players);
+            displayTeamList('blueTeamList', matchData.teams.blue.players);
 
             // 初始化数据记录区域
-            initializeStatsSection('whiteTeamStats', matchData.whiteTeam);
-            initializeStatsSection('blueTeamStats', matchData.blueTeam);
-        } else {
-            // 如果没有数据，显示提示信息
-            document.querySelector('.match-info-card').innerHTML = 
-                '<div class="no-data">没有比赛信息，请先在周报名页面选择球员</div>';
+            initializeStatsSection('whiteTeamStats', matchData.teams.white.players);
+            initializeStatsSection('blueTeamStats', matchData.teams.blue.players);
+        } catch (error) {
+            console.error('读取数据失败:', error);
+            alert('读取数据失败，请返回报名页面重试');
+            window.location.href = 'signup.html';
         }
     });
 
@@ -662,7 +669,7 @@
                 removePlayer(player, teamType);
             });
             
-            // 组装列表项
+            // 组列表项
             li.appendChild(nameSpan);
             li.appendChild(deleteBtn);
             list.appendChild(li);
@@ -720,7 +727,7 @@
         const statsModal = document.getElementById('statsModal');
         const finalStatsModal = document.getElementById('finalStatsModal');
         
-        // 点击弹窗外部时关闭对应的弹窗
+        // 点击弹窗外部时关闭对应的��窗
         if (event.target === statsModal) {
             statsModal.style.display = 'none';
         } else if (event.target === finalStatsModal) {
@@ -736,23 +743,33 @@
 
     // 显示最终统计结果
     function showFinalStats() {
-        const modal = document.getElementById('finalStatsModal');
-        
-        // 获取并显示比分
-        const whiteScore = document.getElementById('whiteTeamScore').value;
-        const blueScore = document.getElementById('blueTeamScore').value;
-        document.getElementById('finalWhiteScore').textContent = whiteScore;
-        document.getElementById('finalBlueScore').textContent = blueScore;
-        
-        // 收集白队数据
-        const whiteTeamData = collectTeamStats('whiteTeamStats');
-        displayFinalStats('whiteTeamGoals', 'whiteTeamAssists', whiteTeamData);
-        
-        // 收集蓝队数据
-        const blueTeamData = collectTeamStats('blueTeamStats');
-        displayFinalStats('blueTeamGoals', 'blueTeamAssists', blueTeamData);
-        
-        modal.style.display = 'block';
+        try {
+            // 验证数据
+            if (!validateMatchData()) {
+                return;
+            }
+
+            const modal = document.getElementById('finalStatsModal');
+            
+            // 获取并显示比分
+            const whiteScore = document.getElementById('whiteTeamScore').value;
+            const blueScore = document.getElementById('blueTeamScore').value;
+            document.getElementById('finalWhiteScore').textContent = whiteScore;
+            document.getElementById('finalBlueScore').textContent = blueScore;
+            
+            // 收集白队数据
+            const whiteTeamData = collectTeamStats('whiteTeamStats');
+            displayFinalStats('whiteTeamGoals', 'whiteTeamAssists', whiteTeamData);
+            
+            // 收集蓝队数据
+            const blueTeamData = collectTeamStats('blueTeamStats');
+            displayFinalStats('blueTeamGoals', 'blueTeamAssists', blueTeamData);
+            
+            // 显示弹窗
+            modal.style.display = 'block';
+        } catch (error) {
+            alert(error.message);
+        }
     }
 
     // 收集队伍统计数据
@@ -763,16 +780,24 @@
         };
         
         const playerItems = document.getElementById(teamStatsId).children;
+        
         Array.from(playerItems).forEach(item => {
             const playerName = item.querySelector('.player-name').textContent;
-            const goals = parseInt(item.querySelector('[id$="-goals"]').textContent);
-            const assists = parseInt(item.querySelector('[id$="-assists"]').textContent);
+            const goals = parseInt(item.querySelector('[id$="-goals"]').textContent) || 0;
+            const assists = parseInt(item.querySelector('[id$="-assists"]').textContent) || 0;
             
+            // 只记录有进球或助攻的球员
             if (goals > 0) {
-                stats.goals.push({ name: playerName, count: goals });
+                stats.goals.push({ 
+                    player: playerName, 
+                    count: goals 
+                });
             }
             if (assists > 0) {
-                stats.assists.push({ name: playerName, count: assists });
+                stats.assists.push({ 
+                    player: playerName, 
+                    count: assists 
+                });
             }
         });
         
@@ -801,45 +826,88 @@
         document.getElementById('finalStatsModal').style.display = 'none';
     }
 
-    // 保存最终统计数据
+    // 修改 saveFinalStats 函数
     function saveFinalStats() {
-        // 获取比分
-        const whiteScore = document.getElementById('whiteTeamScore').value;
-        const blueScore = document.getElementById('blueTeamScore').value;
-        
-        // 收集统计数据
-        const whiteTeamData = collectTeamStats('whiteTeamStats');
-        const blueTeamData = collectTeamStats('blueTeamStats');
-        
-        // 在白队名单下显示统计结果
-        displayTeamFinalStats('whiteFinalStats', whiteTeamData, whiteScore);
-        
-        // 在蓝队名单下显示统计结果
-        displayTeamFinalStats('blueFinalStats', blueTeamData, blueScore);
-        
-        // 保存数据到 localStorage
-        const matchStats = {
-            date: new Date().toISOString(),
-            score: {
-                white: whiteScore,
-                blue: blueScore
-            },
-            stats: {
-                white: whiteTeamData,
-                blue: blueTeamData
+        try {
+            // 1. 获取当前比赛数据
+            const currentMatch = JSON.parse(localStorage.getItem('currentMatch'));
+            if (!currentMatch) {
+                throw new Error('未找到比赛数据');
             }
-        };
-        
-        // 获取已有的统计历史
-        const statsHistory = JSON.parse(localStorage.getItem('matchStatsHistory') || '[]');
-        statsHistory.push(matchStats);
-        localStorage.setItem('matchStatsHistory', JSON.stringify(statsHistory));
-        
-        // 关闭弹窗
-        closeFinalStatsModal();
+
+            // 2. 获取比分和统计数据
+            const whiteScore = parseInt(document.getElementById('whiteTeamScore').value) || 0;
+            const blueScore = parseInt(document.getElementById('blueTeamScore').value) || 0;
+            const whiteStats = collectTeamStats('whiteTeamStats');
+            const blueStats = collectTeamStats('blueTeamStats');
+
+            // 3. 创建新的比赛记录
+            const matchRecord = {
+                id: `match_${new Date().getTime()}`,
+                status: 'completed',
+                basicInfo: {
+                    date: currentMatch.basicInfo.date,
+                    time: currentMatch.basicInfo.time,
+                    type: currentMatch.basicInfo.type,
+                    venue: currentMatch.basicInfo.venue,
+                    createdAt: new Date().toISOString()
+                },
+                teams: {
+                    white: {
+                        players: currentMatch.teams.white.players,
+                        score: whiteScore,
+                        stats: whiteStats
+                    },
+                    blue: {
+                        players: currentMatch.teams.blue.players,
+                        score: blueScore,
+                        stats: blueStats
+                    }
+                }
+            };
+
+            // 4. 获取历史记录
+            const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+
+            // 5. 检查是否存在同一天的记录
+            const sameDate = matchHistory.find(match => {
+                const matchDate = new Date(match.basicInfo.date).toDateString();
+                const currentDate = new Date(matchRecord.basicInfo.date).toDateString();
+                return matchDate === currentDate;
+            });
+
+            if (sameDate) {
+                if (!confirm('当天已有比赛记录，是否覆盖？')) {
+                    return;
+                }
+                // 删除原有记录
+                const index = matchHistory.findIndex(match => 
+                    new Date(match.basicInfo.date).toDateString() === new Date(matchRecord.basicInfo.date).toDateString()
+                );
+                if (index !== -1) {
+                    matchHistory.splice(index, 1);
+                }
+            }
+
+            // 6. 添加新记录
+            matchHistory.push(matchRecord);
+
+            // 7. 保存更新后的历史记录
+            localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
+
+            // 8. 清除当前比赛数据
+            localStorage.removeItem('currentMatch');
+
+            // 9. 跳转到结果页面
+            window.location.href = 'results.html';
+
+        } catch (error) {
+            console.error('保存失败:', error);
+            alert('保存失败：' + error.message);
+        }
     }
 
-    // 在队伍名单下显示统计结果
+    // 在队伍名单下显示统计结���
     function displayTeamFinalStats(containerId, data, score) {
         const container = document.getElementById(containerId);
         const content = container.querySelector('.stats-content');
@@ -882,7 +950,7 @@
         console.log('队伍类型:', teamType);
         
         try {
-            // 从 localStorage 获取当前比赛数据
+            // 从 localStorage 获取前比赛数据
             const matchData = JSON.parse(localStorage.getItem('currentMatch'));
             console.log('当前比赛数据:', matchData);
             
@@ -892,7 +960,7 @@
                 return;
             }
             
-            // 根据队伍类型选择对应的数组
+            // 根据队伍类型选择对应的��组
             const teamArray = teamType === 'white' ? 'whiteTeam' : 'blueTeam';
             console.log('操作的队伍数组:', teamArray);
             console.log('删除前的队员列表:', matchData[teamArray]);
@@ -926,7 +994,7 @@
                 // 重新初始化数据记录区域
                 initializeStatsSection(`${teamType}TeamStats`, matchData[teamArray]);
                 
-                alert('队员删除成功！');
+                alert('队员删除成功');
                 console.log('Player removed successfully');
             } else {
                 alert('删除队员失败！');
@@ -936,6 +1004,29 @@
             alert('发生错误：' + error.message);
             console.error('Error in removePlayer:', error);
         }
+    }
+
+    // 添加数据验证函数
+    function validateMatchData() {
+        const whiteScore = document.getElementById('whiteTeamScore').value;
+        const blueScore = document.getElementById('blueTeamScore').value;
+
+        // 验证比分
+        if (!whiteScore || !blueScore) {
+            throw new Error('请输入双方比分');
+        }
+
+        // 验证比分是否为数字
+        if (isNaN(whiteScore) || isNaN(blueScore)) {
+            throw new Error('比分必须是数字');
+        }
+
+        // 验证比分是否为非负数
+        if (whiteScore < 0 || blueScore < 0) {
+            throw new Error('比分不能为负数');
+        }
+
+        return true;
     }
     </script>
 </body>

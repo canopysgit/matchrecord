@@ -516,7 +516,7 @@
                 return;
             }
 
-            // 检查是否有队员被选中
+            // 检查是否有队员被选���
             const whiteTeamCount = document.getElementById('whiteTeam').children.length;
             const blueTeamCount = document.getElementById('blueTeam').children.length;
             
@@ -592,24 +592,46 @@
                 return blueCaptain && name === blueCaptain ? `${name}(C)` : name;
             });
             
-            // 保存到 localStorage
+            // 创建比赛数据结构
             const matchData = {
-                date: document.getElementById('matchDate').value,
-                time: document.getElementById('matchTimeSlot').value,
-                type: document.getElementById('matchType').value,
-                venue: document.getElementById('matchVenue').value,
-                whiteTeam: whiteTeam,
-                blueTeam: blueTeam,
-                whiteCaptain: whiteCaptain || '',
-                blueCaptain: blueCaptain || ''
+                id: `match_${new Date().getTime()}`,
+                status: 'pending',
+                basicInfo: {
+                    date: document.getElementById('matchDate').value,
+                    time: document.getElementById('matchTimeSlot').value,
+                    type: document.getElementById('matchType').value,
+                    venue: document.getElementById('matchVenue').value,
+                    createdAt: new Date().toISOString()
+                },
+                teams: {
+                    white: {
+                        players: whiteTeam,
+                        captain: whiteCaptain || '',
+                        score: 0,
+                        stats: {
+                            goals: [],
+                            assists: []
+                        }
+                    },
+                    blue: {
+                        players: blueTeam,
+                        captain: blueCaptain || '',
+                        score: 0,
+                        stats: {
+                            goals: [],
+                            assists: []
+                        }
+                    }
+                }
             };
 
+            // 保存到 localStorage
             localStorage.setItem('currentMatch', JSON.stringify(matchData));
-            
+
             // 关闭弹窗
             closeConfirmModal();
             
-            // 直接跳转到记录页面
+            // 跳转到记录页面
             window.location.href = 'record.html';
         }
 
