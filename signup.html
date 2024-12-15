@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>周报名 - 足球队报名与数据统计系统</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -267,6 +268,13 @@
     </style>
 
     <script>
+        // 修改 Supabase 客户端初始化部分
+        const { createClient } = supabase;
+        const supabaseClient = createClient(
+            'https://obidukxlcgecpooynqnz.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
+        );
+
         // 主力球员数据
         const mainPlayers = [
             "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", 
@@ -397,13 +405,13 @@
                 deleteBtn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     
-                    // 如果是队长，清除队长选择
+                    // 如果是队长，除队长选择
                     const captainSelect = teamId === 'whiteTeam' ? 'whiteCaptain' : 'blueCaptain';
                     if (document.getElementById(captainSelect).value === playerName) {
                         document.getElementById(captainSelect).value = '';
                     }
                     
-                    // 找到原始球员列表中的对应球员
+                    // 找到原始球员列表中的对应员
                     const playerLists = document.querySelectorAll('.player-grid');
                     playerLists.forEach(list => {
                         const originalPlayerLi = Array.from(list.children).find(li => 
@@ -459,7 +467,7 @@
             }
         }
 
-        // 添加队长选择事件处理
+        // 添加队伍选择事件处理
         function initializeCaptainSelects() {
             const whiteCaptainSelect = document.getElementById('whiteCaptain');
             const blueCaptainSelect = document.getElementById('blueCaptain');
@@ -578,11 +586,11 @@
         }
 
         // 确认分队
-        function confirmTeams() {
+        async function confirmTeams() {
             const whiteCaptain = document.getElementById('whiteCaptain').value;
             const blueCaptain = document.getElementById('blueCaptain').value;
             
-            // 获取队伍成员，如果是队长则添加(C)标记
+            // 获取队伍成员
             const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => {
                 const name = li.textContent.trim().replace('×', '').trim();
                 return whiteCaptain && name === whiteCaptain ? `${name}(C)` : name;
@@ -595,45 +603,86 @@
             
             // 创建比赛数据结构
             const matchData = {
-                id: `match_${new Date().getTime()}`,
-                status: 'pending',
-                basicInfo: {
-                    date: document.getElementById('matchDate').value,
-                    time: document.getElementById('matchTimeSlot').value,
-                    type: document.getElementById('matchType').value,
-                    venue: document.getElementById('matchVenue').value,
-                    createdAt: new Date().toISOString()
-                },
-                teams: {
-                    white: {
-                        players: whiteTeam,
-                        captain: whiteCaptain || '',
-                        score: 0,
-                        stats: {
-                            goals: [],
-                            assists: []
-                        }
-                    },
-                    blue: {
-                        players: blueTeam,
-                        captain: blueCaptain || '',
-                        score: 0,
-                        stats: {
-                            goals: [],
-                            assists: []
-                        }
-                    }
-                }
+                match_date: document.getElementById('matchDate').value,
+                match_time: document.getElementById('matchTimeSlot').value,
+                match_type: document.getElementById('matchType').value,
+                venue: document.getElementById('matchVenue').value,
+                white_score: 0,
+                blue_score: 0,
+                status: 'pending'
             };
 
-            // 保存到 localStorage
-            localStorage.setItem('currentMatch', JSON.stringify(matchData));
+            try {
+                // 保存比赛记录到 Supabase
+                const { data, error } = await supabaseClient
+                    .from('matches')
+                    .insert([matchData])
+                    .select()
+                    .single();
+                
+                if (error) {
+                    console.error('保存比赛记录时出错:', error);
+                    throw error;
+                }
+                
+                const matchId = data.id;
+                console.log('成功保存比赛记录，ID:', matchId);
 
-            // 关闭弹窗
-            closeConfirmModal();
-            
-            // 跳转到记录页面
-            window.location.href = 'record.html';
+                // 准备球员数据，确保移除所有特殊字符和标记
+                const playerData = [
+                    ...whiteTeam.map(player => ({ 
+                        match_id: matchId, 
+                        player_name: player.replace(/[()×]/g, '').trim(), // 移除所有特殊字符
+                        team: 'white' 
+                    })),
+                    ...blueTeam.map(player => ({ 
+                        match_id: matchId, 
+                        player_name: player.replace(/[()×]/g, '').trim(), // 移除所有特殊字符
+                        team: 'blue' 
+                    }))
+                ];
+
+                // 保存球员信息到 Supabase
+                const { error: playersError } = await supabaseClient
+                    .from('match_players')
+                    .insert(playerData);
+
+                if (playersError) {
+                    console.error('保存球员数据时出错:', playersError);
+                    throw playersError;
+                }
+
+                // 保存当前比赛信息到 localStorage，供 record.html 使用
+                const currentMatch = {
+                    id: matchId,
+                    basicInfo: {
+                        match_date: matchData.match_date,
+                        match_time: matchData.match_time,
+                        match_type: matchData.match_type,
+                        venue: matchData.venue
+                    },
+                    teams: {
+                        white: {
+                            players: whiteTeam,
+                            captain: whiteCaptain || ''
+                        },
+                        blue: {
+                            players: blueTeam,
+                            captain: blueCaptain || ''
+                        }
+                    }
+                };
+                localStorage.setItem('currentMatch', JSON.stringify(currentMatch));
+
+                // 关闭弹窗
+                closeConfirmModal();
+
+                // 跳转到记录页面
+                window.location.href = 'record.html';
+            } catch (error) {
+                console.error('保存比赛数据时发生错误:', error.message);  // 修改这行以显示具体错误信息
+                alert('保存比赛数据时发生错误：' + error.message);
+            }
         }
 
         // 点击弹窗外部关闭
@@ -646,6 +695,18 @@
 
         // 初始化页面
         document.addEventListener('DOMContentLoaded', initializePlayers);
+
+        // 添加加载状态函数
+        function setLoading(isLoading) {
+            const submitBtn = document.querySelector('.confirm-btn');
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '保存中...';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '确认';
+            }
+        }
     </script>
 </body>
 </html> 

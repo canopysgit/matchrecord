@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>记录比赛 - 足球队报名与数据统计系统</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -93,7 +94,7 @@
                     <div id="blueTeamStats" class="player-stats-list"></div>
                 </div>
             </div>
-            <!-- 确认数据统计按钮 -->
+            <!-- 确认统计按钮 -->
             <div class="confirm-stats-section">
                 <button class="confirm-stats-btn" onclick="showFinalStats()">确认数据统计</button>
             </div>
@@ -606,12 +607,19 @@
     let currentPlayer = null;
     let currentAction = null;
 
+    // 初始化 Supabase 客户端
+    const { createClient } = supabase;
+    const supabaseClient = createClient(
+        'https://obidukxlcgecpooynqnz.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
+    );
+
     // 页面加载时获取并显示比赛信息
     document.addEventListener('DOMContentLoaded', function() {
         try {
             // 从 localStorage 获取比赛数据
             const matchData = JSON.parse(localStorage.getItem('currentMatch'));
-            console.log('获取到的比赛数据:', matchData); // 调试信息
+            console.log('获取到的比赛数据:', matchData);
             
             if (!matchData) {
                 alert('没有找到比赛数据，请先在报名页面选择球员');
@@ -620,9 +628,9 @@
             }
 
             // 显示比赛信息
-            document.getElementById('displayMatchDate').textContent = formatDate(matchData.basicInfo.date);
-            document.getElementById('displayMatchTime').textContent = matchData.basicInfo.time;
-            document.getElementById('displayMatchType').textContent = matchData.basicInfo.type;
+            document.getElementById('displayMatchDate').textContent = formatDate(matchData.basicInfo.match_date);
+            document.getElementById('displayMatchTime').textContent = matchData.basicInfo.match_time;
+            document.getElementById('displayMatchType').textContent = matchData.basicInfo.match_type;
             document.getElementById('displayMatchVenue').textContent = matchData.basicInfo.venue;
 
             // 显示队伍名单
@@ -657,7 +665,7 @@
         // 清空现有内容
         list.innerHTML = '';
         
-        // 为每个��员创建列表项
+        // 为每个员创建列表项
         players.forEach(player => {
             console.log('创建队员列表项:', player);
             
@@ -840,78 +848,37 @@
     }
 
     // 修改 saveFinalStats 函数
-    function saveFinalStats() {
+    async function saveFinalStats() {
         try {
-            // 1. 获取当前比赛数据
+            // 获取比分
+            const whiteScore = parseInt(document.getElementById('whiteTeamScore').value) || 0;
+            const blueScore = parseInt(document.getElementById('blueTeamScore').value) || 0;
+
+            // 获取当前比赛数据
             const currentMatch = JSON.parse(localStorage.getItem('currentMatch'));
             if (!currentMatch) {
                 throw new Error('未找到比赛数据');
             }
 
-            // 2. 获取比分和统计数据
-            const whiteScore = parseInt(document.getElementById('whiteTeamScore').value) || 0;
-            const blueScore = parseInt(document.getElementById('blueTeamScore').value) || 0;
-            const whiteStats = collectTeamStats('whiteTeamStats');
-            const blueStats = collectTeamStats('blueTeamStats');
+            // 更新比赛记录
+            const { error: matchError } = await supabaseClient
+                .from('matches')
+                .update({
+                    white_score: whiteScore,
+                    blue_score: blueScore,
+                    status: 'completed'
+                })
+                .eq('id', currentMatch.id);
 
-            // 3. 创建新的比赛记录
-            const matchRecord = {
-                id: `match_${new Date().getTime()}`,
-                status: 'completed',
-                basicInfo: {
-                    date: currentMatch.basicInfo.date,
-                    time: currentMatch.basicInfo.time,
-                    type: currentMatch.basicInfo.type,
-                    venue: currentMatch.basicInfo.venue,
-                    createdAt: new Date().toISOString()
-                },
-                teams: {
-                    white: {
-                        players: currentMatch.teams.white.players,
-                        score: whiteScore,
-                        stats: whiteStats
-                    },
-                    blue: {
-                        players: currentMatch.teams.blue.players,
-                        score: blueScore,
-                        stats: blueStats
-                    }
-                }
-            };
-
-            // 4. 获取历史记录
-            const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
-
-            // 5. 检查是否存在同一天的记录
-            const sameDate = matchHistory.find(match => {
-                const matchDate = new Date(match.basicInfo.date).toDateString();
-                const currentDate = new Date(matchRecord.basicInfo.date).toDateString();
-                return matchDate === currentDate;
-            });
-
-            if (sameDate) {
-                if (!confirm('当天已有比赛记录，是否覆盖？')) {
-                    return;
-                }
-                // 删除原有记录
-                const index = matchHistory.findIndex(match => 
-                    new Date(match.basicInfo.date).toDateString() === new Date(matchRecord.basicInfo.date).toDateString()
-                );
-                if (index !== -1) {
-                    matchHistory.splice(index, 1);
-                }
+            if (matchError) {
+                console.error('更新比赛记录失败:', matchError);
+                throw matchError;
             }
 
-            // 6. 添加新记录
-            matchHistory.push(matchRecord);
-
-            // 7. 保存更新后的历史记录
-            localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
-
-            // 8. 清除当前比赛数据
+            // 清除当前比赛数据
             localStorage.removeItem('currentMatch');
 
-            // 9. 跳转到结果页面
+            // 跳转到结果页面
             window.location.href = 'results.html';
 
         } catch (error) {
