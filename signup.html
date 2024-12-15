@@ -15,7 +15,7 @@
             <li><a href="signup.html" class="active">比赛报名</a></li>
             <li><a href="record.html">记录数据</a></li>
             <li><a href="results.html">比赛结果</a></li>
-            <li><a href="stats.html">射手榜/助攻榜</a></li>
+            <li><a href="stats.html">球员统计</a></li>
         </ul>
     </nav>
 
@@ -306,7 +306,7 @@
             initializeCaptainSelects();
         }
 
-        // 创建球员列表项
+        // 创���球员列表项
         function createPlayerListItem(playerName) {
             const li = document.createElement('li');
             li.innerHTML = `
@@ -338,7 +338,7 @@
             const whiteBtn = playerLi.querySelector('.team-btn.white');
             const blueBtn = playerLi.querySelector('.team-btn.blue');
             
-            // 如果点击的是已选中的按钮，则取消选择
+            // 如果点���的是已选中的按钮，则取消选择
             if (button.classList.contains('selected')) {
                 button.classList.remove('selected');
                 removePlayerFromTeam(playerName, team);
@@ -516,7 +516,7 @@
                 return;
             }
 
-            // 检查是否有队员被选���
+            // 检查是否有队员被选中
             const whiteTeamCount = document.getElementById('whiteTeam').children.length;
             const blueTeamCount = document.getElementById('blueTeam').children.length;
             

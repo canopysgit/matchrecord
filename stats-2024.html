@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2024年度统计 - 足球队数据统计</title>
+    <link rel="stylesheet" href="styles/stats-2024.css">
+</head>
+<body>
+    <!-- 页面主要内容区域 -->
+    <main class="stats-container">
+        <h1 class="page-title">2024年度数据统计</h1>
+        
+        <!-- 统计类型切换标签 -->
+        <div class="stats-tabs">
+            <button class="tab-btn active" data-tab="attendance">出勤榜</button>
+            <button class="tab-btn" data-tab="goals">射手榜</button>
+            <button class="tab-btn" data-tab="assists">助攻榜</button>
+        </div>
+
+        <!-- 数据分类切换 -->
+        <div class="category-tabs">
+            <button class="category-btn active" data-category="total">总榜</button>
+            <button class="category-btn" data-category="internal">内战</button>
+            <button class="category-btn" data-category="external">外战</button>
+        </div>
+
+        <!-- 出勤榜统计 -->
+        <section id="attendance" class="stats-section active">
+            <div class="stats-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>球员</th>
+                            <th>出勤次数</th>
+                            <th>出勤率</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceData">
+                        <!-- 数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 射手榜统计 -->
+        <section id="goals" class="stats-section">
+            <div class="stats-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>球员</th>
+                            <th>进球数</th>
+                            <th>场均进球</th>
+                        </tr>
+                    </thead>
+                    <tbody id="goalsData">
+                        <!-- 数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 助攻榜统�� -->
+        <section id="assists" class="stats-section">
+            <div class="stats-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>球员</th>
+                            <th>助攻数</th>
+                            <th>场均助攻</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assistsData">
+                        <!-- 数据将通过JavaScript动态填充 -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/stats-2024.js"></script>
+</body>
+</html> 

@@ -291,7 +291,7 @@
             <li><a href="signup.html">比赛报名</a></li>
             <li><a href="record.html">记录数据</a></li>
             <li><a href="results.html" class="active">比赛结果</a></li>
-            <li><a href="stats.html">射手榜/助攻榜</a></li>
+            <li><a href="stats.html">球员统计</a></li>
         </ul>
     </nav>
 
@@ -688,7 +688,7 @@
             createStatsInputGroup(players, goal.player, goal.count, 'goal')
         ).join('');
         
-        // 显示助攻数��
+        // 显示助攻数据
         assistsContainer.innerHTML = teamData.stats.assists.map(assist => 
             createStatsInputGroup(players, assist.player, assist.count, 'assist')
         ).join('');

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据统计 - 足球队报名与数据统计系统</title>
+    <title>球员统计 - 足球队报名与数据统计系统</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,26 +15,52 @@
             <li><a href="signup.html">比赛报名</a></li>
             <li><a href="record.html">记录数据</a></li>
             <li><a href="results.html">比赛结果</a></li>
-            <li><a href="stats.html" class="active">射手榜/助攻榜</a></li>
+            <li><a href="stats.html" class="active">球员统计</a></li>
         </ul>
     </nav>
 
     <!-- 主要内容区 -->
     <main class="container">
-        <h1>射手榜/助攻榜</h1>
-        
-        <!-- 数据统计卡片 -->
-        <div class="stats-cards">
-            <!-- 射手榜 -->
-            <section class="stats-card">
-                <h2>射手榜</h2>
-                <div id="goalScorers" class="stats-list"></div>
+        <!-- 年度选择区域 -->
+        <section class="year-selector-section">
+            <h2>数据统计</h2>
+            <div class="year-selector">
+                <button class="year-btn active" data-year="2024">2024年度</button>
+                <button class="year-btn" data-year="all">历史总榜</button>
+            </div>
+        </section>
+
+        <!-- 2024年度统计内容 -->
+        <div id="stats2024" class="year-content active">
+            <iframe src="stats-2024.html" frameborder="0"></iframe>
+        </div>
+
+        <!-- 历史总榜内容 -->
+        <div id="statsAll" class="year-content">
+            <!-- 统计数据卡片区域 -->
+            <section class="stats-cards">
+                <article class="stats-card">
+                    <h3>总访问量</h3>
+                    <p class="stats-number">12,345</p>
+                </article>
+                
+                <article class="stats-card">
+                    <h3>今日访问</h3>
+                    <p class="stats-number">123</p>
+                </article>
+
+                <article class="stats-card">
+                    <h3>活跃用户</h3>
+                    <p class="stats-number">456</p>
+                </article>
             </section>
-            
-            <!-- 助攻榜 -->
-            <section class="stats-card">
-                <h2>助攻榜</h2>
-                <div id="assistProviders" class="stats-list"></div>
+
+            <!-- 图表展示区域 -->
+            <section class="stats-charts">
+                <div class="chart-container">
+                    <h3>访问趋势</h3>
+                    <canvas id="visitsChart"></canvas>
+                </div>
             </section>
         </div>
     </main>
@@ -44,164 +70,19 @@
         <p>© 2024 足球队报名与数据统计系统</p>
     </footer>
 
-    <style>
-    /* 数据统计卡片样式 */
-    .stats-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin: 2rem 0;
-    }
-
-    .stats-card {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        padding: 1.5rem;
-    }
-
-    .stats-card h2 {
-        color: #1E88E5;
-        margin: 0 0 1.5rem 0;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #1E88E5;
-    }
-
-    .stats-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .stats-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        border-bottom: 1px solid #eee;
-        transition: background-color 0.3s;
-    }
-
-    .stats-item:last-child {
-        border-bottom: none;
-    }
-
-    .stats-item:hover {
-        background-color: #f8f9fa;
-    }
-
-    .player-info {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .rank {
-        width: 24px;
-        height: 24px;
-        background-color: #1E88E5;
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        font-weight: bold;
-    }
-
-    .rank-1 {
-        background-color: #FDD835;
-    }
-
-    .rank-2 {
-        background-color: #BDBDBD;
-    }
-
-    .rank-3 {
-        background-color: #BF360C;
-    }
-
-    .player-name {
-        font-weight: bold;
-        color: #333;
-    }
-
-    .stats-count {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #1E88E5;
-    }
-    </style>
-
     <script>
-    // 页面加载时显示统计数据
-    document.addEventListener('DOMContentLoaded', function() {
-        displayStats();
-    });
-
-    // 显示统计数据
-    function displayStats() {
-        const matchResults = JSON.parse(localStorage.getItem('matchResults') || '[]');
-        
-        // 初始化统计对象
-        const stats = {
-            goals: {},
-            assists: {}
-        };
-        
-        // 统计所有比赛的进球和助攻
-        matchResults.forEach(match => {
-            // 统计白队数据
-            countTeamStats(match.stats.white, stats);
-            // 统计蓝队数据
-            countTeamStats(match.stats.blue, stats);
+        // 年度切换功能
+        document.querySelectorAll('.year-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 移除所有active类
+                document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.year-content').forEach(c => c.classList.remove('active'));
+                
+                // 添加active类到当前按钮和对应内容
+                this.classList.add('active');
+                document.getElementById('stats' + this.dataset.year).classList.add('active');
+            });
         });
-        
-        // 显示射手榜
-        displayRankings('goalScorers', stats.goals, '进球');
-        
-        // 显示助攻榜
-        displayRankings('assistProviders', stats.assists, '助攻');
-    }
-
-    // 统计队伍数据
-    function countTeamStats(teamStats, stats) {
-        // 统计进球
-        teamStats.goals.forEach(goal => {
-            stats.goals[goal.name] = (stats.goals[goal.name] || 0) + goal.count;
-        });
-        
-        // 统计助攻
-        teamStats.assists.forEach(assist => {
-            stats.assists[assist.name] = (stats.assists[assist.name] || 0) + assist.count;
-        });
-    }
-
-    // 显示排行榜
-    function displayRankings(containerId, data, type) {
-        const container = document.getElementById(containerId);
-        
-        // 转换为数组并排序
-        const rankings = Object.entries(data)
-            .map(([name, count]) => ({ name, count }))
-            .sort((a, b) => b.count - a.count);
-        
-        // 生成排行榜HTML
-        container.innerHTML = rankings.map((item, index) => `
-            <div class="stats-item">
-                <div class="player-info">
-                    <div class="rank ${index < 3 ? 'rank-' + (index + 1) : ''}">${index + 1}</div>
-                    <span class="player-name">${item.name}</span>
-                </div>
-                <span class="stats-count">${item.count} ${type}</span>
-            </div>
-        `).join('');
-        
-        // 如果没有数据，显示提示信息
-        if (rankings.length === 0) {
-            container.innerHTML = '<div class="no-data">暂无数据</div>';
-        }
-    }
     </script>
 </body>
 </html> 

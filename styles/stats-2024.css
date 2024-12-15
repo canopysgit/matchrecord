@@ -1,0 +1,108 @@
+/* 页面整体样式 */
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* 标签切换样式 */
+.stats-tabs,
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn,
+.category-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #f0f0f0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active,
+.category-btn.active {
+    background: #2196F3;
+    color: white;
+}
+
+/* 统计表格样式 */
+.stats-section {
+    display: none;
+    margin-top: 20px;
+}
+
+.stats-section.active {
+    display: block;
+}
+
+.stats-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+th {
+    background: #f8f9fa;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 排名样式 */
+.rank {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.rank-1 { background: #FFD700; color: #333; }
+.rank-2 { background: #C0C0C0; color: #333; }
+.rank-3 { background: #CD7F32; color: white; }
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .stats-tabs,
+    .category-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn,
+    .category-btn {
+        flex: 1;
+        min-width: 120px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+} 
