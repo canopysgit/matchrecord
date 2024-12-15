@@ -244,6 +244,42 @@
         border-top: 1px solid #eee;
         margin-top: 1rem;
     }
+
+    /* 在已有的样式中添加 */
+    .stats-input-group {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        align-items: center;
+    }
+
+    .player-select {
+        flex: 2;
+        padding: 0.3rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .stats-count {
+        flex: 1;
+        padding: 0.3rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 60px;
+    }
+
+    .remove-stats-btn {
+        padding: 0.3rem 0.6rem;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .remove-stats-btn:hover {
+        background-color: #c82333;
+    }
     </style>
 </head>
 <body>
@@ -360,6 +396,12 @@
     </div>
 
     <script>
+    // 添加全局的 formatDate 函数
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+    }
+
     class MatchResults {
         constructor() {
             this.init();
@@ -391,8 +433,16 @@
 
             console.log('原始比赛数据:', matches);
 
+            // 只显示已完成的比赛
+            const completedMatches = matches.filter(match => match.status === 'completed');
+
+            if (!completedMatches.length) {
+                container.innerHTML = '<div class="no-data">暂无比赛记录</div>';
+                return;
+            }
+
             // 按日期分组并只保留每天最新的记录
-            const latestMatches = matches.reduce((acc, match) => {
+            const latestMatches = completedMatches.reduce((acc, match) => {
                 const date = new Date(match.basicInfo.date).toDateString();
                 console.log('处理日期:', date, '比赛数据:', match);
                 if (!acc[date] || new Date(match.completedAt) > new Date(acc[date].completedAt)) {
@@ -403,13 +453,10 @@
 
             console.log('按日期分组后的数据:', latestMatches);
 
-            // 转换回数组并排序
-            const sortedMatches = Object.values(latestMatches).sort((a, b) => {
-                if (a.status !== b.status) {
-                    return a.status === 'pending' ? -1 : 1;
-                }
-                return new Date(b.basicInfo.date) - new Date(a.basicInfo.date);
-            });
+            // 转换回数组并按日期排序
+            const sortedMatches = Object.values(latestMatches).sort((a, b) => 
+                new Date(b.basicInfo.date) - new Date(a.basicInfo.date)
+            );
 
             console.log('排序后的比赛数据:', sortedMatches);
 
@@ -421,11 +468,9 @@
 
         renderMatchCard(match) {
             return `
-                <div class="match-card ${match.status}">
+                <div class="match-card completed">
                     ${this.renderMatchHeader(match)}
-                    ${match.status === 'completed' 
-                        ? this.renderCompletedMatch(match) 
-                        : this.renderPendingMatch(match)}
+                    ${this.renderCompletedMatch(match)}
                 </div>
             `;
         }
@@ -442,35 +487,6 @@
                     </div>
                     <div class="match-status ${match.status}">
                         ${this.getStatusText(match.status)}
-                    </div>
-                </div>
-            `;
-        }
-
-        renderPendingMatch(match) {
-            return `
-                <div class="match-content pending">
-                    <h3>报名名单</h3>
-                    <div class="team-lists">
-                        <div class="team white">
-                            <h4>白队 (${match.teams.white.players.length}人)</h4>
-                            <ul>
-                                ${match.teams.white.players.map(player => 
-                                    `<li>${player}</li>`).join('')}
-                            </ul>
-                        </div>
-                        <div class="team blue">
-                            <h4>蓝队 (${match.teams.blue.players.length}人)</h4>
-                            <ul>
-                                ${match.teams.blue.players.map(player => 
-                                    `<li>${player}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="match-actions">
-                        <button onclick="window.location.href='record.html'">
-                            记录比赛数据
-                        </button>
                     </div>
                 </div>
             `;
@@ -551,8 +567,7 @@
         }
 
         formatDate(dateString) {
-            const date = new Date(dateString);
-            return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+            return formatDate(dateString); // 调用全局函数
         }
     }
 
@@ -592,9 +607,22 @@
     function showDeleteConfirm(matchId) {
         const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
         const matchIndex = matchHistory.findIndex(match => match.id === matchId);
-        if (matchIndex === -1) return;
+        
+        console.log('要删除的比赛ID:', matchId);
+        console.log('找到的索引:', matchIndex);
+        
+        if (matchIndex === -1) {
+            console.error('未找到要删除的记录');
+            return;
+        }
         
         currentDeleteIndex = matchIndex;
+        const match = matchHistory[matchIndex];
+        
+        // 使用全局的 formatDate 函数
+        const confirmMessage = document.querySelector('#deleteConfirmModal .modal-body p');
+        confirmMessage.textContent = `确定要删除 ${formatDate(match.basicInfo.date)} 的比赛记录吗？此操作不可恢复。`;
+        
         document.getElementById('deleteConfirmModal').style.display = 'block';
     }
 
@@ -602,12 +630,33 @@
     function confirmDelete() {
         if (currentDeleteIndex === -1) return;
         
-        const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
-        matchHistory.splice(currentDeleteIndex, 1);
-        localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
-        
-        closeDeleteConfirmModal();
-        window.location.reload(); // 刷新页面显示更新后的��据
+        try {
+            const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+            console.log('删除前的记录:', matchHistory);
+            
+            // 获取要删除的记录的 ID
+            const matchToDelete = matchHistory[currentDeleteIndex];
+            if (!matchToDelete) {
+                throw new Error('未找到要删除的记录');
+            }
+            
+            // 删除指定记录
+            const newMatchHistory = matchHistory.filter(match => match.id !== matchToDelete.id);
+            
+            console.log('删除后的记录:', newMatchHistory);
+            
+            // 保存更新后的历史记录
+            localStorage.setItem('matchHistory', JSON.stringify(newMatchHistory));
+            
+            // 关闭删除确认弹窗
+            closeDeleteConfirmModal();
+            
+            // 刷新页面显示
+            window.location.reload();
+        } catch (error) {
+            console.error('删除失败:', error);
+            alert('删除失败：' + error.message);
+        }
     }
 
     // 关闭删除确认弹窗
@@ -626,6 +675,109 @@
         } else if (event.target === deleteModal) {
             closeDeleteConfirmModal();
         }
+    }
+
+    // 显示编辑区域的统计数据
+    function displayEditStats(containerId, teamData, players) {
+        // 分别显示进球和助攻数据
+        const goalsContainer = document.getElementById(`${containerId}Goals`);
+        const assistsContainer = document.getElementById(`${containerId}Assists`);
+        
+        // 显示进球数据
+        goalsContainer.innerHTML = teamData.stats.goals.map(goal => 
+            createStatsInputGroup(players, goal.player, goal.count, 'goal')
+        ).join('');
+        
+        // 显示助攻数��
+        assistsContainer.innerHTML = teamData.stats.assists.map(assist => 
+            createStatsInputGroup(players, assist.player, assist.count, 'assist')
+        ).join('');
+    }
+
+    // 创建统计数据输入组
+    function createStatsInputGroup(players, selectedPlayer, count, type) {
+        const options = players.map(player => 
+            `<option value="${player}" ${player === selectedPlayer ? 'selected' : ''}>${player}</option>`
+        ).join('');
+        
+        return `
+            <div class="stats-input-group">
+                <select class="player-select">
+                    ${options}
+                </select>
+                <input type="number" class="stats-count" value="${count}" min="0">
+                <input type="hidden" class="stats-type" value="${type}">
+                <button class="remove-stats-btn" onclick="removeStatsGroup(this)">×</button>
+            </div>
+        `;
+    }
+
+    // 添加新的统计数据
+    function addStats(team, type) {
+        const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+        const match = matchHistory[currentEditIndex];
+        const players = match.teams[team].players;
+        const container = document.getElementById(`edit${team.charAt(0).toUpperCase() + team.slice(1)}${type === 'goal' ? 'Goals' : 'Assists'}`);
+        
+        container.insertAdjacentHTML('beforeend', createStatsInputGroup(players, players[0], 0, type));
+    }
+
+    // 移除统计数据组
+    function removeStatsGroup(button) {
+        button.closest('.stats-input-group').remove();
+    }
+
+    // 收集编辑区域的统计数据
+    function collectEditStats(teamPrefix) {
+        const stats = {
+            goals: [],
+            assists: []
+        };
+        
+        // 收集进球数据
+        document.querySelectorAll(`#edit${teamPrefix}Goals .stats-input-group`).forEach(group => {
+            const player = group.querySelector('.player-select').value;
+            const count = parseInt(group.querySelector('.stats-count').value) || 0;
+            if (count > 0) {
+                stats.goals.push({ player: player, count: count });
+            }
+        });
+        
+        // 收集助攻数据
+        document.querySelectorAll(`#edit${teamPrefix}Assists .stats-input-group`).forEach(group => {
+            const player = group.querySelector('.player-select').value;
+            const count = parseInt(group.querySelector('.stats-count').value) || 0;
+            if (count > 0) {
+                stats.assists.push({ player: player, count: count });
+            }
+        });
+        
+        return stats;
+    }
+
+    // 保存编辑
+    function saveEdit() {
+        if (!confirm('确认保存修改？')) {
+            return;
+        }
+        
+        const matchHistory = JSON.parse(localStorage.getItem('matchHistory') || '[]');
+        const match = matchHistory[currentEditIndex];
+        
+        // 更新比分
+        match.teams.white.score = parseInt(document.getElementById('editWhiteScore').value) || 0;
+        match.teams.blue.score = parseInt(document.getElementById('editBlueScore').value) || 0;
+        
+        // 更新统计数据
+        match.teams.white.stats = collectEditStats('WhiteStats');
+        match.teams.blue.stats = collectEditStats('BlueStats');
+        
+        // 保存更新
+        localStorage.setItem('matchHistory', JSON.stringify(matchHistory));
+        
+        // 关闭弹窗并刷新显示
+        closeEditModal();
+        window.location.reload();
     }
     </script>
 </body>
