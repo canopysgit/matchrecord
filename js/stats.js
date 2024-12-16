@@ -7,7 +7,8 @@ class PlayerStats {
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
         );
         this.currentBoard = 'attendance';
-        this.currentType = 'total';
+        this.sortField = 'total';
+        this.sortDirection = 'desc';
         this.init();
     }
 
@@ -15,8 +16,8 @@ class PlayerStats {
         try {
             console.log('开始初始化...');
             await this.loadStats();
+            document.querySelector('.stats-section h2').textContent = '2024年数据统计';
             this.renderBoards();
-            this.renderTabs();
             this.renderPlayerList();
             this.bindEvents();
             console.log('初始化完成');
@@ -106,18 +107,6 @@ class PlayerStats {
         document.querySelector('.stats-content').insertAdjacentHTML('beforebegin', boardsHtml);
     }
 
-    // 渲染标签页
-    renderTabs() {
-        const tabsHtml = `
-            <div class="stats-tabs">
-                <button class="tab-btn active" data-tab="total">总榜</button>
-                <button class="tab-btn" data-tab="internal">内战</button>
-                <button class="tab-btn" data-tab="external">外战</button>
-            </div>
-        `;
-        document.querySelector('.stats-content').insertAdjacentHTML('beforebegin', tabsHtml);
-    }
-
     // 渲染球员列表
     renderPlayerList() {
         const container = document.querySelector('.stats-content');
@@ -127,51 +116,73 @@ class PlayerStats {
             return;
         }
 
+        // 根据当前排序字段和方向排序
         const sortedPlayers = [...this.players].sort((a, b) => {
-            const valueA = this.getPlayerValue(a) || 0;
-            const valueB = this.getPlayerValue(b) || 0;
-            return valueB - valueA;
+            const fieldName = `${this.currentBoard}_${this.sortField}`;
+            const valueA = a[fieldName] || 0;
+            const valueB = b[fieldName] || 0;
+            return this.sortDirection === 'desc' ? valueB - valueA : valueA - valueB;
         });
 
         const html = `
             <div class="stats-table">
                 <div class="table-header">
-                    <div class="col">排名</div>
-                    <div class="col">球员</div>
-                    <div class="col">${this.getBoardTitle()}</div>
+                    <div class="col rank">排名</div>
+                    <div class="col name">球员</div>
+                    <div class="col value sorted ${this.sortField === 'total' ? this.sortDirection : ''}" 
+                         data-sort="total">总数</div>
+                    <div class="col value ${this.sortField === 'internal' ? 'sorted ' + this.sortDirection : ''}" 
+                         data-sort="internal">内战</div>
+                    <div class="col value ${this.sortField === 'external' ? 'sorted ' + this.sortDirection : ''}" 
+                         data-sort="external">外战</div>
                 </div>
                 ${sortedPlayers.map((player, index) => `
                     <div class="player-row">
-                        <div class="col">${index + 1}</div>
-                        <div class="col">${player.player_name}</div>
-                        <div class="col">${this.getPlayerValue(player)}</div>
+                        <div class="col rank">${index + 1}</div>
+                        <div class="col name">${player.player_name}</div>
+                        <div class="col value">${player[`${this.currentBoard}_total`] || 0}</div>
+                        <div class="col value">${player[`${this.currentBoard}_internal`] || 0}</div>
+                        <div class="col value">${player[`${this.currentBoard}_external`] || 0}</div>
                     </div>
                 `).join('')}
             </div>
         `;
         container.innerHTML = html;
+
+        // 绑定排序事件
+        this.bindSortEvents();
     }
 
-    // 绑定事件
+    // 新增：绑定排序事件
+    bindSortEvents() {
+        const headers = document.querySelectorAll('.table-header .col[data-sort]');
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const sortField = header.dataset.sort;
+                if (this.sortField === sortField) {
+                    // 如果点击的是当前排序字段，切换排序方向
+                    this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
+                } else {
+                    // 如果点击的是新字段，设置为降序
+                    this.sortField = sortField;
+                    this.sortDirection = 'desc';
+                }
+                this.renderPlayerList();
+            });
+        });
+    }
+
+    // 修改绑定事件方法
     bindEvents() {
-        // 榜单切换
         document.querySelector('.stats-boards').addEventListener('click', (e) => {
             const btn = e.target.closest('.board-btn');
             if (btn) {
                 document.querySelectorAll('.board-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.currentBoard = btn.dataset.board;
-                this.renderPlayerList();
-            }
-        });
-
-        // 类型切换
-        document.querySelector('.stats-tabs').addEventListener('click', (e) => {
-            const btn = e.target.closest('.tab-btn');
-            if (btn) {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.currentType = btn.dataset.tab;
+                // 切换榜单时重置排序为总数降序
+                this.sortField = 'total';
+                this.sortDirection = 'desc';
                 this.renderPlayerList();
             }
         });

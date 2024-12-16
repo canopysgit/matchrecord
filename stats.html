@@ -6,48 +6,96 @@
     <title>球员统计 - 足球队报名与数据统计系统</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        .stats-section h2 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+        }
+
         .stats-boards {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
         }
 
-        .board-btn, .tab-btn {
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 2rem;
+        .board-btn {
             background: #f0f0f0;
+            color: #666;
+            border: none;
+            padding: 0.8rem 2rem;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
             transition: all 0.3s;
+            border-radius: 100px;
         }
 
-        .board-btn.active, .tab-btn.active {
-            background: #1E88E5;
-            color: white;
+        .board-btn:hover {
+            background: #e8e8e8;
         }
 
-        .stats-tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
+        .board-btn.active {
+            background: #2196F3;
+            color: #fff;
         }
 
         .stats-table {
             width: 100%;
-            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
 
         .table-header, .player-row {
             display: grid;
-            grid-template-columns: 100px 1fr 150px;
-            padding: 1rem;
-            border-bottom: 1px solid #eee;
+            grid-template-columns: 80px 1.5fr repeat(3, 1fr);
+            padding: 1.2rem 1.5rem;
+            align-items: center;
         }
 
         .table-header {
             background: #f8f9fa;
-            font-weight: bold;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .table-header .col {
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .table-header .col:hover {
+            color: #1E88E5;
+        }
+
+        .table-header .col.sorted:after {
+            content: '';
+            display: inline-block;
+            width: 0;
+            height: 0;
+            margin-left: 8px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+        }
+
+        .table-header .col.sorted.asc:after {
+            border-bottom: 4px solid #1E88E5;
+        }
+
+        .table-header .col.sorted.desc:after {
+            border-top: 4px solid #1E88E5;
+        }
+
+        .player-row {
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+
+        .player-row:last-child {
+            border-bottom: none;
         }
 
         .player-row:hover {
@@ -59,10 +107,28 @@
             align-items: center;
         }
 
+        .col.rank {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .col.name {
+            font-weight: 500;
+        }
+
+        .col.value {
+            justify-content: center;
+            color: #1E88E5;
+            font-weight: 600;
+        }
+
         .no-data {
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
             color: #666;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -79,7 +145,7 @@
 
     <main class="container">
         <section class="stats-section">
-            <h2>数据统计</h2>
+            <h2>数统计</h2>
             <div class="stats-content">
                 <!-- 这里将由 JavaScript 动态生成内容 -->
             </div>
