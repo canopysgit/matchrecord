@@ -615,37 +615,84 @@
     );
 
     // 页面加载时获取并显示比赛信息
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', async function() {
         try {
-            // 从 localStorage 获取比赛数据
-            const matchData = JSON.parse(localStorage.getItem('currentMatch'));
-            console.log('获取到的比赛数据:', matchData);
-            
-            if (!matchData) {
-                alert('没有找到比赛数据，请先在报名页面选择球员');
-                window.location.href = 'signup.html';
+            // 首先从 localStorage 获取数据
+            const matchDataStr = localStorage.getItem('currentMatch');
+            const matchData = JSON.parse(matchDataStr);
+            console.log('localStorage中的数据:', matchData);
+
+            if (!matchData?.matchId) {
+                throw new Error('本地没有找到比赛信息');
+            }
+
+            // 先用 localStorage 的数据渲染页面
+            displayMatchInfo(matchData.matchInfo);
+            displayTeamList('whiteTeamList', matchData.teams.white.players);
+            displayTeamList('blueTeamList', matchData.teams.blue.players);
+            initializeStatsSection('whiteTeamStats', matchData.teams.white.players);
+            initializeStatsSection('blueTeamStats', matchData.teams.blue.players);
+
+            // 然后从 Supabase 获取数据进行验证
+            const { data: match, error: matchError } = await supabaseClient
+                .from('matches')
+                .select('*')
+                .eq('id', matchData.matchId)
+                .single();
+
+            if (matchError) {
+                console.error('验证比赛信息失败:', matchError);
+                // 这里我们不抛出错误，因为本地数据可能还未同步到数据库
                 return;
             }
 
-            // 显示比赛信息
-            document.getElementById('displayMatchDate').textContent = formatDate(matchData.basicInfo.match_date);
-            document.getElementById('displayMatchTime').textContent = matchData.basicInfo.match_time;
-            document.getElementById('displayMatchType').textContent = matchData.basicInfo.match_type;
-            document.getElementById('displayMatchVenue').textContent = matchData.basicInfo.venue;
+            // 如果数据库中找不到数据，说明可能还未保存成功
+            if (!match) {
+                console.warn('数据库中未找到比赛数据，可能正在保存中');
+                return;
+            }
 
-            // 显示队伍名单
-            displayTeamList('whiteTeamList', matchData.teams.white.players);
-            displayTeamList('blueTeamList', matchData.teams.blue.players);
+            // 如果数据库中有数据，则更新显示
+            displayMatchInfo(match);
 
-            // 初始化数据记录区域
-            initializeStatsSection('whiteTeamStats', matchData.teams.white.players);
-            initializeStatsSection('blueTeamStats', matchData.teams.blue.players);
+            // 获取最新的球员信息
+            const { data: players, error: playersError } = await supabaseClient
+                .from('match_players')
+                .select('player_name, team')
+                .eq('match_id', matchData.matchId);
+
+            if (playersError) {
+                console.error('获取球员信息失败:', playersError);
+                return;
+            }
+
+            // 更新球员显示
+            const whitePlayers = players
+                .filter(p => p.team === 'white')
+                .map(p => p.player_name);
+            const bluePlayers = players
+                .filter(p => p.team === 'blue')
+                .map(p => p.player_name);
+
+            displayTeamList('whiteTeamList', whitePlayers);
+            displayTeamList('blueTeamList', bluePlayers);
+            initializeStatsSection('whiteTeamStats', whitePlayers);
+            initializeStatsSection('blueTeamStats', bluePlayers);
+
         } catch (error) {
             console.error('读取数据失败:', error);
             alert('读取数据失败，请返回报名页面重试');
             window.location.href = 'signup.html';
         }
     });
+
+    // 显示比赛信息的辅助函数
+    function displayMatchInfo(matchInfo) {
+        document.getElementById('displayMatchDate').textContent = formatDate(matchInfo.match_date);
+        document.getElementById('displayMatchTime').textContent = matchInfo.match_time;
+        document.getElementById('displayMatchType').textContent = matchInfo.match_type;
+        document.getElementById('displayMatchVenue').textContent = matchInfo.venue;
+    }
 
     // 显示队伍名单
     function displayTeamList(elementId, players) {
@@ -659,13 +706,19 @@
             return;
         }
         
+        // 确保 players 是数组
+        if (!Array.isArray(players)) {
+            console.error('players 不是数组:', players);
+            return;
+        }
+        
         const teamType = elementId === 'whiteTeamList' ? 'white' : 'blue';
         console.log('队伍类型:', teamType);
         
         // 清空现有内容
         list.innerHTML = '';
         
-        // 为每个员创建列表项
+        // 为每个球员创建列表项
         players.forEach(player => {
             console.log('创建队员列表项:', player);
             
@@ -674,23 +727,15 @@
             // 创建球员名字的 span 元素
             const nameSpan = document.createElement('span');
             nameSpan.textContent = player;
-            nameSpan.className = 'player-name-span'; // 添加类名便于调试
+            nameSpan.className = 'player-name-span';
             
             // 创建删除按钮
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-player';
             deleteBtn.textContent = '×';
+            deleteBtn.onclick = () => removePlayer(player, teamType);
             
-            // 直接添加事件监听器
-            deleteBtn.addEventListener('click', function(e) {
-                e.preventDefault(); // 阻止事件冒泡
-                console.log('点击删除按钮');
-                console.log('删除队员:', player);
-                console.log('所属队伍:', teamType);
-                removePlayer(player, teamType);
-            });
-            
-            // 组列表项
+            // 组装列表项
             li.appendChild(nameSpan);
             li.appendChild(deleteBtn);
             list.appendChild(li);
@@ -793,7 +838,7 @@
         }
     }
 
-    // 收集队伍统计数据
+    // 收集队统计数据
     function collectTeamStats(teamStatsId) {
         const stats = {
             goals: [],
@@ -854,13 +899,19 @@
             const whiteScore = parseInt(document.getElementById('whiteTeamScore').value) || 0;
             const blueScore = parseInt(document.getElementById('blueTeamScore').value) || 0;
 
-            // 获取当前比赛数据
-            const currentMatch = JSON.parse(localStorage.getItem('currentMatch'));
-            if (!currentMatch) {
-                throw new Error('未找到比赛数据');
+            // 获取比赛 ID
+            const matchData = JSON.parse(localStorage.getItem('currentMatch'));
+            const matchId = matchData?.matchId;
+
+            if (!matchId) {
+                throw new Error('未找到比赛信息');
             }
 
-            // 更新比赛记录
+            // 收集统计数据
+            const whiteTeamStats = collectTeamStats('whiteTeamStats');
+            const blueTeamStats = collectTeamStats('blueTeamStats');
+
+            // 更新比赛结果
             const { error: matchError } = await supabaseClient
                 .from('matches')
                 .update({
@@ -868,12 +919,65 @@
                     blue_score: blueScore,
                     status: 'completed'
                 })
-                .eq('id', currentMatch.id);
+                .eq('id', matchId);
 
             if (matchError) {
-                console.error('更新比赛记录失败:', matchError);
                 throw matchError;
             }
+
+            // 保存球员统计数据
+            const statsPromises = [];
+
+            // 保存白队统计
+            whiteTeamStats.goals.forEach(stat => {
+                statsPromises.push(
+                    supabaseClient.from('match_stats').insert({
+                        match_id: matchId,
+                        player_name: stat.player,
+                        team: 'white',
+                        goals: stat.count,
+                        assists: 0
+                    })
+                );
+            });
+
+            whiteTeamStats.assists.forEach(stat => {
+                statsPromises.push(
+                    supabaseClient.from('match_stats').upsert({
+                        match_id: matchId,
+                        player_name: stat.player,
+                        team: 'white',
+                        assists: stat.count
+                    })
+                );
+            });
+
+            // 保存蓝队统计
+            blueTeamStats.goals.forEach(stat => {
+                statsPromises.push(
+                    supabaseClient.from('match_stats').insert({
+                        match_id: matchId,
+                        player_name: stat.player,
+                        team: 'blue',
+                        goals: stat.count,
+                        assists: 0
+                    })
+                );
+            });
+
+            blueTeamStats.assists.forEach(stat => {
+                statsPromises.push(
+                    supabaseClient.from('match_stats').upsert({
+                        match_id: matchId,
+                        player_name: stat.player,
+                        team: 'blue',
+                        assists: stat.count
+                    })
+                );
+            });
+
+            // 等待所有统计数据保存完成
+            await Promise.all(statsPromises);
 
             // 清除当前比赛数据
             localStorage.removeItem('currentMatch');
@@ -923,66 +1027,45 @@
         container.style.display = 'block';
     }
 
-    // 修改 removePlayer 函数，添加更多调试信息
-    function removePlayer(playerName, teamType) {
-        console.log('开始删除队员操作');
-        console.log('队员名字:', playerName);
-        console.log('队伍类型:', teamType);
-        
+    // 修改 removePlayer 函数
+    async function removePlayer(playerName, teamType) {
         try {
-            // 从 localStorage 获取前比赛数据
             const matchData = JSON.parse(localStorage.getItem('currentMatch'));
-            console.log('当前比赛数据:', matchData);
-            
-            if (!matchData) {
-                alert('没有找到比赛数据！');
-                console.error('No match data found in localStorage');
-                return;
+            const matchId = matchData?.matchId;
+
+            if (!matchId) {
+                throw new Error('没有找到比赛信息');
             }
-            
-            // 根据队伍类型选择对应的组
-            const teamArray = teamType === 'white' ? 'whiteTeam' : 'blueTeam';
-            console.log('操作的队伍数组:', teamArray);
-            console.log('删除前的队员列表:', matchData[teamArray]);
-            
-            // 确保数组存在
-            if (!Array.isArray(matchData[teamArray])) {
-                alert('队伍数据格式错误！');
-                console.error('Team array not found:', teamArray);
-                return;
+
+            // 从数据库中删除球员
+            const { error: deleteError } = await supabaseClient
+                .from('match_players')
+                .delete()
+                .eq('match_id', matchId)
+                .eq('player_name', playerName)
+                .eq('team', teamType);
+
+            if (deleteError) {
+                throw deleteError;
             }
-            
-            // 记录原始长度
-            const originalLength = matchData[teamArray].length;
-            
-            // 从数组中移除该队员
-            matchData[teamArray] = matchData[teamArray].filter(name => {
-                console.log('比较:', name, playerName, name !== playerName);
-                return name !== playerName;
-            });
-            
-            console.log('删除后的队员列表:', matchData[teamArray]);
-            
-            // 确认是否成功移除
-            if (matchData[teamArray].length < originalLength) {
-                // 更新 localStorage
-                localStorage.setItem('currentMatch', JSON.stringify(matchData));
-                
-                // 重新显示队伍名单
-                displayTeamList(`${teamType}TeamList`, matchData[teamArray]);
-                
-                // 重新初始化数据记录区域
-                initializeStatsSection(`${teamType}TeamStats`, matchData[teamArray]);
-                
-                alert('队员删除成功');
-                console.log('Player removed successfully');
+
+            // 更新本地存储中的数据
+            if (teamType === 'white') {
+                matchData.teams.white.players = matchData.teams.white.players.filter(name => name !== playerName);
             } else {
-                alert('删除队员失败！');
-                console.error('Failed to remove player:', playerName);
+                matchData.teams.blue.players = matchData.teams.blue.players.filter(name => name !== playerName);
             }
+            localStorage.setItem('currentMatch', JSON.stringify(matchData));
+
+            // 更新显示
+            displayTeamList(`${teamType}TeamList`, matchData.teams[teamType].players);
+            initializeStatsSection(`${teamType}TeamStats`, matchData.teams[teamType].players);
+
+            alert('队员删除成功');
+
         } catch (error) {
-            alert('发生错误：' + error.message);
-            console.error('Error in removePlayer:', error);
+            console.error('删除队员失败:', error);
+            alert('删除队员失败：' + error.message);
         }
     }
 
