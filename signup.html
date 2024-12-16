@@ -631,7 +631,7 @@
             }
         }
 
-        // 修改保存分队结果函数
+        // 修改��存分队结果函数
         async function saveTeams() {
             try {
                 console.log('开始保存分队结果');
@@ -731,101 +731,121 @@
 
         // 确认分队
         async function confirmTeams() {
-            const whiteCaptain = document.getElementById('whiteCaptain').value;
-            const blueCaptain = document.getElementById('blueCaptain').value;
-            
-            // 获取队伍成员
-            const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => {
-                const name = li.textContent.trim().replace('×', '').trim();
-                return whiteCaptain && name === whiteCaptain ? `${name}(C)` : name;
-            });
-            
-            const blueTeam = Array.from(document.getElementById('blueTeam').children).map(li => {
-                const name = li.textContent.trim().replace('×', '').trim();
-                return blueCaptain && name === blueCaptain ? `${name}(C)` : name;
-            });
-            
-            // 创建比赛数据结构
-            const matchData = {
-                match_date: document.getElementById('matchDate').value,
-                match_time: document.getElementById('matchTimeSlot').value,
-                match_type: document.getElementById('matchType').value,
-                venue: document.getElementById('matchVenue').value,
-                white_score: 0,
-                blue_score: 0,
-                status: 'pending'
-            };
-
             try {
-                // 保存比赛记录到 Supabase
-                const { data, error } = await supabaseClient
+                // 获取比赛基本信息
+                const matchDate = document.getElementById('matchDate').value;
+                const matchTime = document.getElementById('matchTimeSlot').value;
+                const matchType = document.getElementById('matchType').value;
+                const venue = document.getElementById('matchVenue').value;
+
+                // 获取队伍信息
+                const whiteTeam = Array.from(document.getElementById('whiteTeam').children)
+                    .map(li => li.querySelector('.player-name').textContent.trim());
+                const blueTeam = Array.from(document.getElementById('blueTeam').children)
+                    .map(li => li.querySelector('.player-name').textContent.trim());
+                const whiteCaptain = document.getElementById('whiteCaptain').value;
+                const blueCaptain = document.getElementById('blueCaptain').value;
+
+                console.log('准备创建比赛记录...');
+
+                // 首先创建比赛记录
+                const { data: match, error: matchError } = await supabaseClient
                     .from('matches')
-                    .insert([matchData])
+                    .insert([{
+                        id: crypto.randomUUID(),  // 显式生成 UUID
+                        match_date: matchDate,
+                        match_time: matchTime,
+                        match_type: matchType,
+                        venue: venue
+                    }])
                     .select()
                     .single();
-                
-                if (error) {
-                    console.error('保存比赛记录时出错:', error);
-                    throw error;
-                }
-                
-                const matchId = data.id;
-                console.log('成功保存比赛记录，ID:', matchId);
 
-                // 准备球员数据，确保移除所有特殊字符和标记
-                const playerData = [
-                    ...whiteTeam.map(player => ({ 
-                        match_id: matchId, 
-                        player_name: player.replace(/[()×]/g, '').trim(), // 移除所有特殊字符
-                        team: 'white' 
+                if (matchError) throw matchError;
+                console.log('创建比赛记录成功:', match);
+
+                // 创建球员记录（移除 is_captain 字段）
+                const playerRecords = [
+                    ...whiteTeam.map(player => ({
+                        match_id: match.id,
+                        player_name: player,
+                        team: 'white'
                     })),
-                    ...blueTeam.map(player => ({ 
-                        match_id: matchId, 
-                        player_name: player.replace(/[()×]/g, '').trim(), // 移除所有特殊字符
-                        team: 'blue' 
+                    ...blueTeam.map(player => ({
+                        match_id: match.id,
+                        player_name: player,
+                        team: 'blue'
                     }))
                 ];
 
-                // 保存球员信息到 Supabase
+                // 保存球员记录
                 const { error: playersError } = await supabaseClient
                     .from('match_players')
-                    .insert(playerData);
+                    .insert(playerRecords);
 
-                if (playersError) {
-                    console.error('保存球员数据时出错:', playersError);
-                    throw playersError;
+                if (playersError) throw playersError;
+                console.log('创建球员记录成功');
+
+                // 如果有队长，创建队长记录
+                if (whiteCaptain || blueCaptain) {
+                    const captainRecords = [];
+                    if (whiteCaptain) {
+                        captainRecords.push({
+                            match_id: match.id,
+                            team: 'white',
+                            captain_name: whiteCaptain
+                        });
+                    }
+                    if (blueCaptain) {
+                        captainRecords.push({
+                            match_id: match.id,
+                            team: 'blue',
+                            captain_name: blueCaptain
+                        });
+                    }
+
+                    // 保存队长信息到 match_captains 表
+                    const { error: captainsError } = await supabaseClient
+                        .from('match_captains')
+                        .insert(captainRecords);
+
+                    if (captainsError) throw captainsError;
+                    console.log('创建队长记录成功');
                 }
 
-                // 保存当前比赛信息到 localStorage，供 record.html 使用
+                // 保存到 localStorage
                 const currentMatch = {
-                    id: matchId,
-                    basicInfo: {
-                        match_date: matchData.match_date,
-                        match_time: matchData.match_time,
-                        match_type: matchData.match_type,
-                        venue: matchData.venue
+                    matchId: match.id,
+                    matchInfo: {
+                        date: matchDate,
+                        time: matchTime,
+                        type: matchType,
+                        venue: venue
                     },
                     teams: {
                         white: {
                             players: whiteTeam,
-                            captain: whiteCaptain || ''
+                            captain: whiteCaptain
                         },
                         blue: {
                             players: blueTeam,
-                            captain: blueCaptain || ''
+                            captain: blueCaptain
                         }
                     }
                 };
+
                 localStorage.setItem('currentMatch', JSON.stringify(currentMatch));
+                console.log('保存到 localStorage 成功:', currentMatch);
 
                 // 关闭弹窗
                 closeConfirmModal();
 
                 // 跳转到记录页面
                 window.location.href = 'record.html';
+
             } catch (error) {
-                console.error('保存比赛数据时发生错误:', error.message);  // 修改这行以显示具体错误信息
-                alert('保存比赛数据时发生错误：' + error.message);
+                console.error('保存比赛数据失败:', error);
+                alert('保存失败: ' + error.message);
             }
         }
 
@@ -861,7 +881,7 @@
             const buttons = playerLi.querySelectorAll('button');
             const isSelected = button.classList.contains('selected');
             
-            // 果是已选中的按钮，则取消选择
+            // 果是已选中按钮，则取消选择
             if (isSelected) {
                 button.classList.remove('selected');
                 removePlayerFromTeam(playerName, team);
