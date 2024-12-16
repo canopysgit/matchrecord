@@ -1,101 +1,106 @@
 class PlayerStats {
     constructor() {
-        this.defaultPlayers = [
-            "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", 
-            "马指", "邵林", "一陶", "尚枫", "朱门", "小鹤", "陈光", "井", 
-            "杨超", "金昊", "张健", "小常", "赵军", "扇子", "毛毛", "威威", 
-            "蔡湑", "袁祎", "李蒙", "宣宇", "康进", "旭东", "田爽", "贾楠", 
-            "麦克", "勋哥", "小杰", "马蒂", "肖凯", "文征"
-        ];
-        this.initializePlayersIfNeeded();
-        this.players = this.loadPlayers();
+        // 初始化 Supabase 客户端
+        const { createClient } = supabase;
+        this.supabaseClient = createClient(
+            'https://obidukxlcgecpooynqnz.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
+        );
         this.currentBoard = 'attendance';
         this.currentType = 'total';
-        this.sortField = 'value';
-        this.sortDirection = 'desc';
         this.init();
     }
 
-    // 初始化默认球员数据
-    initializePlayersIfNeeded() {
-        let needsUpdate = false;
-        const storedData = localStorage.getItem('playerStats');
-        
-        if (!storedData) {
-            needsUpdate = true;
-        } else {
-            // 检查是否需要更��现有数据
-            const currentData = JSON.parse(storedData);
-            const currentPlayers = currentData.mainPlayers.map(p => p.name);
-            const missingPlayers = this.defaultPlayers.filter(name => !currentPlayers.includes(name));
+    async init() {
+        try {
+            console.log('开始初始化...');
+            await this.loadStats();
+            this.renderBoards();
+            this.renderTabs();
+            this.renderPlayerList();
+            this.bindEvents();
+            console.log('初始化完成');
+        } catch (error) {
+            console.error('初始化失败:', error);
+        }
+    }
+
+    async loadStats() {
+        try {
+            console.log('开始加载数据...');
             
-            if (missingPlayers.length > 0) {
-                // 有新球员需要添加
-                missingPlayers.forEach(name => {
-                    currentData.mainPlayers.push({
-                        name,
-                        attendance: {
-                            internal: 0,
-                            external: 0
-                        },
-                        stats: {
-                            internal: { goals: 0, assists: 0 },
-                            external: { goals: 0, assists: 0 }
-                        }
-                    });
-                });
-                localStorage.setItem('playerStats', JSON.stringify(currentData));
-                console.log('已添加新球员:', missingPlayers);
+            // 检查 supabaseClient 是否正确初始化
+            if (!this.supabaseClient) {
+                throw new Error('Supabase 客户端未初始化');
+            }
+
+            // 从 player_stats_2024 表加载数据
+            const { data, error } = await this.supabaseClient
+                .from('player_stats_2024')  // 使用正确的表名
+                .select(`
+                    id,
+                    player_name,
+                    attendance_total,
+                    attendance_internal,
+                    attendance_external,
+                    goals_total,
+                    goals_internal,
+                    goals_external,
+                    assists_total,
+                    assists_internal,
+                    assists_external
+                `)
+                .order('player_name');
+
+            // 检查错误
+            if (error) {
+                console.error('数据库查询错误:', error);
+                throw error;
+            }
+
+            // 检查数据
+            if (!data) {
+                console.warn('未收到数据');
+                this.players = [];
                 return;
             }
-        }
 
-        if (needsUpdate) {
-            // 完全初始化新数据
-            const defaultData = {
-                mainPlayers: this.defaultPlayers.map(name => ({
-                    name,
-                    attendance: {
-                        internal: 0,
-                        external: 0
-                    },
-                    stats: {
-                        internal: { goals: 0, assists: 0 },
-                        external: { goals: 0, assists: 0 }
-                    }
-                }))
-            };
-            localStorage.setItem('playerStats', JSON.stringify(defaultData));
+            console.log('成功加载数据:', data);
+            this.players = data;
+
+            // 检查数据格式
+            if (this.players.length > 0) {
+                console.log('示例数据:', this.players[0]);
+            }
+
+        } catch (error) {
+            console.error('加载统计数据失败:', error);
+            this.players = [];
+            // 显示错误信息
+            const container = document.querySelector('.stats-content');
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message" style="color: red; padding: 1rem;">
+                        加载数据失败: ${error.message}
+                    </div>
+                `;
+            }
         }
     }
 
-    // 加载球员数据
-    loadPlayers() {
-        const storedPlayers = localStorage.getItem('playerStats');
-        return storedPlayers ? JSON.parse(storedPlayers) : { mainPlayers: [] };
-    }
-
-    // 初始化
-    init() {
-        this.renderBoards();
-        this.renderTabs();
-        this.renderPlayerList();
-        this.bindEvents();
+    // 获取当前显示的数值
+    getPlayerValue(player) {
+        const field = `${this.currentBoard}_${this.currentType}`;
+        return player[field] || 0;
     }
 
     // 渲染榜单选择
     renderBoards() {
         const boardsHtml = `
             <div class="stats-boards">
-                <button class="board-btn active" data-board="attendance">
-                    <span data-board="attendance">出勤榜</span>
-                </button>
-                <button class="board-btn" data-board="goals">
-                    <span data-board="goals">射手榜</span>
-                </button>
-                <button class="board-btn" data-board="assists">
-                    <span data-board="assists">助攻榜</span>
-                </button>
+                <button class="board-btn active" data-board="attendance">出勤榜</button>
+                <button class="board-btn" data-board="goals">射手榜</button>
+                <button class="board-btn" data-board="assists">助攻榜</button>
             </div>
         `;
         document.querySelector('.stats-content').insertAdjacentHTML('beforebegin', boardsHtml);
@@ -105,15 +110,9 @@ class PlayerStats {
     renderTabs() {
         const tabsHtml = `
             <div class="stats-tabs">
-                <button class="tab-btn active" data-tab="total">
-                    <span data-tab="total">总榜</span>
-                </button>
-                <button class="tab-btn" data-tab="internal">
-                    <span data-tab="internal">内战</span>
-                </button>
-                <button class="tab-btn" data-tab="external">
-                    <span data-tab="external">外战</span>
-                </button>
+                <button class="tab-btn active" data-tab="total">总榜</button>
+                <button class="tab-btn" data-tab="internal">内战</button>
+                <button class="tab-btn" data-tab="external">外战</button>
             </div>
         `;
         document.querySelector('.stats-content').insertAdjacentHTML('beforebegin', tabsHtml);
@@ -122,103 +121,35 @@ class PlayerStats {
     // 渲染球员列表
     renderPlayerList() {
         const container = document.querySelector('.stats-content');
-        const boardTitle = this.getBoardTitle();
         
+        if (!this.players || this.players.length === 0) {
+            container.innerHTML = '<div class="no-data">暂无统计数据</div>';
+            return;
+        }
+
+        const sortedPlayers = [...this.players].sort((a, b) => {
+            const valueA = this.getPlayerValue(a) || 0;
+            const valueB = this.getPlayerValue(b) || 0;
+            return valueB - valueA;
+        });
+
         const html = `
             <div class="stats-table">
                 <div class="table-header">
                     <div class="col">排名</div>
-                    <div class="col sortable" data-sort="name">
-                        球员 ${this.getSortIcon('name')}
-                    </div>
-                    <div class="col sortable" data-sort="value">
-                        ${boardTitle} ${this.getSortIcon('value')}
-                    </div>
+                    <div class="col">球员</div>
+                    <div class="col">${this.getBoardTitle()}</div>
                 </div>
-                ${this.getSortedPlayers().map((player, index) => 
-                    this.renderPlayerRow(player, index + 1)
-                ).join('')}
+                ${sortedPlayers.map((player, index) => `
+                    <div class="player-row">
+                        <div class="col">${index + 1}</div>
+                        <div class="col">${player.player_name}</div>
+                        <div class="col">${this.getPlayerValue(player)}</div>
+                    </div>
+                `).join('')}
             </div>
         `;
         container.innerHTML = html;
-        this.bindSortEvents();
-    }
-
-    // 渲染单个球员行
-    renderPlayerRow(player, rank) {
-        const value = this.getPlayerValue(player);
-        return `
-            <div class="player-row ${rank <= 3 ? 'top-' + rank : ''}">
-                <div class="col rank">${rank}</div>
-                <div class="col">${player.name}</div>
-                <div class="col">
-                    <span class="value">${value}</span>
-                    ${this.currentType !== 'total' ? `
-                        <button class="edit-btn" onclick="playerStats.editValue('${player.name}')">
-                            编辑
-                        </button>
-                    ` : ''}
-                </div>
-            </div>
-        `;
-    }
-
-    // 获取球员在当前榜单的数值
-    getPlayerValue(player) {
-        if (this.currentBoard === 'attendance') {
-            if (this.currentType === 'total') {
-                return player.attendance.internal + player.attendance.external;
-            }
-            return player.attendance[this.currentType] || 0;
-        } else {
-            if (this.currentType === 'total') {
-                return (player.stats.internal?.[this.currentBoard] || 0) + 
-                       (player.stats.external?.[this.currentBoard] || 0);
-            }
-            return player.stats[this.currentType]?.[this.currentBoard] || 0;
-        }
-    }
-
-    // 获取排序后的球员列表
-    getSortedPlayers() {
-        return [...this.players.mainPlayers].sort((a, b) => {
-            if (this.sortField === 'name') {
-                return this.sortDirection === 'desc' 
-                    ? b.name.localeCompare(a.name)
-                    : a.name.localeCompare(b.name);
-            }
-            
-            const valueA = this.getPlayerValue(a);
-            const valueB = this.getPlayerValue(b);
-            return this.sortDirection === 'desc' ? valueB - valueA : valueA - valueB;
-        });
-    }
-
-    // 编辑数值
-    editValue(playerName) {
-        if (this.currentType === 'total') return;
-        
-        const player = this.findPlayer(playerName);
-        const currentValue = this.getPlayerValue(player);
-        const boardText = this.getBoardTitle();
-
-        const newValue = prompt(
-            `请输入 ${playerName} 的${this.getTypeText(this.currentType)}${boardText}:`, 
-            currentValue
-        );
-
-        if (newValue !== null && !isNaN(newValue)) {
-            if (this.currentBoard === 'attendance') {
-                player.attendance[this.currentType] = parseInt(newValue);
-            } else {
-                if (!player.stats[this.currentType]) {
-                    player.stats[this.currentType] = { goals: 0, assists: 0 };
-                }
-                player.stats[this.currentType][this.currentBoard] = parseInt(newValue);
-            }
-            this.saveData();
-            this.renderPlayerList();
-        }
     }
 
     // 绑定事件
@@ -254,49 +185,5 @@ class PlayerStats {
             assists: '助攻数'
         };
         return titles[this.currentBoard];
-    }
-
-    // 保存数据
-    saveData() {
-        localStorage.setItem('playerStats', JSON.stringify(this.players));
-    }
-
-    // 查找球员
-    findPlayer(name) {
-        return this.players.mainPlayers.find(p => p.name === name);
-    }
-
-    // 获取类型文本
-    getTypeText(type) {
-        const types = {
-            total: '总',
-            internal: '内战',
-            external: '外战'
-        };
-        return types[type];
-    }
-
-    // 获取排序图标
-    getSortIcon(field) {
-        if (this.sortField !== field) return '↕️';
-        return this.sortDirection === 'desc' ? '↓' : '↑';
-    }
-
-    // 绑定排序事件
-    bindSortEvents() {
-        document.querySelectorAll('.sortable').forEach(header => {
-            header.addEventListener('click', (e) => {
-                const field = e.target.closest('.sortable').dataset.sort;
-                
-                if (field === this.sortField) {
-                    this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
-                } else {
-                    this.sortField = field;
-                    this.sortDirection = 'desc';
-                }
-                
-                this.renderPlayerList();
-            });
-        });
     }
 } 

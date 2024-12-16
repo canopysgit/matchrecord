@@ -5,24 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>球员统计 - 足球队报名与数据统计系统</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .stats-boards {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .board-btn, .tab-btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 2rem;
+            background: #f0f0f0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .board-btn.active, .tab-btn.active {
+            background: #1E88E5;
+            color: white;
+        }
+
+        .stats-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header, .player-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 150px;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table-header {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .player-row:hover {
+            background: #f8f9fa;
+        }
+
+        .col {
+            display: flex;
+            align-items: center;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
     <nav class="navbar">
         <div class="nav-brand">⚽ 足球队管理系统</div>
         <ul class="nav-menu">
             <li><a href="index.html">首页</a></li>
             <li><a href="signup.html">比赛报名</a></li>
-            <li><a href="record.html">记录数据</a></li>
             <li><a href="results.html">比赛结果</a></li>
             <li><a href="stats.html" class="active">球员统计</a></li>
         </ul>
     </nav>
 
-    <!-- 主要内容区 -->
     <main class="container">
-        <!-- 年度选择区域 -->
-        <section class="year-selector-section">
+        <section class="stats-section">
             <h2>数据统计</h2>
             <div class="stats-content">
                 <!-- 这里将由 JavaScript 动态生成内容 -->
@@ -30,15 +86,21 @@
         </section>
     </main>
 
-    <!-- 页脚 -->
     <footer class="footer">
         <p>© 2024 足球队报名与数据统计系统</p>
     </footer>
 
+    <!-- 确保按照正确的顺序引入脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
     <script src="js/stats.js"></script>
     <script>
-        // 确保在 DOM 加载完成后再初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        // 等待 DOM 和 Supabase 都加载完成
+        window.addEventListener('load', function() {
+            if (typeof supabase === 'undefined') {
+                console.error('Supabase 未加载');
+                return;
+            }
+            console.log('Supabase 已加载');
             window.playerStats = new PlayerStats();
         });
     </script>
