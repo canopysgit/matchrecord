@@ -118,9 +118,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 2rem;
-            font-size: 1.8rem;
-            margin: 1rem 0;
+            padding: 1.5rem 0;
+        }
+
+        .team-score {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .team-name {
@@ -129,11 +133,16 @@
             color: #333;
         }
 
+        .score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1E88E5;
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
-            margin-top: 1.5rem;
         }
 
         .stats-card {
@@ -147,6 +156,7 @@
             color: #1E88E5;
             margin-bottom: 1rem;
             font-size: 1.1rem;
+            text-align: center;
         }
 
         .stats-list {
@@ -191,6 +201,65 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* 最新比赛详细信息样式 */
+        .match-details {
+            margin-top: 1.5rem;
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+
+        .team-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .team-players {
+            margin-bottom: 1rem;
+        }
+
+        .team-players h4 {
+            color: #1E88E5;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .players-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .player-tag {
+            background: #f8f9fa;
+            padding: 0.3rem 0.8rem;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .team-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stats-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .stats-item h5 {
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .stats-item div {
+            font-size: 0.9rem;
+            margin: 0.3rem 0;
+        }
     </style>
 </head>
 <body>
@@ -224,35 +293,31 @@
 
         <!-- 数据展示区域 -->
         <section class="stats-section">
-            <!-- 最新比赛 -->
             <div class="latest-match">
                 <h3 class="section-title">
                     <i class="fas fa-futbol"></i>
                     最新比赛
                 </h3>
-                <div id="latestMatch">
-                    <!-- 最新比赛数据将通过 JavaScript 动态插入 -->
-                </div>
+                <div id="latestMatch"></div>
             </div>
-
-            <!-- 数据排行 -->
+            
             <div class="top-players">
                 <h3 class="section-title">
                     <i class="fas fa-trophy"></i>
-                    数据排行
+                    球员榜单
                 </h3>
                 <div class="stats-grid">
                     <div class="stats-card">
-                        <h4>进球榜 TOP5</h4>
-                        <ul class="stats-list" id="topScorers">
-                            <!-- 进球榜数据将通过 JavaScript 动态插入 -->
-                        </ul>
+                        <h4>出勤榜</h4>
+                        <ul class="stats-list" id="topAttendance"></ul>
                     </div>
                     <div class="stats-card">
-                        <h4>助攻榜 TOP5</h4>
-                        <ul class="stats-list" id="topAssists">
-                            <!-- 助攻榜数据将通过 JavaScript 动态插入 -->
-                        </ul>
+                        <h4>射手榜</h4>
+                        <ul class="stats-list" id="topScorers"></ul>
+                    </div>
+                    <div class="stats-card">
+                        <h4>助攻榜</h4>
+                        <ul class="stats-list" id="topAssists"></ul>
                     </div>
                 </div>
             </div>
@@ -315,13 +380,12 @@
             const loginSection = document.querySelector('.login-section');
             loginSection.innerHTML = `
                 <h2>管理员面板</h2>
-                <p>当前登录：${email}</p>
-                <div style="margin-top: 1rem;">
-                    <a href="record.html" class="login-btn" style="display: inline-block; text-decoration: none; text-align: center; margin-bottom: 1rem;">
-                        记录比赛数据
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <a href="signup.html" class="login-btn" style="flex: 1; text-decoration: none; text-align: center;">
+                        记录数据
                     </a>
-                    <button onclick="handleLogout()" class="login-btn" style="background: #dc3545;">
-                        退出登录
+                    <button onclick="handleLogout()" class="login-btn" style="flex: 1; background: #dc3545;">
+                        退出
                     </button>
                 </div>
             `;
@@ -330,7 +394,8 @@
         // 加载最新比赛
         async function loadLatestMatch() {
             try {
-                const { data: match, error } = await supabaseClient
+                // 获取最新比赛
+                const { data: match, error: matchError } = await supabaseClient
                     .from('matches')
                     .select('*')
                     .eq('status', 'completed')
@@ -338,9 +403,31 @@
                     .limit(1)
                     .single();
 
-                if (error) throw error;
+                if (matchError) throw matchError;
 
                 if (match) {
+                    // 获取这场比赛的球员
+                    const { data: players, error: playersError } = await supabaseClient
+                        .from('match_players')
+                        .select('*')
+                        .eq('match_id', match.id);
+
+                    if (playersError) throw playersError;
+
+                    // 获取这场比赛的统计数据
+                    const { data: stats, error: statsError } = await supabaseClient
+                        .from('match_stats')
+                        .select('*')
+                        .eq('match_id', match.id);
+
+                    if (statsError) throw statsError;
+
+                    // 分离白队和蓝队数据
+                    const whitePlayers = players.filter(p => p.team === 'white');
+                    const bluePlayers = players.filter(p => p.team === 'blue');
+                    const whiteStats = stats.filter(s => s.team === 'white');
+                    const blueStats = stats.filter(s => s.team === 'blue');
+
                     document.getElementById('latestMatch').innerHTML = `
                         <div class="match-card">
                             <div class="match-header">
@@ -353,14 +440,65 @@
                             </div>
                             <div class="match-content">
                                 <div class="match-score">
-                                    <div class="team">
-                                        <div class="team-name">白队</div>
-                                        <div class="score">${match.white_score || 0}</div>
+                                    <div class="team-score">
+                                        <span class="team-name">白队</span>
+                                        <span class="score">${match.white_score || 0}</span>
                                     </div>
-                                    <div style="color: #666;">VS</div>
-                                    <div class="team">
-                                        <div class="score">${match.blue_score || 0}</div>
-                                        <div class="team-name">蓝队</div>
+                                    <div style="color: #666; margin: 0 1rem;">VS</div>
+                                    <div class="team-score">
+                                        <span class="score">${match.blue_score || 0}</span>
+                                        <span class="team-name">蓝队</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="match-details">
+                                    <div class="team-details">
+                                        <div class="team-players">
+                                            <h4>白队阵容</h4>
+                                            <div class="players-list">
+                                                ${whitePlayers.map(p => 
+                                                    `<span class="player-tag">${p.player_name}</span>`
+                                                ).join('')}
+                                            </div>
+                                        </div>
+                                        <div class="team-stats">
+                                            <div class="stats-item">
+                                                <h5>进球</h5>
+                                                ${whiteStats.filter(s => s.goals > 0)
+                                                    .map(s => `<div>${s.player_name} ${s.goals}球</div>`)
+                                                    .join('') || '<div>无</div>'}
+                                            </div>
+                                            <div class="stats-item">
+                                                <h5>助攻</h5>
+                                                ${whiteStats.filter(s => s.assists > 0)
+                                                    .map(s => `<div>${s.player_name} ${s.assists}次</div>`)
+                                                    .join('') || '<div>无</div>'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="team-details">
+                                        <div class="team-players">
+                                            <h4>蓝队阵容</h4>
+                                            <div class="players-list">
+                                                ${bluePlayers.map(p => 
+                                                    `<span class="player-tag">${p.player_name}</span>`
+                                                ).join('')}
+                                            </div>
+                                        </div>
+                                        <div class="team-stats">
+                                            <div class="stats-item">
+                                                <h5>进球</h5>
+                                                ${blueStats.filter(s => s.goals > 0)
+                                                    .map(s => `<div>${s.player_name} ${s.goals}球</div>`)
+                                                    .join('') || '<div>无</div>'}
+                                            </div>
+                                            <div class="stats-item">
+                                                <h5>助攻</h5>
+                                                ${blueStats.filter(s => s.assists > 0)
+                                                    .map(s => `<div>${s.player_name} ${s.assists}次</div>`)
+                                                    .join('') || '<div>无</div>'}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -376,12 +514,48 @@
         async function loadTopPlayers() {
             try {
                 // 获取所有比赛统计数据
-                const { data: stats, error } = await supabaseClient
+                const { data: stats, error: statsError } = await supabaseClient
                     .from('match_stats')
                     .select('*');
 
-                if (error) throw error;
+                if (statsError) throw statsError;
 
+                // 获取所有比赛球员数据（用于统计出勤）
+                const { data: matchPlayers, error: playersError } = await supabaseClient
+                    .from('match_players')
+                    .select('*');
+
+                if (playersError) throw playersError;
+
+                // 计算出勤次数
+                const attendanceStats = {};
+                matchPlayers.forEach(record => {
+                    if (!attendanceStats[record.player_name]) {
+                        attendanceStats[record.player_name] = 0;
+                    }
+                    attendanceStats[record.player_name]++;
+                });
+
+                // 转换为数组并排序
+                const attendance = Object.entries(attendanceStats)
+                    .map(([name, count]) => ({ name, count }))
+                    .sort((a, b) => b.count - a.count)
+                    .slice(0, 5);
+
+                // 显示出勤榜
+                document.getElementById('topAttendance').innerHTML = attendance
+                    .map((player, index) => `
+                        <li>
+                            <div class="player-rank">
+                                <span class="rank-number">${index + 1}</span>
+                                ${player.name}
+                            </div>
+                            <span>${player.count}场</span>
+                        </li>
+                    `)
+                    .join('');
+
+                // 计算进球和助攻统计
                 // 计算每个球员的总进球和助攻
                 const playerStats = {};
                 stats.forEach(stat => {
