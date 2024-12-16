@@ -654,10 +654,33 @@
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
     );
 
-    // 页面加载时获取并显示比赛信息
-    document.addEventListener('DOMContentLoaded', async function() {
+    // 添加通用的权限验证函数
+    async function checkAdminAuth() {
         try {
-            // 首先从 localStorage 获取据
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                alert('请先登录管理员账号');
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        } catch (error) {
+            console.error('权限检查失败:', error);
+            alert('权限检查失败，请重新登录');
+            window.location.href = 'index.html';
+            return false;
+        }
+    }
+
+    // 修改页面加载事件
+    document.addEventListener('DOMContentLoaded', async function() {
+        // 首先检查权限
+        if (!await checkAdminAuth()) {
+            return;
+        }
+
+        try {
+            // 继续执行原有的页面加载代码...
             const matchDataStr = localStorage.getItem('currentMatch');
             const matchData = JSON.parse(matchDataStr);
             console.log('localStorage中的数据:', matchData);
@@ -682,7 +705,7 @@
 
             if (matchError) {
                 console.error('验证比赛信息失败:', matchError);
-                // 这��我们不抛出错误，因为本地数据可能还未同步到数据库
+                // 这里我们不抛出错误，因为本地数据可能还未同步到数据库
                 return;
             }
 
@@ -720,8 +743,8 @@
             initializeStatsSection('blueTeamStats', bluePlayers);
 
         } catch (error) {
-            console.error('读取数据失败:', error);
-            alert('读取数据失败，请返回报名页重试');
+            console.error('读取数据失��:', error);
+            alert('读取数据失败，请返回报名页面重试');
             window.location.href = 'signup.html';
         }
     });
@@ -1080,7 +1103,7 @@
                     .insert(statsData);
 
                 if (insertError) {
-                    console.error('插��统计数据失败:', insertError);
+                    console.error('插入统计数据失败:', insertError);
                     throw insertError;
                 }
 
@@ -1173,7 +1196,7 @@
             alert('队员删除成功');
 
         } catch (error) {
-            console.error('删��队员失败:', error);
+            console.error('删除队员失败:', error);
             alert('删除队员失败：' + error.message);
         }
     }

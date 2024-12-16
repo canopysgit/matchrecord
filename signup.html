@@ -491,9 +491,32 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
         );
 
+        // 添加通用的权限验证函数（与 record.html 相同）
+        async function checkAdminAuth() {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    alert('请先登录管理员账号');
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('权限检查失败:', error);
+                alert('权限检查失败，请重新登录');
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
         // 修改初始化球员列表的函数
         async function initializePlayers() {
             try {
+                // 首先检查权限
+                if (!await checkAdminAuth()) {
+                    return;
+                }
+
                 // 从 Supabase 获取所有球员，按 id 排序
                 const { data: players, error } = await supabaseClient
                     .from('players')
@@ -631,7 +654,7 @@
             }
         }
 
-        // 修改��存分队结果函数
+        // 修改存分队结果函数
         async function saveTeams() {
             try {
                 console.log('开始保存分队结果');

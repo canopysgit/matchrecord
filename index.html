@@ -5,83 +5,459 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>足球队报名与数据统计系统</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .dashboard {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 登录区域样式 */
+        .login-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .login-btn {
+            background: #1E88E5;
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #1565C0;
+        }
+
+        .error-message {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 0.8rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        /* 数据展示区域样式 */
+        .stats-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .latest-match, .top-players {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #1E88E5;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #1E88E5;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .match-card {
+            background: linear-gradient(to bottom, #ffffff, #f8f9fa);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .match-header {
+            background: linear-gradient(135deg, #1E88E5, #1565C0);
+            color: white;
+            padding: 1rem;
+        }
+
+        .match-content {
+            padding: 1.5rem;
+        }
+
+        .match-score {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            font-size: 1.8rem;
+            margin: 1rem 0;
+        }
+
+        .team-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stats-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stats-card h4 {
+            color: #1E88E5;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .stats-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .stats-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stats-list li:last-child {
+            border-bottom: none;
+        }
+
+        .player-rank {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .rank-number {
+            background: #1E88E5;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
     <nav class="navbar">
         <div class="nav-brand">⚽ 足球队管理系统</div>
         <ul class="nav-menu">
             <li><a href="index.html" class="active">首页</a></li>
             <li><a href="signup.html">比赛报名</a></li>
-            <li><a href="record.html">记录数据</a></li>
             <li><a href="results.html">比赛结果</a></li>
             <li><a href="stats.html">球员统计</a></li>
         </ul>
     </nav>
 
-    <!-- 主要内容区 -->
-    <main class="container">
-        <!-- 本周报名模块 -->
-        <section class="signup-section">
-            <h2>本周比赛报名</h2>
-            <div class="signup-card">
-                <div class="signup-info">
-                    <p>比赛时间：2024年1月20日 周六 15:00</p>
-                    <p>已报名人数：<span id="signupCount">0</span>人</p>
-                    <p>报名截止时间：2024年1月19日 20:00</p>
+    <main class="dashboard">
+        <!-- 登录区域 -->
+        <section class="login-section">
+            <h2>管理员登录</h2>
+            <div id="errorMessage" class="error-message"></div>
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input type="email" id="email" required>
                 </div>
-                <a href="signup.html" class="btn-primary">立即报名</a>
-            </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="login-btn">登录</button>
+            </form>
         </section>
 
-        <!-- 最新比赛数据 -->
-        <section class="latest-match">
-            <h2>最新比赛数据</h2>
-            <div class="match-card">
-                <div class="match-header">
-                    <span class="match-date">2024年1月13日</span>
-                    <span class="match-result">我队 3 - 1 对手</span>
-                </div>
-                <div class="match-stats">
-                    <div class="stats-item">
-                        <h3>进球</h3>
-                        <ul id="goalsList">
-                            <li>暂无数据</li>
-                        </ul>
-                    </div>
-                    <div class="stats-item">
-                        <h3>助攻</h3>
-                        <ul id="assistsList">
-                            <li>暂无数据</li>
-                        </ul>
-                    </div>
+        <!-- 数据展示区域 -->
+        <section class="stats-section">
+            <!-- 最新比赛 -->
+            <div class="latest-match">
+                <h3 class="section-title">
+                    <i class="fas fa-futbol"></i>
+                    最新比赛
+                </h3>
+                <div id="latestMatch">
+                    <!-- 最新比赛数据将通过 JavaScript 动态插入 -->
                 </div>
             </div>
-        </section>
 
-        <!-- 数据排行榜 -->
-        <section class="rankings">
-            <h2>进球助攻总榜</h2>
-            <div class="rankings-container">
-                <div class="ranking-card">
-                    <h3>进球榜 TOP5</h3>
-                    <ul id="goalsRanking">
-                        <li>暂无数据</li>
-                    </ul>
-                </div>
-                <div class="ranking-card">
-                    <h3>助攻榜 TOP5</h3>
-                    <ul id="assistsRanking">
-                        <li>暂无数据</li>
-                    </ul>
+            <!-- 数据排行 -->
+            <div class="top-players">
+                <h3 class="section-title">
+                    <i class="fas fa-trophy"></i>
+                    数据排行
+                </h3>
+                <div class="stats-grid">
+                    <div class="stats-card">
+                        <h4>进球榜 TOP5</h4>
+                        <ul class="stats-list" id="topScorers">
+                            <!-- 进球榜数据将通过 JavaScript 动态插入 -->
+                        </ul>
+                    </div>
+                    <div class="stats-card">
+                        <h4>助攻榜 TOP5</h4>
+                        <ul class="stats-list" id="topAssists">
+                            <!-- 助攻榜数据将通过 JavaScript 动态插入 -->
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- 页脚 -->
     <footer class="footer">
         <p>© 2024 足球队报名与数据统计系统</p>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+    <script>
+        const supabaseClient = supabase.createClient(
+            'https://obidukxlcgecpooynqnz.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
+        );
+
+        // 页面加载时获取数据
+        document.addEventListener('DOMContentLoaded', async function() {
+            await Promise.all([
+                loadLatestMatch(),
+                loadTopPlayers()
+            ]);
+
+            // 检查登录状态
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                showLoggedInState(session.user.email);
+            }
+        });
+
+        // 处理登录
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                // 登录成功
+                localStorage.setItem('isAdmin', 'true');
+                localStorage.setItem('adminSession', data.session.access_token);
+                showLoggedInState(email);
+            } catch (error) {
+                console.error('登录失败:', error);
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = '登录失败：' + error.message;
+            }
+        }
+
+        // 显示已登录状态
+        function showLoggedInState(email) {
+            const loginSection = document.querySelector('.login-section');
+            loginSection.innerHTML = `
+                <h2>管理员面板</h2>
+                <p>当前登录：${email}</p>
+                <div style="margin-top: 1rem;">
+                    <a href="record.html" class="login-btn" style="display: inline-block; text-decoration: none; text-align: center; margin-bottom: 1rem;">
+                        记录比赛数据
+                    </a>
+                    <button onclick="handleLogout()" class="login-btn" style="background: #dc3545;">
+                        退出登录
+                    </button>
+                </div>
+            `;
+        }
+
+        // 加载最新比赛
+        async function loadLatestMatch() {
+            try {
+                const { data: match, error } = await supabaseClient
+                    .from('matches')
+                    .select('*')
+                    .eq('status', 'completed')
+                    .order('match_date', { ascending: false })
+                    .limit(1)
+                    .single();
+
+                if (error) throw error;
+
+                if (match) {
+                    document.getElementById('latestMatch').innerHTML = `
+                        <div class="match-card">
+                            <div class="match-header">
+                                <div style="font-size: 1.2rem; font-weight: bold;">
+                                    ${formatDate(match.match_date)}
+                                </div>
+                                <div style="font-size: 0.9rem; margin-top: 0.5rem;">
+                                    ${match.match_type} | ${match.venue}
+                                </div>
+                            </div>
+                            <div class="match-content">
+                                <div class="match-score">
+                                    <div class="team">
+                                        <div class="team-name">白队</div>
+                                        <div class="score">${match.white_score || 0}</div>
+                                    </div>
+                                    <div style="color: #666;">VS</div>
+                                    <div class="team">
+                                        <div class="score">${match.blue_score || 0}</div>
+                                        <div class="team-name">蓝队</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('加载最新比赛失败:', error);
+            }
+        }
+
+        // 加载球员排行
+        async function loadTopPlayers() {
+            try {
+                // 获取所有比赛统计数据
+                const { data: stats, error } = await supabaseClient
+                    .from('match_stats')
+                    .select('*');
+
+                if (error) throw error;
+
+                // 计算每个球员的总进球和助攻
+                const playerStats = {};
+                stats.forEach(stat => {
+                    if (!playerStats[stat.player_name]) {
+                        playerStats[stat.player_name] = { goals: 0, assists: 0 };
+                    }
+                    playerStats[stat.player_name].goals += stat.goals || 0;
+                    playerStats[stat.player_name].assists += stat.assists || 0;
+                });
+
+                // 转换为数组并排序
+                const players = Object.entries(playerStats).map(([name, stats]) => ({
+                    name,
+                    goals: stats.goals,
+                    assists: stats.assists
+                }));
+
+                // 显示进球榜
+                const topScorers = players
+                    .sort((a, b) => b.goals - a.goals)
+                    .slice(0, 5);
+                
+                document.getElementById('topScorers').innerHTML = topScorers
+                    .map((player, index) => `
+                        <li>
+                            <div class="player-rank">
+                                <span class="rank-number">${index + 1}</span>
+                                ${player.name}
+                            </div>
+                            <span>${player.goals}球</span>
+                        </li>
+                    `)
+                    .join('');
+
+                // 显示助攻榜
+                const topAssists = players
+                    .sort((a, b) => b.assists - a.assists)
+                    .slice(0, 5);
+                
+                document.getElementById('topAssists').innerHTML = topAssists
+                    .map((player, index) => `
+                        <li>
+                            <div class="player-rank">
+                                <span class="rank-number">${index + 1}</span>
+                                ${player.name}
+                            </div>
+                            <span>${player.assists}次</span>
+                        </li>
+                    `)
+                    .join('');
+
+            } catch (error) {
+                console.error('加载球员排行失败:', error);
+            }
+        }
+
+        // 处理登出
+        async function handleLogout() {
+            try {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+                
+                localStorage.removeItem('isAdmin');
+                localStorage.removeItem('adminSession');
+                window.location.reload();
+            } catch (error) {
+                console.error('退出登录失败:', error);
+                alert('退出登录失败：' + error.message);
+            }
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+    </script>
 </body>
 </html> 
