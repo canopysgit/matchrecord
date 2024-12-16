@@ -280,6 +280,57 @@
     .remove-stats-btn:hover {
         background-color: #c82333;
     }
+
+    /* 错误消息样式 */
+    .error-message {
+        padding: 1rem;
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+        margin: 1rem 0;
+        text-align: center;
+    }
+
+    /* 无数据提示样式 */
+    .no-data {
+        padding: 2rem;
+        text-align: center;
+        color: #666;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+
+    /* 比赛卡片样式 */
+    .match-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+    }
+
+    .match-info {
+        margin-bottom: 1.5rem;
+    }
+
+    .match-date {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1E88E5;
+        margin-bottom: 0.5rem;
+    }
+
+    .match-details {
+        color: #666;
+    }
+
+    .match-details span:not(:last-child)::after {
+        content: " | ";
+        color: #ddd;
+        margin: 0 0.5rem;
+    }
     </style>
 </head>
 <body>
@@ -399,143 +450,151 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 
     <script>
-    // 初始化 Supabase 客户端
+    // 初始化 Supabase ���户端
     const { createClient } = supabase;
     const supabaseClient = createClient(
         'https://obidukxlcgecpooynqnz.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
     );
 
-    // 添加全局的 formatDate 函数
-    function formatDate(dateString) {
-        const date = new Date(dateString);
-        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-    }
+    // 页面加载时获取并显示比赛数据
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            // 获取所有已完成的比赛
+            const { data: matches, error: matchError } = await supabaseClient
+                .from('matches')
+                .select('*')
+                .eq('status', 'completed')
+                .order('match_date', { ascending: false });
 
-    class MatchResults {
-        constructor() {
-            this.init();
-        }
-
-        init() {
-            document.addEventListener('DOMContentLoaded', () => {
-                this.loadAllMatches();
-            });
-        }
-
-        async loadAllMatches() {
-            try {
-                // 从 Supabase 获取比赛记录
-                const { data: matches, error } = await supabaseClient
-                    .from('matches')
-                    .select('*')
-                    .order('match_date', { ascending: false });
-
-                if (error) throw error;
-                
-                this.displayMatches(matches);
-            } catch (error) {
-                console.error('加载比赛记录失败:', error);
-                alert('加载数据失败，请刷新页面重试');
+            if (matchError) {
+                throw matchError;
             }
-        }
 
-        displayMatches(matches) {
+            // 获取所有比赛的统计数据
+            const { data: allStats, error: statsError } = await supabaseClient
+                .from('match_stats')
+                .select('*')
+                .in('match_id', matches.map(m => m.id));
+
+            if (statsError) {
+                throw statsError;
+            }
+
+            // 显示每场比赛的数据
             const container = document.querySelector('.match-results-container');
-            
-            if (!matches.length) {
+            if (!container) {
+                throw new Error('找不到比赛结果容器元素');
+            }
+
+            if (!matches || matches.length === 0) {
                 container.innerHTML = '<div class="no-data">暂无比赛记录</div>';
                 return;
             }
 
             container.innerHTML = matches.map(match => {
+                // 获取这场比赛的统计数据
+                const matchStats = allStats.filter(stat => stat.match_id === match.id);
+                
+                // 分离白队和蓝队数据
+                const whiteTeamStats = matchStats.filter(stat => stat.team === 'white');
+                const blueTeamStats = matchStats.filter(stat => stat.team === 'blue');
+
                 return `
-                    <div class="match-card ${match.status}">
-                        ${this.renderMatchHeader(match)}
-                        ${this.renderMatchContent(match)}
+                    <div class="match-card">
+                        <div class="match-info">
+                            <div class="match-date">${formatDate(match.match_date)}</div>
+                            <div class="match-details">
+                                <span class="match-time">${match.match_time}</span>
+                                <span class="match-type">${match.match_type}</span>
+                                <span class="match-venue">${match.venue}</span>
+                            </div>
+                        </div>
+                        <div class="match-score">
+                            <div class="team white-team">
+                                <span class="team-name">白队</span>
+                                <span class="score">${match.white_score || 0}</span>
+                            </div>
+                            <div class="score-separator">:</div>
+                            <div class="team blue-team">
+                                <span class="score">${match.blue_score || 0}</span>
+                                <span class="team-name">蓝队</span>
+                            </div>
+                        </div>
+                        <div class="match-stats">
+                            <div class="team-stats">
+                                <h4>白队数据</h4>
+                                ${generateTeamStatsHTML(whiteTeamStats)}
+                            </div>
+                            <div class="team-stats">
+                                <h4>蓝队数据</h4>
+                                ${generateTeamStatsHTML(blueTeamStats)}
+                            </div>
+                        </div>
                     </div>
                 `;
             }).join('');
+
+        } catch (error) {
+            console.error('获取比赛数据失败:', error);
+            const container = document.querySelector('.match-results-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        获取比赛数据失败：${error.message}
+                    </div>
+                `;
+            }
+        }
+    });
+
+    // 生成队伍统计数据的 HTML
+    function generateTeamStatsHTML(teamStats) {
+        if (!teamStats || teamStats.length === 0) {
+            return '<p>无数据</p>';
         }
 
-        renderMatchHeader(match) {
-            // 格式化日期
-            const date = new Date(match.match_date);
-            const formattedDate = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
-            
-            return `
-                <div class="match-header">
-                    <div class="match-info">
-                        <span class="match-date">${formattedDate}</span>
-                        <span class="match-time">${match.match_time}</span>
-                        <span class="match-type">${match.match_type}</span>
-                        <span class="match-venue">${match.venue}</span>
-                    </div>
-                    <div class="match-status ${match.status}">
-                        ${this.getStatusText(match.status)}
-                    </div>
-                </div>
-            `;
-        }
+        // 按进球数排序
+        const sortedByGoals = [...teamStats]
+            .filter(stat => stat.goals > 0)
+            .sort((a, b) => b.goals - a.goals);
 
-        renderMatchContent(match) {
-            return `
-                <div class="match-content completed">
-                    <div class="match-score">
-                        <div class="team white">
-                            <span class="team-name">白队</span>
-                            <span class="score">${match.white_score || 0}</span>
-                        </div>
-                        <span class="score-separator">:</span>
-                        <div class="team blue">
-                            <span class="score">${match.blue_score || 0}</span>
-                            <span class="team-name">蓝队</span>
-                        </div>
-                    </div>
-                    <div class="match-stats">
-                        ${this.renderTeamStats('white', match)}
-                        ${this.renderTeamStats('blue', match)}
-                    </div>
-                    <div class="match-actions">
-                        <button class="action-btn edit-btn" onclick="showEditModal('${match.id}')">编辑</button>
-                        <button class="action-btn delete-btn" onclick="showDeleteConfirm('${match.id}')">删除</button>
-                    </div>
-                </div>
-            `;
-        }
+        // 按助攻数排序
+        const sortedByAssists = [...teamStats]
+            .filter(stat => stat.assists > 0)
+            .sort((a, b) => b.assists - a.assists);
 
-        renderTeamStats(teamColor, match) {
-            // 从 match_players 表获取球员数据
-            return `
-                <div class="team-stats ${teamColor}">
-                    <h4>${teamColor === 'white' ? '白队' : '蓝队'}数据</h4>
-                    <div class="stats-section">
-                        <h5>球员名单</h5>
-                        <ul class="players-list">
-                            <!-- 这里需要从 match_players 表获取数据 -->
-                            <li>暂无数据</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-        }
-
-        getStatusText(status) {
-            const statusMap = {
-                pending: '待比赛',
-                ongoing: '进行中',
-                completed: '已完成'
-            };
-            return statusMap[status] || status;
-        }
-
-        formatDate(dateString) {
-            return formatDate(dateString); // 调用全局函数
-        }
+        return `
+            <div class="stats-category">
+                <h5>进球</h5>
+                <ul>
+                    ${sortedByGoals.length > 0 
+                        ? sortedByGoals.map(stat => 
+                            `<li>${stat.player_name} ${stat.goals}球</li>`
+                        ).join('')
+                        : '<li>无</li>'
+                    }
+                </ul>
+            </div>
+            <div class="stats-category">
+                <h5>助攻</h5>
+                <ul>
+                    ${sortedByAssists.length > 0 
+                        ? sortedByAssists.map(stat => 
+                            `<li>${stat.player_name} ${stat.assists}次</li>`
+                        ).join('')
+                        : '<li>无</li>'
+                    }
+                </ul>
+            </div>
+        `;
     }
 
-    // 初始化
-    const matchResults = new MatchResults();
+    // 格式化日期
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+    }
 
     let currentEditIndex = -1;
     let currentDeleteIndex = -1;

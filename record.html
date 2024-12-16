@@ -288,7 +288,7 @@
     .player-stats-item {
         display: flex;
         align-items: center;
-        padding: 0.5rem;
+        padding: 0.8rem;
         background-color: white;
         border-radius: 4px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -297,23 +297,30 @@
     .player-name {
         flex: 1;
         font-weight: bold;
+        margin-right: 1rem;
     }
 
     .stats-buttons {
         display: flex;
+        gap: 1rem;
+    }
+
+    .stats-control {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 0.5rem;
     }
 
     .stats-btn {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
         padding: 0.5rem 1rem;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         font-size: 0.9rem;
         transition: all 0.3s;
+        width: 100%;
+        text-align: center;
     }
 
     .goal-btn {
@@ -326,10 +333,43 @@
         color: white;
     }
 
+    .number-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: #f8f9fa;
+        padding: 0.3rem;
+        border-radius: 4px;
+    }
+
+    .control-btn {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        border-radius: 4px;
+        background-color: #e9ecef;
+        color: #495057;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .control-btn:hover {
+        background-color: #dee2e6;
+    }
+
+    .control-btn:active {
+        background-color: #ced4da;
+    }
+
     .stats-count {
-        background-color: rgba(255,255,255,0.2);
-        padding: 0.2rem 0.5rem;
-        border-radius: 3px;
+        min-width: 20px;
+        text-align: center;
+        font-weight: bold;
+        color: #495057;
     }
 
     /* 弹窗样式 */
@@ -617,7 +657,7 @@
     // 页面加载时获取并显示比赛信息
     document.addEventListener('DOMContentLoaded', async function() {
         try {
-            // 首先从 localStorage 获取数据
+            // 首先从 localStorage 获取据
             const matchDataStr = localStorage.getItem('currentMatch');
             const matchData = JSON.parse(matchDataStr);
             console.log('localStorage中的数据:', matchData);
@@ -642,7 +682,7 @@
 
             if (matchError) {
                 console.error('验证比赛信息失败:', matchError);
-                // 这里我们不抛出错误，因为本地数据可能还未同步到数据库
+                // 这��我们不抛出错误，因为本地数据可能还未同步到数据库
                 return;
             }
 
@@ -681,7 +721,7 @@
 
         } catch (error) {
             console.error('读取数据失败:', error);
-            alert('读取数据失败，请返回报名页面重试');
+            alert('读取数据失败，请返回报名页重试');
             window.location.href = 'signup.html';
         }
     });
@@ -705,21 +745,21 @@
             console.error('找不到元素:', elementId);
             return;
         }
-        
-        // 确保 players 是数组
-        if (!Array.isArray(players)) {
-            console.error('players 不是数组:', players);
-            return;
-        }
+
+        // 确保我们有正确的球员数组
+        const playerArray = Array.isArray(players) ? players : 
+                           (players?.players && Array.isArray(players.players)) ? players.players : 
+                           [];
         
         const teamType = elementId === 'whiteTeamList' ? 'white' : 'blue';
         console.log('队伍类型:', teamType);
+        console.log('处理后的球员数组:', playerArray);
         
         // 清空现有内容
         list.innerHTML = '';
         
         // 为每个球员创建列表项
-        players.forEach(player => {
+        playerArray.forEach(player => {
             console.log('创建队员列表项:', player);
             
             const li = document.createElement('li');
@@ -742,19 +782,44 @@
         });
     }
 
-    // 初始化数据记录区域
+    // 修改 initializeStatsSection 函数
     function initializeStatsSection(elementId, players) {
+        console.log('初始化统计区域');
+        console.log('elementId:', elementId);
+        console.log('players:', players);
+
+        // 确保我们有正确的球员数组
+        const playerArray = Array.isArray(players) ? players : 
+                           (players?.players && Array.isArray(players.players)) ? players.players : 
+                           [];
+
+        console.log('处理后的球员数组:', playerArray);
+
         const container = document.getElementById(elementId);
-        container.innerHTML = players.map(player => `
+        container.innerHTML = playerArray.map(player => `
             <div class="player-stats-item">
                 <span class="player-name">${player}</span>
                 <div class="stats-buttons">
-                    <button class="stats-btn goal-btn" onclick="openStatsModal('${player}', 'goal')">
-                        进球 <span class="stats-count" id="${player}-goals">0</span>
-                    </button>
-                    <button class="stats-btn assist-btn" onclick="openStatsModal('${player}', 'assist')">
-                        助攻 <span class="stats-count" id="${player}-assists">0</span>
-                    </button>
+                    <div class="stats-control">
+                        <button class="stats-btn goal-btn">
+                            进球
+                        </button>
+                        <div class="number-control">
+                            <button class="control-btn" onclick="updateStats('${player}', 'goal', -1)">-</button>
+                            <span class="stats-count" id="${player}-goals">0</span>
+                            <button class="control-btn" onclick="updateStats('${player}', 'goal', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="stats-control">
+                        <button class="stats-btn assist-btn">
+                            助攻
+                        </button>
+                        <div class="number-control">
+                            <button class="control-btn" onclick="updateStats('${player}', 'assist', -1)">-</button>
+                            <span class="stats-count" id="${player}-assists">0</span>
+                            <button class="control-btn" onclick="updateStats('${player}', 'assist', 1)">+</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `).join('');
@@ -907,11 +972,17 @@
                 throw new Error('未找到比赛信息');
             }
 
+            console.log('开始保存比赛数据...');
+            console.log('比分:', { white: whiteScore, blue: blueScore });
+
             // 收集统计数据
             const whiteTeamStats = collectTeamStats('whiteTeamStats');
             const blueTeamStats = collectTeamStats('blueTeamStats');
 
-            // 更新比赛结果
+            console.log('白队统计:', whiteTeamStats);
+            console.log('蓝队统计:', blueTeamStats);
+
+            // 1. 首先更新比赛结果
             const { error: matchError } = await supabaseClient
                 .from('matches')
                 .update({
@@ -922,67 +993,105 @@
                 .eq('id', matchId);
 
             if (matchError) {
+                console.error('更新比赛结果失败:', matchError);
                 throw matchError;
             }
 
-            // 保存球员统计数据
-            const statsPromises = [];
+            console.log('比赛结果更新成功');
 
-            // 保存白队统计
+            // 2. 删除已有的统计数据
+            const { error: deleteError } = await supabaseClient
+                .from('match_stats')
+                .delete()
+                .eq('match_id', matchId);
+
+            if (deleteError) {
+                console.error('删除旧统计数据失败:', deleteError);
+                throw deleteError;
+            }
+
+            console.log('旧统计数据删除成功');
+
+            // 3. 准备新的统计数据
+            const statsData = [];
+
+            // 处理白队数据
             whiteTeamStats.goals.forEach(stat => {
-                statsPromises.push(
-                    supabaseClient.from('match_stats').insert({
-                        match_id: matchId,
-                        player_name: stat.player,
-                        team: 'white',
-                        goals: stat.count,
-                        assists: 0
-                    })
-                );
+                statsData.push({
+                    match_id: matchId,
+                    player_name: stat.player,
+                    team: 'white',
+                    goals: stat.count,
+                    assists: 0
+                });
             });
 
             whiteTeamStats.assists.forEach(stat => {
-                statsPromises.push(
-                    supabaseClient.from('match_stats').upsert({
+                const existingPlayer = statsData.find(
+                    s => s.player_name === stat.player && s.team === 'white'
+                );
+                if (existingPlayer) {
+                    existingPlayer.assists = stat.count;
+                } else {
+                    statsData.push({
                         match_id: matchId,
                         player_name: stat.player,
                         team: 'white',
+                        goals: 0,
                         assists: stat.count
-                    })
-                );
+                    });
+                }
             });
 
-            // 保存蓝队统计
+            // 处理蓝队数据
             blueTeamStats.goals.forEach(stat => {
-                statsPromises.push(
-                    supabaseClient.from('match_stats').insert({
-                        match_id: matchId,
-                        player_name: stat.player,
-                        team: 'blue',
-                        goals: stat.count,
-                        assists: 0
-                    })
-                );
+                statsData.push({
+                    match_id: matchId,
+                    player_name: stat.player,
+                    team: 'blue',
+                    goals: stat.count,
+                    assists: 0
+                });
             });
 
             blueTeamStats.assists.forEach(stat => {
-                statsPromises.push(
-                    supabaseClient.from('match_stats').upsert({
+                const existingPlayer = statsData.find(
+                    s => s.player_name === stat.player && s.team === 'blue'
+                );
+                if (existingPlayer) {
+                    existingPlayer.assists = stat.count;
+                } else {
+                    statsData.push({
                         match_id: matchId,
                         player_name: stat.player,
                         team: 'blue',
+                        goals: 0,
                         assists: stat.count
-                    })
-                );
+                    });
+                }
             });
 
-            // 等待所有统计数据保存完成
-            await Promise.all(statsPromises);
+            console.log('准备插入的统计数据:', statsData);
 
-            // 清除当前比赛数据
+            // 4. 插入新的统计数据
+            if (statsData.length > 0) {
+                const { error: insertError } = await supabaseClient
+                    .from('match_stats')
+                    .insert(statsData);
+
+                if (insertError) {
+                    console.error('插��统计数据失败:', insertError);
+                    throw insertError;
+                }
+
+                console.log('统计数据保存成功');
+            }
+
+            // 5. 清除当前比赛数据并跳转
             localStorage.removeItem('currentMatch');
+            console.log('本地数据已清除');
 
-            // 跳转到结果页面
+            alert('比赛数据保存成功！');
             window.location.href = 'results.html';
 
         } catch (error) {
@@ -1017,7 +1126,7 @@
                 <h5>助攻</h5>
                 <ul>
                     ${data.assists.sort((a, b) => b.count - a.count)
-                        .map(item => `<li>${item.name} ${item.count}个</li>`)
+                        .map(item => `<li>${item.name} ${item.count}次</li>`)
                         .join('')}
                 </ul>
             </div>`;
@@ -1064,7 +1173,7 @@
             alert('队员删除成功');
 
         } catch (error) {
-            console.error('删除队员失败:', error);
+            console.error('删��队员失败:', error);
             alert('删除队员失败：' + error.message);
         }
     }
@@ -1090,6 +1199,20 @@
         }
 
         return true;
+    }
+
+    // 添加 updateStats 函数
+    function updateStats(player, type, change) {
+        const countElement = document.getElementById(`${player}-${type}s`);
+        let currentValue = parseInt(countElement.textContent) || 0;
+        currentValue += change;
+        
+        // 确保数值不小于0
+        if (currentValue < 0) {
+            currentValue = 0;
+        }
+        
+        countElement.textContent = currentValue;
     }
     </script>
 </body>
