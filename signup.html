@@ -23,7 +23,7 @@
     <!-- 主要内容区 -->
     <main class="container">
         <!-- 比赛信息 -->
-        <section class="match-info-section">
+        <section class="match-info">
             <div class="match-info-card">
                 <div class="form-group">
                     <label for="matchDate">比赛日期</label>
@@ -51,55 +51,47 @@
             </div>
         </section>
 
-        <!-- 球员选择 -->
-        <section class="player-selection-section">
-            <!-- 分队结果 -->
-            <div class="teams-container">
-                <div class="team white-team">
+        <!-- 队伍展示 -->
+        <section class="teams-display">
+            <div class="teams-grid">
+                <div class="team-box white-team">
                     <h3>白队</h3>
-                    <ul id="whiteTeam"></ul>
+                    <div id="whiteTeam" class="team-list"></div>
                 </div>
-                <div class="team blue-team">
+                <div class="team-box blue-team">
                     <h3>蓝队</h3>
-                    <ul id="blueTeam"></ul>
+                    <div id="blueTeam" class="team-list"></div>
                 </div>
             </div>
+        </section>
 
-            <!-- 队长选择区域 -->
-            <div class="captain-selection">
-                <h3>选择队长</h3>
-                <div class="captain-buttons">
-                    <div class="team-captain">
-                        <h4>白队队长</h4>
-                        <select id="whiteCaptain" class="captain-select">
-                            <option value="">请选择队长</option>
-                        </select>
-                    </div>
-                    <div class="team-captain">
-                        <h4>蓝队队长</h4>
-                        <select id="blueCaptain" class="captain-select">
-                            <option value="">请选择队长</option>
-                        </select>
-                    </div>
-                </div>
+        <!-- 球员选择 -->
+        <section class="player-selection">
+            <div class="player-group">
+                <h3>主力球员</h3>
+                <div id="mainPlayerList" class="player-list"></div>
             </div>
+            <div class="player-group">
+                <h3>外援球员</h3>
+                <div id="guestPlayerList" class="player-list"></div>
+            </div>
+        </section>
 
-            <!-- 球员列表 -->
-            <div class="player-lists">
-                <!-- 主力球员名单 -->
-                <div class="player-list">
-                    <h3 class="section-title">主力球员</h3>
-                    <ul id="mainPlayerList" class="player-grid">
-                        <!-- 主力球员列表将通过JavaScript动态生成 -->
-                    </ul>
+        <!-- 队长选择 移到最下面 -->
+        <section class="captain-selection">
+            <h3>选择队长</h3>
+            <div class="captain-grid">
+                <div class="captain-box">
+                    <label>白队队长</label>
+                    <select id="whiteCaptain">
+                        <option value="">请选择队长</option>
+                    </select>
                 </div>
-
-                <!-- 外援球员区域 -->
-                <div class="guest-section">
-                    <h3 class="section-title">外援球员</h3>
-                    <ul id="guestPlayerList" class="player-grid">
-                        <!-- 外援球员列表将通过JavaScript动态生成 -->
-                    </ul>
+                <div class="captain-box">
+                    <label>蓝队队长</label>
+                    <select id="blueCaptain">
+                        <option value="">请选择队长</option>
+                    </select>
                 </div>
             </div>
         </section>
@@ -142,12 +134,53 @@
 
     <!-- 添加样式 -->
     <style>
-    .captain-selection {
-        margin: 2rem 0;
-        padding: 1rem;
-        background-color: #f8f9fa;
-        border-radius: 8px;
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .player-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 10px;
+        margin: 15px 0;
+        padding: 0 15px;
+    }
+
+    .player-grid li {
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        background: #fff;
+        border-radius: 6px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 120px;
+        max-width: 160px;
+    }
+
+    .player-name {
+        flex: 1;
+        font-size: 16px;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 10px;
+    }
+
+    .team-buttons button {
+        min-width: 35px;
+        padding: 4px 10px;
+        font-size: 15px;
+    }
+
+    .captain-selection {
+        margin-top: 30px;
+        background-color: #e3f2fd;
+        border: 2px solid #1E88E5;
+        border-radius: 8px;
+        padding: 20px;
     }
 
     .captain-buttons {
@@ -265,6 +298,189 @@
     .captain-select option {
         padding: 0.5rem;
     }
+
+    .player-grid {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 15px;
+        margin: 15px 0;
+        padding: 0 15px;
+    }
+
+    .player-grid li {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        min-width: 100px;
+        max-width: 140px;
+    }
+
+    .player-name {
+        flex: 1;
+        font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-right: 8px;
+    }
+
+    .team-buttons {
+        display: flex;
+        gap: 4px;
+    }
+
+    .team-buttons button {
+        min-width: 28px;
+        padding: 2px 6px;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .team-buttons button:hover {
+        background: #f5f5f5;
+        border-color: #1E88E5;
+        color: #1E88E5;
+    }
+
+    .team-buttons button.selected {
+        background: #1E88E5;
+        color: white;
+        border-color: #1565C0;
+    }
+
+    .player-list, .guest-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: #1E88E5;
+        margin-bottom: 15px;
+        padding-left: 15px;
+        font-size: 16px;
+    }
+
+    /* 队伍展示区域样式 */
+    .teams-display {
+        margin: 20px 0;
+    }
+
+    .teams-grid {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 20px;
+    }
+
+    .team-box {
+        flex: 1;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+        min-height: 200px;
+    }
+
+    .team-box h3 {
+        color: #1E88E5;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #1E88E5;
+    }
+
+    .team-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 每行4个球员 */
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .team-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px;
+        background: #f8f9fa;
+        border-radius: 4px;
+        border: 1px solid #e0e0e0;
+    }
+
+    .team-list .player-name {
+        flex: 1;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .team-list .delete-btn {
+        padding: 2px 8px;
+        border: none;
+        background: none;
+        color: #dc3545;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    /* 队长选择区域样式 */
+    .captain-selection {
+        margin-top: 30px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 25px;
+    }
+
+    .captain-selection h3 {
+        color: #1E88E5;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+
+    .captain-grid {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+    }
+
+    .captain-box {
+        flex: 1;
+        max-width: 300px;
+    }
+
+    .captain-box label {
+        display: block;
+        color: #666;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .captain-box select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #333;
+        background: #f8f9fa;
+        transition: all 0.3s;
+    }
+
+    .captain-box select:hover {
+        border-color: #1E88E5;
+    }
+
+    .captain-box select:focus {
+        outline: none;
+        border-color: #1E88E5;
+        box-shadow: 0 0 0 2px rgba(30,136,229,0.2);
+    }
     </style>
 
     <script>
@@ -275,165 +491,61 @@
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9iaWR1a3hsY2dlY3Bvb3lucW56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNjAyMDgsImV4cCI6MjA0OTgzNjIwOH0.a4Y-nWWxb8ClbMO2BUXG2vTJMqTJe2rQAXdWyKHZlHs'
         );
 
-        // 主力球员数据
-        const mainPlayers = [
-            "霏赫", "阿曼", "嘉磊", "赵哥", "赵祺", "罗霄", "广文", "黄鹏", 
-            "马指", "邵林", "一陶", "尚枫", "朱门", "小鹤", "陈光", "井", 
-            "杨超", "金昊", "张健", "小常", "赵军", "扇子", "毛毛", "威威", 
-            "蔡湑", "袁祎", "李蒙", "宣宇", "康进", "旭东", "田爽", "贾楠", 
-            "麦克", "勋哥", "小杰", "马蒂", "肖凯", "文征"
-        ];
+        // 修改初始化球员列表的函数
+        async function initializePlayers() {
+            try {
+                // 从 Supabase 获取所有球员，按 id 排序
+                const { data: players, error } = await supabaseClient
+                    .from('players')
+                    .select('*')
+                    .order('id', { ascending: true });  // 按 id 升序排序
 
-        // 外援球员数据
-        const guestPlayers = ["大雄", "贺楠", "小段", "青格勒"];
+                if (error) throw error;
 
-        // 初始化球员列表
-        function initializePlayers() {
-            const mainPlayerList = document.getElementById('mainPlayerList');
-            const guestPlayerList = document.getElementById('guestPlayerList');
+                // 分离主力和外援
+                const regularPlayers = players.filter(p => p.player_type === 'regular');
+                const guestPlayers = players.filter(p => p.player_type === 'guest');
 
-            // 清空现有内容
-            mainPlayerList.innerHTML = '';
-            guestPlayerList.innerHTML = '';
-
-            // 添加主力球员
-            mainPlayers.forEach(playerName => {
-                const li = createPlayerListItem(playerName);
-                mainPlayerList.appendChild(li);
-            });
-
-            // 添加外援球员
-            guestPlayers.forEach(playerName => {
-                const li = createPlayerListItem(playerName);
-                guestPlayerList.appendChild(li);
-            });
-
-            // 绑定保存按钮事件
-            document.getElementById('submitTeams').addEventListener('click', saveTeams);
-            
-            // 初始化队长选择
-            initializeCaptainSelects();
-        }
-
-        // 创建球员列表项
-        function createPlayerListItem(playerName) {
-            const li = document.createElement('li');
-            li.innerHTML = `
-                <span class="player-name">${playerName}</span>
-                <div class="button-group">
-                    <button class="team-btn white" data-team="whiteTeam">白</button>
-                    <button class="team-btn blue" data-team="blueTeam">蓝</button>
-                </div>
-            `;
-            
-            // 绑定按钮事件
-            const buttons = li.querySelectorAll('.team-btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    handleTeamButtonClick(this, playerName);
-                });
-            });
-            
-            return li;
-        }
-
-        // 处理队伍按钮点击
-        function handleTeamButtonClick(button, playerName) {
-            const playerLi = button.closest('li');
-            const team = button.getAttribute('data-team');
-            const otherTeam = team === 'whiteTeam' ? 'blueTeam' : 'whiteTeam';
-            
-            // 更新按钮状态
-            const whiteBtn = playerLi.querySelector('.team-btn.white');
-            const blueBtn = playerLi.querySelector('.team-btn.blue');
-            
-            // 如果是已选中的按钮，则取消选择
-            if (button.classList.contains('selected')) {
-                button.classList.remove('selected');
-                removePlayerFromTeam(playerName, team);
-                return;
-            }
-            
-            // 移除之前的选中状态
-            whiteBtn.classList.remove('selected');
-            blueBtn.classList.remove('selected');
-            button.classList.add('selected');
-            
-            // 从另一个队伍中移除
-            removePlayerFromTeam(playerName, otherTeam);
-
-            // 添加到选中的队伍
-            addPlayerToTeam(playerName, team, playerLi);
-        }
-
-        // 从队伍中移除球员
-        function removePlayerFromTeam(playerName, teamId) {
-            const teamList = document.getElementById(teamId);
-            if (!teamList) return;
-            
-            const playerToRemove = Array.from(teamList.children).find(li => 
-                li.textContent.trim().startsWith(playerName)
-            );
-            
-            if (playerToRemove) {
-                playerToRemove.remove();
-                // 更新队长选择下拉框
-                updateCaptainSelects();
-            }
-        }
-
-        // 添加球员到队伍
-        function addPlayerToTeam(playerName, teamId, originalLi) {
-            const teamList = document.getElementById(teamId);
-            if (!teamList) return;
-            
-            // 检查是否已经在队伍中
-            const existingPlayer = Array.from(teamList.children).find(li => 
-                li.textContent.trim().replace('(C)', '').replace('×', '').trim() === playerName
-            );
-            
-            if (!existingPlayer) {
-                const teamLi = document.createElement('li');
-                teamLi.innerHTML = `
-                    <span class="player-name">${playerName}</span>
-                    <button class="delete-btn" title="移除">×</button>
+                // 生成主力球员列表 HTML
+                const mainPlayerList = document.getElementById('mainPlayerList');
+                mainPlayerList.innerHTML = `
+                    <ul class="player-grid">
+                        ${regularPlayers.map(player => `
+                            <li>
+                                <span class="player-name">${player.name}</span>
+                                <div class="team-buttons">
+                                    <button onclick="handleTeamButtonClick(this, '${player.name}', 'whiteTeam')">白</button>
+                                    <button onclick="handleTeamButtonClick(this, '${player.name}', 'blueTeam')">蓝</button>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
                 `;
-                teamList.appendChild(teamLi);
-                
-                // 绑定删除按钮事件
-                const deleteBtn = teamLi.querySelector('.delete-btn');
-                deleteBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    
-                    // 如果是队长，除队长选择
-                    const captainSelect = teamId === 'whiteTeam' ? 'whiteCaptain' : 'blueCaptain';
-                    if (document.getElementById(captainSelect).value === playerName) {
-                        document.getElementById(captainSelect).value = '';
-                    }
-                    
-                    // 找到原始球员列表中的对应员
-                    const playerLists = document.querySelectorAll('.player-grid');
-                    playerLists.forEach(list => {
-                        const originalPlayerLi = Array.from(list.children).find(li => 
-                            li.querySelector('.player-name').textContent === playerName
-                        );
-                        if (originalPlayerLi) {
-                            originalPlayerLi.querySelectorAll('.team-btn').forEach(btn => {
-                                btn.classList.remove('selected');
-                            });
-                        }
-                    });
-                    
-                    // 移除队伍中的球员
-                    teamLi.remove();
-                    // 更新队长选择下拉框
-                    updateCaptainSelects();
-                });
 
-                // 更新队长选择下拉框
-                updateCaptainSelects();
+                // 生成外援球员列表 HTML
+                const guestPlayerList = document.getElementById('guestPlayerList');
+                guestPlayerList.innerHTML = `
+                    <ul class="player-grid">
+                        ${guestPlayers.map(player => `
+                            <li>
+                                <span class="player-name">${player.name}</span>
+                                <div class="team-buttons">
+                                    <button onclick="handleTeamButtonClick(this, '${player.name}', 'whiteTeam')">白</button>
+                                    <button onclick="handleTeamButtonClick(this, '${player.name}', 'blueTeam')">蓝</button>
+                                </div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+
+            } catch (error) {
+                console.error('加载球员列表失败:', error);
+                alert('加载球员列表失败，请刷新页面重试');
             }
         }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', initializePlayers);
 
         // 更新队长选择下拉框
         function updateCaptainSelects() {
@@ -499,61 +611,93 @@
                     const nameSpan = captainLi.querySelector('.player-name');
                     nameSpan.textContent = `${captainName}(C)`;
                 }
+
+                // 更新选择区域中的队长标记
+                const mainPlayerList = document.getElementById('mainPlayerList');
+                const guestPlayerList = document.getElementById('guestPlayerList');
+                
+                [mainPlayerList, guestPlayerList].forEach(list => {
+                    if (!list) return;
+                    
+                    list.querySelectorAll('.player-name').forEach(span => {
+                        const playerName = span.textContent.replace('(C)', '').trim();
+                        if (playerName === captainName) {
+                            span.textContent = `${playerName}(C)`;
+                        } else {
+                            span.textContent = playerName;
+                        }
+                    });
+                });
             }
         }
 
-        // 保存分队结果
-        function saveTeams() {
-            // 检查比赛日期和时间
-            const matchDate = document.getElementById('matchDate').value;
-            const matchTime = document.getElementById('matchTimeSlot').value;
-            
-            console.log('比赛日期:', matchDate); // 调试信息
-            console.log('比赛时间:', matchTime); // 调试信息
-            
-            if (!matchDate) {
-                console.log('日期为空'); // 调试信息
-                alert('请选择比赛日期！');
-                document.getElementById('matchDate').focus();
-                return;
-            }
-            
-            if (!matchTime) {
-                console.log('时间为空'); // 调试信息
-                alert('请选择比赛时间！');
-                document.getElementById('matchTimeSlot').focus();
-                return;
-            }
+        // 修改保存分队结果函数
+        async function saveTeams() {
+            try {
+                console.log('开始保存分队结果');
+                
+                // 检查比赛日期和时间
+                const matchDate = document.getElementById('matchDate').value;
+                const matchTime = document.getElementById('matchTimeSlot').value;
+                
+                console.log('比赛日期:', matchDate);
+                console.log('比赛时间:', matchTime);
+                
+                if (!matchDate) {
+                    alert('请选择比赛日期！');
+                    document.getElementById('matchDate').focus();
+                    return;
+                }
+                
+                if (!matchTime) {
+                    alert('请选择比赛时间！');
+                    document.getElementById('matchTimeSlot').focus();
+                    return;
+                }
 
-            // 检查是否有队员被选中
-            const whiteTeamCount = document.getElementById('whiteTeam').children.length;
-            const blueTeamCount = document.getElementById('blueTeam').children.length;
-            
-            console.log('白队人数:', whiteTeamCount); // 调试信息
-            console.log('蓝队人数:', blueTeamCount); // 调试信息
-            
-            if (whiteTeamCount === 0 && blueTeamCount === 0) {
-                alert('请至少选择一名队员！');
-                return;
-            }
+                // 检查是否有队员被选中
+                const whiteTeamCount = document.getElementById('whiteTeam').children.length;
+                const blueTeamCount = document.getElementById('blueTeam').children.length;
+                
+                console.log('白队人数:', whiteTeamCount);
+                console.log('蓝队人数:', blueTeamCount);
+                
+                if (whiteTeamCount === 0 && blueTeamCount === 0) {
+                    alert('请至少选择一名队员！');
+                    return;
+                }
 
-            const whiteCaptain = document.getElementById('whiteCaptain').value;
-            const blueCaptain = document.getElementById('blueCaptain').value;
-            
-            // 获取队伍成员，如果是队长则添加(C)标记
-            const whiteTeam = Array.from(document.getElementById('whiteTeam').children).map(li => {
-                const name = li.textContent.trim().replace('×', '').trim();
-                return whiteCaptain && name === whiteCaptain ? `${name}(C)` : name;
-            });
-            
-            const blueTeam = Array.from(document.getElementById('blueTeam').children).map(li => {
-                const name = li.textContent.trim().replace('×', '').trim();
-                return blueCaptain && name === blueCaptain ? `${name}(C)` : name;
-            });
-            
-            // 显示确认弹窗
-            showConfirmModal(whiteTeam, blueTeam, whiteCaptain, blueCaptain);
+                const whiteCaptain = document.getElementById('whiteCaptain').value;
+                const blueCaptain = document.getElementById('blueCaptain').value;
+                
+                // 获取队伍成员
+                const whiteTeam = Array.from(document.getElementById('whiteTeam').children)
+                    .map(li => li.querySelector('.player-name').textContent.trim());
+                const blueTeam = Array.from(document.getElementById('blueTeam').children)
+                    .map(li => li.querySelector('.player-name').textContent.trim());
+                
+                console.log('白队队员:', whiteTeam);
+                console.log('蓝队队员:', blueTeam);
+
+                // 显示确认弹窗
+                showConfirmModal(whiteTeam, blueTeam, whiteCaptain, blueCaptain);
+                
+            } catch (error) {
+                console.error('保存分队结果时出错:', error);
+                alert('保存失败：' + error.message);
+            }
         }
+
+        // 确保提交按钮绑定了事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitButton = document.getElementById('submitTeams');
+            if (submitButton) {
+                submitButton.addEventListener('click', saveTeams);
+                console.log('已绑定保存按钮事件');
+            } else {
+                console.error('找不到保存按钮');
+            }
+        });
 
         // 显示确认弹窗
         function showConfirmModal(whiteTeam, blueTeam, whiteCaptain, blueCaptain) {
@@ -707,6 +851,91 @@
                 submitBtn.textContent = '确认';
             }
         }
+
+        // 处理队伍按钮点击
+        function handleTeamButtonClick(button, playerName, team) {
+            const playerLi = button.closest('li');
+            const otherTeam = team === 'whiteTeam' ? 'blueTeam' : 'whiteTeam';
+            
+            // 更新按钮状态
+            const buttons = playerLi.querySelectorAll('button');
+            const isSelected = button.classList.contains('selected');
+            
+            // 果是已选中的按钮，则取消选择
+            if (isSelected) {
+                button.classList.remove('selected');
+                removePlayerFromTeam(playerName, team);
+                return;
+            }
+            
+            // 移除之前的选中状态
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            
+            // 从另一个队伍移除
+            removePlayerFromTeam(playerName, otherTeam);
+
+            // 添加到中的队伍
+            addPlayerToTeam(playerName, team, playerLi);
+        }
+
+        // 从队伍中移除球员
+        function removePlayerFromTeam(playerName, teamId) {
+            const teamList = document.getElementById(teamId);
+            if (!teamList) return;
+            
+            const playerToRemove = Array.from(teamList.children).find(li => 
+                li.textContent.trim().startsWith(playerName)
+            );
+            
+            if (playerToRemove) {
+                playerToRemove.remove();
+                // 更新队长选择下拉框
+                updateCaptainSelects();
+            }
+        }
+
+        // 添加球员到队伍
+        function addPlayerToTeam(playerName, teamId) {
+            const teamList = document.getElementById(teamId);
+            if (!teamList) return;
+            
+            // 检查是否已经在队伍中
+            const existingPlayer = Array.from(teamList.children).find(li => 
+                li.textContent.trim().replace('(C)', '').replace('×', '').trim() === playerName
+            );
+            
+            if (!existingPlayer) {
+                const teamLi = document.createElement('li');
+                teamLi.innerHTML = `
+                    <span class="player-name">${playerName}</span>
+                    <button class="delete-btn" title="移除" onclick="removePlayerFromTeam('${playerName}', '${teamId}')">×</button>
+                `;
+                teamList.appendChild(teamLi);
+                
+                // 更新队长选择下拉框
+                updateCaptainSelects();
+            }
+        }
+
+        // 初始化队长选择事件
+        function initializeCaptainSelects() {
+            const whiteCaptainSelect = document.getElementById('whiteCaptain');
+            const blueCaptainSelect = document.getElementById('blueCaptain');
+            
+            whiteCaptainSelect.addEventListener('change', function() {
+                updateCaptainDisplay('whiteTeam', this.value);
+            });
+            
+            blueCaptainSelect.addEventListener('change', function() {
+                updateCaptainDisplay('blueTeam', this.value);
+            });
+        }
+
+        // 确保在页面加载时初始化队长选择功能
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCaptainSelects();
+        });
     </script>
 </body>
 </html> 
