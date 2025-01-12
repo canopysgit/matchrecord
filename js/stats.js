@@ -16,7 +16,6 @@ class PlayerStats {
         try {
             console.log('开始初始化...');
             await this.loadStats();
-            document.querySelector('.stats-section h2').textContent = '2024年数据统计';
             this.renderBoards();
             this.renderPlayerList();
             this.bindEvents();
