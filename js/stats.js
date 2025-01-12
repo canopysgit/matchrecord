@@ -28,18 +28,17 @@ class PlayerStats {
 
     async loadStats() {
         try {
-            console.log('开始加载数据...');
+            console.log('开始加载 2025 年数据...');
             
             // 检查 supabaseClient 是否正确初始化
             if (!this.supabaseClient) {
                 throw new Error('Supabase 客户端未初始化');
             }
 
-            // 从 player_stats_2024 表加载数据
+            const tableName = `player_stats_2025`;
             const { data, error } = await this.supabaseClient
-                .from('player_stats_2024')  // 使用正确的表名
+                .from(tableName)
                 .select(`
-                    id,
                     player_name,
                     attendance_total,
                     attendance_internal,
@@ -55,18 +54,18 @@ class PlayerStats {
 
             // 检查错误
             if (error) {
-                console.error('数据库查询错误:', error);
+                console.error('数据库查询错误 (2025):', error);
                 throw error;
             }
 
             // 检查数据
             if (!data) {
-                console.warn('未收到数据');
+                console.warn('未收到 2025 年数据');
                 this.players = [];
                 return;
             }
 
-            console.log('成功加载数据:', data);
+            console.log('成功加载 2025 年数据:', data);
             this.players = data;
 
             // 检查数据格式
@@ -75,7 +74,7 @@ class PlayerStats {
             }
 
         } catch (error) {
-            console.error('加载统计数据失败:', error);
+            console.error('加载 2025 年数据失败:', error);
             this.players = [];
             // 显示错误信息
             const container = document.querySelector('.stats-content');
