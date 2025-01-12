@@ -659,6 +659,11 @@
                 return;
             }
 
+            // 筛选出 2025 年的比赛并按日期升序排序
+            const matches2025 = matches
+                .filter(match => new Date(match.match_date).getFullYear() === 2025)
+                .sort((a, b) => new Date(a.match_date) - new Date(b.match_date));
+
             container.innerHTML = matches.map(match => {
                 // 获取这场比赛的数据
                 const matchStats = allStats.filter(stat => stat.match_id === match.id);
@@ -670,11 +675,16 @@
                 const whitePlayers = matchPlayers.filter(player => player.team === 'white');
                 const bluePlayers = matchPlayers.filter(player => player.team === 'blue');
 
+                // 获取 2025 年比赛的序号
+                const match2025Index = matches2025.findIndex(m => m.id === match.id);
+                const matchNumberLabel = match2025Index !== -1 ? `2025年第 ${match2025Index + 1} 场` : '';
+
                 return `
                     <div class="match-card">
                         <div class="match-header">
                             <div class="match-date">${formatDate(match.match_date)}</div>
                             <div class="match-meta">
+                                <span class="match-number">${matchNumberLabel}</span>
                                 <span class="match-time"><i class="fas fa-clock"></i> ${match.match_time}</span>
                                 <span class="match-type"><i class="fas fa-futbol"></i> ${match.match_type}</span>
                                 <span class="match-venue"><i class="fas fa-map-marker-alt"></i> ${match.venue}</span>
