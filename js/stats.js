@@ -34,7 +34,7 @@ class PlayerStats {
                 throw new Error('Supabase 客户端未初始化');
             }
 
-            const tableName = `player_stats_2025`;
+            const tableName = `regular_player_stats_2025`;
             const { data, error } = await this.supabaseClient
                 .from(tableName)
                 .select(`
