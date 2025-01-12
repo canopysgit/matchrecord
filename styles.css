@@ -732,11 +732,11 @@ body {
 }
 
 .board-btn.active::before {
-    opacity: 1;
+   /* opacity: 1; */
 }
 
 .board-btn.active span {
-    color: white;
+    z-index: 3;
 }
 
 /* 表格样式优化 */
