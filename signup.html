@@ -39,11 +39,17 @@
                 </div>
                 <div class="form-group">
                     <label for="matchType">比赛性质</label>
-                    <select id="matchType" name="matchType">
+                    <select id="matchType" name="matchType" onchange="toggleOpponentTeamField()">
                         <option value="内战">内战</option>
                         <option value="外战">外战</option>
                     </select>
                 </div>
+                <!-- 添加对手队伍字段 -->
+                <div class="form-group" id="opponentTeamGroup" style="display: none;">
+                    <label for="opponentTeam">对手队伍名称</label>
+                    <input type="text" id="opponentTeam" name="opponentTeam" placeholder="请输入对手队伍名称">
+                </div>
+                
                 <div class="form-group">
                     <label for="matchVenue">比赛场地</label>
                     <input type="text" id="matchVenue" name="matchVenue" value="机场">
@@ -753,124 +759,130 @@
         }
 
         // 确认分队
-        async function confirmTeams() {
-            try {
-                // 获取比赛基本信息
-                const matchDate = document.getElementById('matchDate').value;
-                const matchTime = document.getElementById('matchTimeSlot').value;
-                const matchType = document.getElementById('matchType').value;
-                const venue = document.getElementById('matchVenue').value;
+async function confirmTeams() {
+    try {
+        // 获取比赛基本信息
+        const matchDate = document.getElementById('matchDate').value;
+        const matchTime = document.getElementById('matchTimeSlot').value;
+        const matchType = document.getElementById('matchType').value;
+        const venue = document.getElementById('matchVenue').value;
+        const opponentTeam = document.getElementById('opponentTeam').value;
 
-                // 获取队伍信息
-                const whiteTeam = Array.from(document.getElementById('whiteTeam').children)
-                    .map(li => li.querySelector('.player-name').textContent.trim());
-                const blueTeam = Array.from(document.getElementById('blueTeam').children)
-                    .map(li => li.querySelector('.player-name').textContent.trim());
-                const whiteCaptain = document.getElementById('whiteCaptain').value;
-                const blueCaptain = document.getElementById('blueCaptain').value;
+        // 获取队伍信息
+        const whiteTeam = Array.from(document.getElementById('whiteTeam').children)
+            .map(li => li.querySelector('.player-name').textContent.trim());
+        const blueTeam = Array.from(document.getElementById('blueTeam').children)
+            .map(li => li.querySelector('.player-name').textContent.trim());
+        const whiteCaptain = document.getElementById('whiteCaptain').value;
+        const blueCaptain = document.getElementById('blueCaptain').value;
 
-                console.log('准备创建比赛记录...');
+        console.log('准备创建比赛记录...');
 
-                // 首先创建比赛记录
-                const { data: match, error: matchError } = await supabaseClient
-                    .from('matches')
-                    .insert([{
-                        id: crypto.randomUUID(),  // 显式生成 UUID
-                        match_date: matchDate,
-                        match_time: matchTime,
-                        match_type: matchType,
-                        venue: venue
-                    }])
-                    .select()
-                    .single();
+        // 首先创建比赛记录
+        const { data: match, error: matchError } = await supabaseClient
+            .from('matches')
+            .insert([{
+                id: crypto.randomUUID(),  // 显式生成 UUID
+                match_date: matchDate,
+                match_time: matchTime,
+                match_type: matchType,
+                venue: venue,
+                opponent_team: matchType === '外战' ? opponentTeam : null,
+                status: 'pending',
+                white_score: 0,
+                blue_score: 0
+            }])
+            .select()
+            .single();
 
-                if (matchError) throw matchError;
-                console.log('创建比赛记录成功:', match);
+        if (matchError) throw matchError;
+        console.log('创建比赛记录成功:', match);
 
-                // 创建球员记录（移除 is_captain 字段）
-                const playerRecords = [
-                    ...whiteTeam.map(player => ({
-                        match_id: match.id,
-                        player_name: player,
-                        team: 'white'
-                    })),
-                    ...blueTeam.map(player => ({
-                        match_id: match.id,
-                        player_name: player,
-                        team: 'blue'
-                    }))
-                ];
+        // 创建球员记录（移除 is_captain 字段）
+        const playerRecords = [
+            ...whiteTeam.map(player => ({
+                match_id: match.id,
+                player_name: player,
+                team: 'white'
+            })),
+            ...blueTeam.map(player => ({
+                match_id: match.id,
+                player_name: player,
+                team: 'blue'
+            }))
+        ];
 
-                // 保存球员记录
-                const { error: playersError } = await supabaseClient
-                    .from('match_players')
-                    .insert(playerRecords);
+        // 保存球员记录
+        const { error: playersError } = await supabaseClient
+            .from('match_players')
+            .insert(playerRecords);
 
-                if (playersError) throw playersError;
-                console.log('创建球员记录成功');
+        if (playersError) throw playersError;
+        console.log('创建球员记录成功');
 
-                // 如果有队长，创建队长记录
-                if (whiteCaptain || blueCaptain) {
-                    const captainRecords = [];
-                    if (whiteCaptain) {
-                        captainRecords.push({
-                            match_id: match.id,
-                            team: 'white',
-                            captain_name: whiteCaptain
-                        });
-                    }
-                    if (blueCaptain) {
-                        captainRecords.push({
-                            match_id: match.id,
-                            team: 'blue',
-                            captain_name: blueCaptain
-                        });
-                    }
-
-                    // 保存队长信息到 match_captains 表
-                    const { error: captainsError } = await supabaseClient
-                        .from('match_captains')
-                        .insert(captainRecords);
-
-                    if (captainsError) throw captainsError;
-                    console.log('创建队长记录成功');
-                }
-
-                // 保存到 localStorage
-                const currentMatch = {
-                    matchId: match.id,
-                    matchInfo: {
-                        date: matchDate,
-                        time: matchTime,
-                        type: matchType,
-                        venue: venue
-                    },
-                    teams: {
-                        white: {
-                            players: whiteTeam,
-                            captain: whiteCaptain
-                        },
-                        blue: {
-                            players: blueTeam,
-                            captain: blueCaptain
-                        }
-                    }
-                };
-
-                localStorage.setItem('currentMatch', JSON.stringify(currentMatch));
-                console.log('保存到 localStorage 成功:', currentMatch);
-
-                // 关闭弹窗
-                closeConfirmModal();
-
-                // 跳转到记录页面
-                window.location.href = 'record.html';
-
-            } catch (error) {
-                console.error('保存比赛数据失败:', error);
-                alert('保存失败: ' + error.message);
+        // 如果有队长，创建队长记录
+        if (whiteCaptain || blueCaptain) {
+            const captainRecords = [];
+            if (whiteCaptain) {
+                captainRecords.push({
+                    match_id: match.id,
+                    team: 'white',
+                    captain_name: whiteCaptain
+                });
             }
+            if (blueCaptain) {
+                captainRecords.push({
+                    match_id: match.id,
+                    team: 'blue',
+                    captain_name: blueCaptain
+                });
+            }
+
+            // 保存队长信息到 match_captains 表
+            const { error: captainsError } = await supabaseClient
+                .from('match_captains')
+                .insert(captainRecords);
+
+            if (captainsError) throw captainsError;
+            console.log('创建队长记录成功');
         }
+
+        // 保存到 localStorage
+        const currentMatch = {
+            matchId: match.id,
+            matchInfo: {
+                date: matchDate,
+                time: matchTime,
+                type: matchType,
+                venue: venue,
+                opponentTeam: matchType === '外战' ? opponentTeam : null
+            },
+            teams: {
+                white: {
+                    players: whiteTeam,
+                    captain: whiteCaptain
+                },
+                blue: {
+                    players: blueTeam,
+                    captain: blueCaptain
+                }
+            }
+        };
+
+        localStorage.setItem('currentMatch', JSON.stringify(currentMatch));
+        console.log('保存到 localStorage 成功:', currentMatch);
+
+        // 关闭弹窗
+        closeConfirmModal();
+
+        // 跳转到记录页面
+        window.location.href = 'record.html';
+
+    } catch (error) {
+        console.error('保存比赛数据失败:', error);
+        alert('保存失败: ' + error.message);
+    }
+}
 
         // 点击弹窗外部关闭
         window.onclick = function(event) {
@@ -975,10 +987,24 @@
             });
         }
 
-        // 确保在页面加载时初始化队长选择功能
+        // 添加这个函数来切换对手队伍输入框的显示状态
+        function toggleOpponentTeamField() {
+            const matchType = document.getElementById('matchType').value;
+            const opponentTeamGroup = document.getElementById('opponentTeamGroup');
+            
+            if (matchType === '外战') {
+                opponentTeamGroup.style.display = 'block';
+            } else {
+                opponentTeamGroup.style.display = 'none';
+                document.getElementById('opponentTeam').value = '';
+            }
+        }
+
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
             initializeCaptainSelects();
-        });
+            toggleOpponentTeamField(); // 初始化对手队伍字段显示状态
+});
     </script>
 </body>
-</html> 
+</html>
