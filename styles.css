@@ -1,4 +1,4 @@
-/* 页面基础样式 - v2.1 */
+/* 页面基础样式 - v2.4 */
 * {
     margin: 0;
     padding: 0;
@@ -8,13 +8,13 @@
 /* 强制移动端菜单隐藏 */
 @media screen and (max-width: 1200px) {
     .nav-menu {
-        display: none !important;
         position: fixed !important;
         top: 60px !important;
         left: -100% !important;
         width: 100% !important;
         height: calc(100vh - 60px) !important;
         background-color: #1E88E5 !important;
+        display: flex !important;
         flex-direction: column !important;
         justify-content: flex-start !important;
         align-items: center !important;
@@ -24,8 +24,20 @@
     }
     
     .nav-menu.active {
-        display: flex !important;
         left: 0 !important;
+    }
+    
+    .nav-menu > li {
+        width: 90% !important;
+        margin-bottom: 0.5rem !important;
+        display: flex !important;
+    }
+    
+    .nav-menu a {
+        padding: 1rem !important;
+        justify-content: center !important;
+        border-radius: 8px !important;
+        width: 100% !important;
     }
     
     .hamburger {
@@ -202,10 +214,6 @@ body {
 
 /* 响应式导航栏 */
 @media screen and (max-width: 1024px) {
-    .nav-menu > li {
-        display: none !important;
-    }
-    
     .hamburger {
         display: flex !important;
     }
@@ -252,6 +260,7 @@ body {
     .nav-menu > li {
         width: 90%;
         margin-bottom: 0.5rem;
+        display: flex !important;
     }
 
     .nav-menu a {
