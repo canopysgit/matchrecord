@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>胜率统计 - 足球队数据系统</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .winrate-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .winrate-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .winrate-header h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .control-panel {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .control-btn:hover:not(:disabled) {
+            background: #2980b9;
+        }
+
+        .control-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .control-btn.success {
+            background: #27ae60;
+        }
+
+        .control-btn.danger {
+            background: #e74c3c;
+        }
+
+        .progress-message {
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .progress-message.info {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .progress-message.success {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .progress-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .filter-panel {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .winrate-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .winrate-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table-header {
+            background: #34495e;
+            color: white;
+            display: grid;
+            grid-template-columns: 60px 1fr 80px 80px 80px 80px 100px 120px;
+            gap: 1rem;
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        .table-header .col {
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .table-header .col:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .table-header .col.sorted {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .table-header .col.sorted::after {
+            content: ' ↓';
+        }
+
+        .table-header .col.sorted.asc::after {
+            content: ' ↑';
+        }
+
+        .player-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 80px 80px 80px 80px 100px 120px;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #ecf0f1;
+            align-items: center;
+        }
+
+        .player-row:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .player-row:hover {
+            background: #e8f4fd;
+        }
+
+        .rank {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .rank.top3 {
+            color: #f39c12;
+        }
+
+        .player-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .player-type {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .player-type.regular {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .player-type.guest {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .winrate-value {
+            font-weight: bold;
+        }
+
+        .winrate-high {
+            color: #27ae60;
+        }
+
+        .winrate-medium {
+            color: #f39c12;
+        }
+
+        .winrate-low {
+            color: #e74c3c;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .winrate-container {
+                padding: 1rem;
+            }
+
+            .control-panel {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .table-header,
+            .player-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .table-header .col,
+            .player-row > div {
+                padding: 0.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">丛莱梅蔬果足球队</div>
+        <ul class="nav-menu">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="signup.html">比赛报名</a></li>
+            <li><a href="results.html">比赛结果</a></li>
+            <li><a href="stats.html">球员统计</a></li>
+            <li><a href="winrate.html" class="active">胜率统计</a></li>
+        </ul>
+    </nav>
+    
+    <main class="container">
+        <div class="winrate-container">
+        
+        <div class="winrate-header">
+            <h1>球员胜率统计</h1>
+            <p>2025年内战胜率数据分析</p>
+        </div>
+
+        <div class="control-panel">
+            <button id="calculate-winrate-btn" class="control-btn">计算胜率</button>
+            <button id="refresh-data-btn" class="control-btn">刷新数据</button>
+            <div id="winrate-progress" class="progress-message info">点击"计算胜率"开始更新数据</div>
+        </div>
+
+        <div class="filter-panel">
+            <div class="filter-group">
+                <label for="min-matches">最少参赛场次:</label>
+                <select id="min-matches">
+                    <option value="0">不限制</option>
+                    <option value="3" selected>3场及以上</option>
+                    <option value="5">5场及以上</option>
+                    <option value="10">10场及以上</option>
+                </select>
+                
+                <label for="player-type-filter">球员类型:</label>
+                <select id="player-type-filter">
+                    <option value="all">全部</option>
+                    <option value="regular">常规球员</option>
+                    <option value="guest">外援</option>
+                </select>
+                
+                <label for="sort-field">排序方式:</label>
+                <select id="sort-field">
+                    <option value="win_rate">按胜率</option>
+                    <option value="total_matches">按场次</option>
+                    <option value="wins">按胜场</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="winrate-stats" class="winrate-stats">
+            <!-- 统计卡片将在这里动态生成 -->
+        </div>
+
+        <div id="winrate-table-container" class="winrate-table">
+            <div class="no-data">请先计算胜率数据</div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>© 2013-2025 丛莱梅蔬果足球队</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+    <script src="js/winrate.js"></script>
+    <script>
+        // 等待 DOM 和 Supabase 都加载完成
+        window.addEventListener('load', function() {
+            if (typeof supabase === 'undefined') {
+                console.error('Supabase 未加载');
+                return;
+            }
+            console.log('Supabase 已加载');
+            window.winrateCalculator = new WinrateCalculator();
+            
+            // 绑定按钮事件
+            document.getElementById('calculate-winrate-btn').addEventListener('click', async () => {
+                await window.winrateCalculator.calculateWinrates();
+                await loadAndDisplayData();
+            });
+            
+            document.getElementById('refresh-data-btn').addEventListener('click', loadAndDisplayData);
+            
+            // 绑定筛选器事件
+            document.getElementById('min-matches').addEventListener('change', loadAndDisplayData);
+            document.getElementById('player-type-filter').addEventListener('change', loadAndDisplayData);
+            document.getElementById('sort-field').addEventListener('change', loadAndDisplayData);
+            
+            // 初始加载数据
+            loadAndDisplayData();
+        });
+        
+        // 加载并显示数据
+        async function loadAndDisplayData() {
+            try {
+                const data = await window.winrateCalculator.getAllWinrateData();
+                
+                if (data.length === 0) {
+                    showNoData();
+                    return;
+                }
+                
+                await displayStats(data);
+                displayTable(data);
+                
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                document.getElementById('winrate-progress').textContent = `加载失败: ${error.message}`;
+                document.getElementById('winrate-progress').className = 'progress-message error';
+            }
+        }
+        
+        // 显示统计卡片
+        async function displayStats(data) {
+            const totalPlayers = data.length;
+            const regularPlayers = data.filter(p => p.player_type === 'regular').length;
+            const guestPlayers = data.filter(p => p.player_type === 'guest').length;
+            
+            // 获取真实的内战总数
+            let totalInternalMatches = 0;
+            try {
+                totalInternalMatches = await window.winrateCalculator.getTotalInternalMatches();
+            } catch (error) {
+                console.error('获取内战总数失败:', error);
+            }
+            
+            const statsHtml = `
+                <div class="stat-card">
+                    <h3>总球员数</h3>
+                    <div class="stat-value">${totalPlayers}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>常规球员</h3>
+                    <div class="stat-value">${regularPlayers}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>外援</h3>
+                    <div class="stat-value">${guestPlayers}</div>
+                </div>
+                <div class="stat-card">
+                    <h3>内战数量</h3>
+                    <div class="stat-value">${totalInternalMatches}</div>
+                </div>
+            `;
+            
+            document.getElementById('winrate-stats').innerHTML = statsHtml;
+        }
+        
+        // 显示表格
+        function displayTable(allData) {
+            // 应用筛选器
+            const minMatches = parseInt(document.getElementById('min-matches').value);
+            const playerTypeFilter = document.getElementById('player-type-filter').value;
+            const sortField = document.getElementById('sort-field').value;
+            
+            let filteredData = allData.filter(player => {
+                if (player.total_matches < minMatches) return false;
+                if (playerTypeFilter !== 'all' && player.player_type !== playerTypeFilter) return false;
+                return true;
+            });
+            
+            // 排序
+            filteredData.sort((a, b) => {
+                return parseFloat(b[sortField]) - parseFloat(a[sortField]);
+            });
+            
+            if (filteredData.length === 0) {
+                showNoData('没有符合筛选条件的数据');
+                return;
+            }
+            
+            const tableHtml = `
+                <div class="table-header">
+                    <div class="col">排名</div>
+                    <div class="col">球员</div>
+                    <div class="col">总场次</div>
+                    <div class="col">胜场</div>
+                    <div class="col">平局</div>
+                    <div class="col">负场</div>
+                    <div class="col">胜率</div>
+                    <div class="col">类型</div>
+                </div>
+                ${filteredData.map((player, index) => {
+                    const winRate = parseFloat(player.win_rate);
+                    let winRateClass = 'winrate-low';
+                    if (winRate >= 60) winRateClass = 'winrate-high';
+                    else if (winRate >= 40) winRateClass = 'winrate-medium';
+                    
+                    return `
+                        <div class="player-row">
+                            <div class="rank ${index < 3 ? 'top3' : ''}">${index + 1}</div>
+                            <div class="player-name">${player.player_name}</div>
+                            <div>${player.total_matches}</div>
+                            <div>${player.wins}</div>
+                            <div>${player.draws}</div>
+                            <div>${player.losses}</div>
+                            <div class="winrate-value ${winRateClass}">${player.win_rate}%</div>
+                            <div><span class="player-type ${player.player_type}">${player.player_type === 'regular' ? '常规' : '外援'}</span></div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+            
+            document.getElementById('winrate-table-container').innerHTML = tableHtml;
+        }
+        
+        // 显示无数据状态
+        function showNoData(message = '暂无胜率数据') {
+            document.getElementById('winrate-stats').innerHTML = '';
+            document.getElementById('winrate-table-container').innerHTML = `<div class="no-data">${message}</div>`;
+        }
+    </script>
+</body>
+</html>
