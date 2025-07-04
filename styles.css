@@ -173,6 +173,16 @@ body {
 }
 
 /* 响应式导航栏 */
+@media screen and (max-width: 1024px) {
+    .nav-menu > li {
+        display: none !important;
+    }
+    
+    .hamburger {
+        display: flex !important;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .navbar {
         flex-direction: row;
@@ -188,27 +198,27 @@ body {
     }
 
     .hamburger {
-        display: flex;
+        display: flex !important;
     }
 
     .nav-menu {
-        position: fixed;
-        top: 60px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 60px);
-        background-color: #1E88E5;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        transition: left 0.3s ease;
-        z-index: 999;
-        padding-top: 2rem;
+        position: fixed !important;
+        top: 60px !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: calc(100vh - 60px) !important;
+        background-color: #1E88E5 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        transition: left 0.3s ease !important;
+        z-index: 999 !important;
+        padding-top: 2rem !important;
     }
 
     .nav-menu.active {
-        left: 0;
+        left: 0 !important;
     }
 
     .nav-menu > li {
