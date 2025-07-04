@@ -1,4 +1,4 @@
-/* 页面基础样式 - v2.4 */
+/* CSS v2.5 - 足球比赛记录系统样式 */
 * {
     margin: 0;
     padding: 0;
@@ -189,6 +189,7 @@ body {
     cursor: pointer;
     padding: 0.5rem;
     margin-right: 1rem;
+    align-self: center;
 }
 
 .hamburger span {
@@ -212,8 +213,12 @@ body {
     transform: rotate(45deg) translate(-5px, -6px);
 }
 
-/* 响应式导航栏 */
-@media screen and (max-width: 1024px) {
+/* 响应式导航栏 - 统一移动端样式 */
+@media screen and (max-width: 1200px) {
+    .nav-menu > li {
+        display: none;
+    }
+    
     .hamburger {
         display: flex !important;
     }
