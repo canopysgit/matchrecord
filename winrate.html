@@ -337,9 +337,12 @@
                 
                 <label for="sort-field">排序方式:</label>
                 <select id="sort-field">
-                    <option value="win_rate">按胜率</option>
-                    <option value="total_matches">按场次</option>
-                    <option value="wins">按胜场</option>
+                    <option value="win_rate_desc">按胜率(高到低)</option>
+                    <option value="win_rate_asc">按胜率(低到高)</option>
+                    <option value="total_matches_desc">按场次(多到少)</option>
+                    <option value="total_matches_asc">按场次(少到多)</option>
+                    <option value="wins_desc">按胜场(多到少)</option>
+                    <option value="wins_asc">按胜场(少到多)</option>
                 </select>
             </div>
         </div>
@@ -456,8 +459,18 @@
             });
             
             // 排序
+            const isDesc = sortField.endsWith('_desc');
+            const field = sortField.replace(/_desc$|_asc$/, '');
+            
             filteredData.sort((a, b) => {
-                return parseFloat(b[sortField]) - parseFloat(a[sortField]);
+                const valueA = parseFloat(a[field]);
+                const valueB = parseFloat(b[field]);
+                
+                if (isDesc) {
+                    return valueB - valueA; // 降序：大到小
+                } else {
+                    return valueA - valueB; // 升序：小到大
+                }
             });
             
             if (filteredData.length === 0) {
