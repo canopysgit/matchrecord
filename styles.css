@@ -1,8 +1,36 @@
-/* 页面基础样式 */
+/* 页面基础样式 - v2.1 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+/* 强制移动端菜单隐藏 */
+@media screen and (max-width: 1200px) {
+    .nav-menu {
+        display: none !important;
+        position: fixed !important;
+        top: 60px !important;
+        left: -100% !important;
+        width: 100% !important;
+        height: calc(100vh - 60px) !important;
+        background-color: #1E88E5 !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        transition: left 0.3s ease !important;
+        z-index: 999 !important;
+        padding-top: 2rem !important;
+    }
+    
+    .nav-menu.active {
+        display: flex !important;
+        left: 0 !important;
+    }
+    
+    .hamburger {
+        display: flex !important;
+    }
 }
 
 body {
