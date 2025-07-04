@@ -142,31 +142,119 @@ body {
     color: #1E88E5;
 }
 
+/* 汉堡菜单按钮 */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-right: 1rem;
+}
+
+.hamburger span {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+.hamburger.active span:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
 /* 响应式导航栏 */
 @media screen and (max-width: 768px) {
     .navbar {
-        flex-direction: column;
-        height: auto;
-        padding: 1rem;
+        flex-direction: row;
+        height: 60px;
+        padding: 0;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .nav-brand {
-        padding: 1rem;
-        justify-content: center;
+        padding: 0 1rem;
+        justify-content: flex-start;
+    }
+
+    .hamburger {
+        display: flex;
     }
 
     .nav-menu {
-        flex-direction: column;
+        position: fixed;
+        top: 60px;
+        left: -100%;
         width: 100%;
+        height: calc(100vh - 60px);
+        background-color: #1E88E5;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        transition: left 0.3s ease;
+        z-index: 999;
+        padding-top: 2rem;
+    }
+
+    .nav-menu.active {
+        left: 0;
     }
 
     .nav-menu > li {
-        width: 100%;
+        width: 90%;
+        margin-bottom: 0.5rem;
     }
 
     .nav-menu a {
         padding: 1rem;
         justify-content: center;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .nav-menu a:hover {
+        background-color: rgba(255,255,255,0.2);
+    }
+
+    /* 下拉菜单在移动端的调整 */
+    .dropdown-content {
+        position: static;
+        display: block;
+        background-color: rgba(255,255,255,0.1);
+        box-shadow: none;
+        border-radius: 8px;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown-content a {
+        color: white;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding: 0.8rem 1rem;
+    }
+
+    .dropdown-content a:hover {
+        background-color: rgba(255,255,255,0.1);
+        color: white;
+    }
+
+    .dropdown-content a.active {
+        background-color: rgba(255,255,255,0.2);
+        color: white;
     }
 }
 

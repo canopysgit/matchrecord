@@ -503,6 +503,11 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
         <div class="nav-brand">丛莱梅蔬果足球队</div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
         <ul class="nav-menu">
             <li><a href="index.html">首页</a></li>
             <li><a href="signup.html">比赛报名</a></li>
@@ -1008,6 +1013,40 @@
         closeEditModal();
         window.location.reload();
     }
+
+    // 汉堡菜单切换
+    function toggleMenu() {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    }
+
+    // 点击菜单项时关闭菜单
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.nav-menu a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const hamburger = document.querySelector('.hamburger');
+                const navMenu = document.querySelector('.nav-menu');
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+    });
+
+    // 点击页面其他地方时关闭菜单
+    document.addEventListener('click', function(event) {
+        const navbar = document.querySelector('.navbar');
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (!navbar.contains(event.target) && navMenu.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    });
     </script>
 </body>
 </html>

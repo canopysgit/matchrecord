@@ -11,6 +11,11 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
         <div class="nav-brand">⚽ 足球队管理系统</div>
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
         <ul class="nav-menu">
             <li><a href="index.html">首页</a></li>
             <li><a href="signup.html">比赛报名</a></li>
@@ -1237,6 +1242,37 @@
         
         countElement.textContent = currentValue;
     }
+    
+    // 汉堡菜单控制函数
+    function toggleMenu() {
+        const navMenu = document.querySelector('.nav-menu');
+        const hamburger = document.querySelector('.hamburger');
+        
+        navMenu.classList.toggle('active');
+        hamburger.classList.toggle('active');
+    }
+    
+    // 点击菜单项或页面其他区域时关闭菜单
+    document.addEventListener('DOMContentLoaded', function() {
+        // 点击菜单项时关闭菜单
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.nav-menu').classList.remove('active');
+                document.querySelector('.hamburger').classList.remove('active');
+            });
+        });
+        
+        // 点击页面其他区域时关闭菜单
+        document.addEventListener('click', function(e) {
+            const navMenu = document.querySelector('.nav-menu');
+            const hamburger = document.querySelector('.hamburger');
+            
+            if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                navMenu.classList.remove('active');
+                hamburger.classList.remove('active');
+            }
+        });
+    });
     </script>
 </body>
-</html> 
+</html>
