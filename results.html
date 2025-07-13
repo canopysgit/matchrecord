@@ -522,6 +522,135 @@
         min-width: 40px;
         text-align: right;
     }
+
+    /* 移动端响应式样式 */
+    @media (max-width: 768px) {
+        .match-card {
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .match-header {
+            padding: 1rem;
+        }
+        
+        .match-date {
+            font-size: 1.2rem;
+        }
+        
+        .match-meta {
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .match-score-section {
+            padding: 1.5rem 1rem;
+            gap: 2rem;
+        }
+        
+        .score {
+            font-size: 2rem;
+        }
+        
+        .match-players-section {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 1rem;
+        }
+        
+        .team-players h4 {
+            font-size: 1.1rem;
+        }
+        
+        .player-tag {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+        
+        .match-stats-section {
+            padding: 1.5rem 1rem;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .team-stats {
+            padding: 1rem;
+        }
+        
+        .team-stats h4 {
+            font-size: 1.1rem;
+        }
+        
+        .stats-category {
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .stats-category h5 {
+            font-size: 0.9rem;
+            margin-bottom: 0.6rem;
+        }
+        
+        .stats-category li {
+            padding: 0.4rem 0.3rem;
+            font-size: 0.85rem;
+        }
+        
+        .match-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1rem;
+        }
+        
+        /* 编辑弹窗移动端优化 */
+        .modal-content.large-modal {
+            margin: 2vh auto;
+            width: 95%;
+            max-height: 96vh;
+            padding: 1rem;
+        }
+        
+        .edit-score-section {
+            padding: 1rem;
+        }
+        
+        .team-edit {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stats-input-group {
+            flex-direction: column;
+            gap: 0.3rem;
+            align-items: stretch;
+        }
+        
+        .player-select,
+        .stats-count {
+            width: 100%;
+            padding: 0.5rem;
+        }
+        
+        .remove-stats-btn {
+            align-self: flex-end;
+            width: auto;
+            padding: 0.4rem 0.8rem;
+        }
+    }
     </style>
 
     <!-- 添加 Font Awesome 图标库 -->
