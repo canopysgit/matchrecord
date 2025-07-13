@@ -487,15 +487,40 @@
     }
 
     .stats-category li {
-        padding: 0.5rem;
+        padding: 0.3rem 0.5rem;
         border-bottom: 1px solid #eee;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        font-size: 0.9rem;
+        line-height: 1.2;
     }
 
     .stats-category li:last-child {
         border-bottom: none;
+    }
+
+    /* 球员统计数据优化显示 */
+    .player-stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .player-name {
+        font-weight: 500;
+        color: #333;
+        flex: 1;
+        text-align: left;
+    }
+
+    .stat-count {
+        font-weight: bold;
+        color: #1E88E5;
+        font-size: 0.85rem;
+        min-width: 40px;
+        text-align: right;
     }
     </style>
 
@@ -535,10 +560,6 @@
         <a href="index.html" class="mobile-nav-item">
             <div class="mobile-nav-icon"><i class="fas fa-home"></i></div>
             <div class="mobile-nav-text">首页</div>
-        </a>
-        <a href="signup.html" class="mobile-nav-item">
-            <div class="mobile-nav-icon"><i class="fas fa-user-plus"></i></div>
-            <div class="mobile-nav-text">报名</div>
         </a>
         <a href="results.html" class="mobile-nav-item active">
             <div class="mobile-nav-icon"><i class="fas fa-trophy"></i></div>
@@ -803,7 +824,7 @@
                 <ul>
                     ${sortedByGoals.length > 0 
                         ? sortedByGoals.map(stat => 
-                            `<li>${stat.player_name} ${stat.goals}球</li>`
+                            `<li><div class="player-stat-item"><span class="player-name">${stat.player_name}</span><span class="stat-count">${stat.goals}球</span></div></li>`
                         ).join('')
                         : '<li>无</li>'
                     }
@@ -814,7 +835,7 @@
                 <ul>
                     ${sortedByAssists.length > 0 
                         ? sortedByAssists.map(stat => 
-                            `<li>${stat.player_name} ${stat.assists}次</li>`
+                            `<li><div class="player-stat-item"><span class="player-name">${stat.player_name}</span><span class="stat-count">${stat.assists}次</span></div></li>`
                         ).join('')
                         : '<li>无</li>'
                     }
