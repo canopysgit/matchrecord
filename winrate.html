@@ -209,9 +209,7 @@
             font-weight: bold;
         }
 
-        .rank.top3 {
-            color: #f39c12;
-        }
+
 
         .player-name {
             font-weight: 500;
@@ -271,26 +269,188 @@
             text-decoration: underline;
         }
 
+        /* 移动端卡片布局 */
+        .mobile-player-cards {
+            display: none;
+            padding: 0 8px;
+        }
+        
+        .player-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #e0e0e0;
+        }
+        
+
+        
+        .player-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        
+        .player-card-rank {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            color: #666;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            min-width: 32px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+
+        
+        .player-card-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            flex: 1;
+            margin: 0 16px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .player-card-type {
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .player-card-type.regular {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
+        
+        .player-card-type.guest {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffcc02 100%);
+            color: #e65100;
+            border: 1px solid #ffb74d;
+        }
+        
+        .player-card-stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .stat-item.highlight {
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+            border: 2px solid #4caf50;
+            box-shadow: 0 2px 8px rgba(76,175,80,0.2);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 6px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .stat-value.winrate.winrate-high {
+            color: #27ae60;
+            text-shadow: 0 1px 2px rgba(39,174,96,0.2);
+        }
+        
+        .stat-value.winrate.winrate-medium {
+            color: #f39c12;
+            text-shadow: 0 1px 2px rgba(243,156,18,0.2);
+        }
+        
+        .stat-value.winrate.winrate-low {
+            color: #e74c3c;
+            text-shadow: 0 1px 2px rgba(231,76,60,0.2);
+        }
+        
+        .player-card-details {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 12px 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .detail-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .detail-label {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             .winrate-container {
                 padding: 1rem;
             }
-
+            
             .control-panel {
                 flex-direction: column;
-                text-align: center;
+                gap: 1rem;
             }
 
-            .table-header,
-            .player-row {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
+            .winrate-table {
+                display: none;
             }
-
-            .table-header .col,
-            .player-row > div {
-                padding: 0.5rem;
-                text-align: center;
+            
+            .mobile-player-cards {
+                display: block;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-player-cards {
+                display: none;
             }
         }
     </style>
@@ -298,18 +458,17 @@
 <body>
     <nav class="navbar">
         <div class="nav-brand">丛莱梅蔬果足球队</div>
+        <ul class="nav-menu">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="results.html">比赛结果</a></li>
+            <li><a href="stats.html">球员统计</a></li>
+            <li><a href="winrate.html" class="active">胜率统计</a></li>
+        </ul>
         <div class="hamburger" onclick="toggleMenu()">
             <span></span>
             <span></span>
             <span></span>
         </div>
-        <ul class="nav-menu">
-            <li><a href="index.html">首页</a></li>
-            <li><a href="signup.html">比赛报名</a></li>
-            <li><a href="results.html">比赛结果</a></li>
-            <li><a href="stats.html">球员统计</a></li>
-            <li><a href="winrate.html" class="active">胜率统计</a></li>
-        </ul>
     </nav>
     
     <main class="container">
@@ -339,7 +498,7 @@
                 <label for="player-type-filter">球员类型:</label>
                 <select id="player-type-filter">
                     <option value="all">全部</option>
-                    <option value="regular">常规球员</option>
+                    <option value="regular" selected>常规球员</option>
                     <option value="guest">外援</option>
                 </select>
                 
@@ -362,6 +521,11 @@
         <div id="winrate-table-container" class="winrate-table">
             <div class="no-data">请先计算胜率数据</div>
         </div>
+        
+        <!-- 移动端卡片容器 -->
+        <div id="mobile-cards-container" class="mobile-player-cards">
+            <!-- 移动端卡片将在这里动态生成 -->
+        </div>
     </main>
     
     <!-- 移动端底部导航栏 -->
@@ -369,10 +533,6 @@
         <a href="index.html" class="mobile-nav-item">
             <div class="mobile-nav-icon"><i class="fas fa-home"></i></div>
             <div class="mobile-nav-text">首页</div>
-        </a>
-        <a href="signup.html" class="mobile-nav-item">
-            <div class="mobile-nav-icon"><i class="fas fa-user-plus"></i></div>
-            <div class="mobile-nav-text">报名</div>
         </a>
         <a href="results.html" class="mobile-nav-item">
             <div class="mobile-nav-icon"><i class="fas fa-trophy"></i></div>
@@ -510,6 +670,7 @@
                 return;
             }
             
+            // 桌面版表格HTML
             const tableHtml = `
                 <div class="table-header">
                     <div class="col">排名</div>
@@ -529,7 +690,7 @@
                     
                     return `
                         <div class="player-row">
-                            <div class="rank ${index < 3 ? 'top3' : ''}">${index + 1}</div>
+                            <div class="rank">${index + 1}</div>
                             <div class="player-name">${player.player_name}</div>
                             <div>${player.total_matches}</div>
                             <div>${player.wins}</div>
@@ -542,13 +703,59 @@
                 }).join('')}
             `;
             
+            // 移动端卡片HTML
+            const mobileCardsHtml = filteredData.map((player, index) => {
+                const winRate = parseFloat(player.win_rate);
+                let winRateClass = 'winrate-low';
+                if (winRate >= 60) winRateClass = 'winrate-high';
+                else if (winRate >= 40) winRateClass = 'winrate-medium';
+                
+                return `
+                    <div class="player-card">
+                        <div class="player-card-header">
+                            <div class="player-card-rank">${index + 1}</div>
+                            <div class="player-card-name">${player.player_name}</div>
+                            <div class="player-card-type ${player.player_type}">${player.player_type === 'regular' ? '常规' : '外援'}</div>
+                        </div>
+                        
+                        <div class="player-card-stats">
+                            <div class="stat-item highlight">
+                                <div class="stat-label">胜率</div>
+                                <div class="stat-value winrate ${winRateClass}">${player.win_rate}%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">总场次</div>
+                                <div class="stat-value">${player.total_matches}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="player-card-details">
+                            <div class="detail-item">
+                                <div class="detail-label">胜场</div>
+                                <div class="detail-value">${player.wins}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">平局</div>
+                                <div class="detail-value">${player.draws}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">负场</div>
+                                <div class="detail-value">${player.losses}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
             document.getElementById('winrate-table-container').innerHTML = tableHtml;
+            document.getElementById('mobile-cards-container').innerHTML = mobileCardsHtml;
         }
         
         // 显示无数据状态
         function showNoData(message = '暂无胜率数据') {
             document.getElementById('winrate-stats').innerHTML = '';
             document.getElementById('winrate-table-container').innerHTML = `<div class="no-data">${message}</div>`;
+            document.getElementById('mobile-cards-container').innerHTML = '';
         }
         
         // 汉堡菜单控制函数

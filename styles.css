@@ -5,6 +5,11 @@
     box-sizing: border-box;
 }
 
+/* 桌面版隐藏底部导航栏 */
+.mobile-bottom-nav {
+    display: none;
+}
+
 /* 移动端底部导航栏 */
 @media screen and (max-width: 768px) {
     /* 隐藏原有的导航菜单和汉堡按钮 */
