@@ -68,6 +68,7 @@ export default function Home() {
       // Win rate (only regular players on homepage)
       const { data: winrate } = await supabase.from(tables.playerWinrate).select('*')
         .eq('player_type', 'regular')
+        .gte('total_matches', 3)
         .order('win_rate', { ascending: false }).limit(5)
       setTopWinRate((winrate as WinRateRow[]) || [])
     } catch (err) {
@@ -133,7 +134,7 @@ export default function Home() {
           {topAttendance.length === 0 && <EmptyRank />}
         </RankCard>
 
-        <RankCard title="胜率榜 TOP5" icon={<TrendingUp className="w-5 h-5" />} link="/winrate">
+        <RankCard title="胜率榜 TOP5（3场以上）" icon={<TrendingUp className="w-5 h-5" />} link="/winrate">
           {topWinRate.map((p, i) => (
             <RankRow key={p.player_name} rank={i + 1} name={p.player_name} value={`${p.win_rate}%`} />
           ))}
