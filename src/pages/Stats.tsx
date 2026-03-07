@@ -57,7 +57,7 @@ export default function Stats() {
   if (loading) return <div className="text-center py-20 text-gray-500">加载中...</div>
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-3xl mx-auto space-y-4">
       <h1 className="text-2xl font-bold text-gray-800">{season}年数据统计</h1>
 
       {/* Board tabs */}

@@ -42,7 +42,7 @@ export default function WinRate() {
   if (loading) return <div className="text-center py-20 text-gray-500">加载中...</div>
 
   return (
-    <div className="space-y-4">
+    <div className="max-w-3xl mx-auto space-y-4">
       <div className="text-center">
         <h1 className="text-2xl font-bold text-gray-800">{season}年球员胜率统计</h1>
         <p className="text-gray-500 text-sm mt-1">仅统计内战数据</p>
