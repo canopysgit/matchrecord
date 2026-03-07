@@ -8,8 +8,8 @@ type SortField = 'win_rate' | 'total_matches' | 'wins'
 export default function WinRate() {
   const { season } = useSeason()
   const [data, setData] = useState<WinRateRow[]>([])
-  const [minMatches, setMinMatches] = useState(0)
-  const [playerType, setPlayerType] = useState<'all' | 'regular' | 'guest'>('all')
+  const [minMatches, setMinMatches] = useState(3)
+  const [playerType, setPlayerType] = useState<'all' | 'regular' | 'guest'>('regular')
   const [sortField, setSortField] = useState<SortField>('win_rate')
   const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc')
   const [loading, setLoading] = useState(true)
