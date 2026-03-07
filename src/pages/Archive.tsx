@@ -193,9 +193,13 @@ function ArchiveTeamStats({ label, stats }: { label: string; stats: MatchStat[] 
 }
 
 /* ─── Stats Tab ─── */
+type ArchivePlayerFilter = 'regular' | 'guest' | 'all'
+
 function ArchiveStats({ season }: { season: number }) {
   const [players, setPlayers] = useState<PlayerStatRow[]>([])
+  const [guestNames, setGuestNames] = useState<Set<string>>(new Set())
   const [board, setBoard] = useState<'attendance' | 'goals' | 'assists'>('goals')
+  const [playerFilter, setPlayerFilter] = useState<ArchivePlayerFilter>('regular')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { loadData() }, [season])
@@ -203,7 +207,14 @@ function ArchiveStats({ season }: { season: number }) {
   async function loadData() {
     setLoading(true)
     const tables = getTableNames(season)
-    const { data } = await supabase.from(tables.playerStats).select('*')
+    const [{ data }, { data: playersList }] = await Promise.all([
+      supabase.from(tables.playerStats).select('*'),
+      supabase.from('players').select('name, player_type'),
+    ])
+    const guests = new Set(
+      (playersList || []).filter(p => p.player_type === 'guest').map(p => p.name)
+    )
+    setGuestNames(guests)
     setPlayers((data || []) as PlayerStatRow[])
     setLoading(false)
   }
@@ -213,7 +224,13 @@ function ArchiveStats({ season }: { season: number }) {
     return (p[key] as number) || 0
   }
 
-  const sorted = [...players]
+  const filtered = players.filter(p => {
+    if (playerFilter === 'regular') return !guestNames.has(p.player_name)
+    if (playerFilter === 'guest') return guestNames.has(p.player_name)
+    return true
+  })
+
+  const sorted = [...filtered]
     .filter(p => getValue(p) > 0)
     .sort((a, b) => getValue(b) - getValue(a))
 
@@ -224,7 +241,7 @@ function ArchiveStats({ season }: { season: number }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         {(Object.keys(boardLabels) as (keyof typeof boardLabels)[]).map(b => (
           <button
             key={b}
@@ -234,6 +251,18 @@ function ArchiveStats({ season }: { season: number }) {
             }`}
           >
             {boardLabels[b]}
+          </button>
+        ))}
+        <span className="text-gray-300 mx-1">|</span>
+        {([['regular', '主力'], ['guest', '外援'], ['all', '全部']] as [ArchivePlayerFilter, string][]).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setPlayerFilter(key)}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
+              playerFilter === key ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+            }`}
+          >
+            {label}
           </button>
         ))}
       </div>
@@ -264,6 +293,7 @@ function ArchiveStats({ season }: { season: number }) {
 /* ─── Win Rate Tab ─── */
 function ArchiveWinRate({ season }: { season: number }) {
   const [data, setData] = useState<WinRateRow[]>([])
+  const [playerType, setPlayerType] = useState<'all' | 'regular' | 'guest'>('regular')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => { loadData() }, [season])
@@ -277,7 +307,7 @@ function ArchiveWinRate({ season }: { season: number }) {
   }
 
   const sorted = [...data]
-    .filter(p => p.total_matches >= 3)
+    .filter(p => playerType === 'all' || p.player_type === playerType)
     .sort((a, b) => b.win_rate - a.win_rate)
 
   const winRateClass = (rate: number) =>
@@ -287,7 +317,21 @@ function ArchiveWinRate({ season }: { season: number }) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-gray-500 text-center">仅统计内战数据 | 最少3场</p>
+      <div className="flex flex-wrap justify-center items-center gap-2">
+        <p className="text-sm text-gray-500">仅统计内战数据</p>
+        <span className="text-gray-300 mx-1">|</span>
+        {([['regular', '主力'], ['guest', '外援'], ['all', '全部']] as ['regular' | 'guest' | 'all', string][]).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setPlayerType(key)}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
+              playerType === key ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
 
       {/* Desktop */}
       <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden">
