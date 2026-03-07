@@ -57,8 +57,8 @@ export default function Home() {
         const sorted = stats as PlayerStatRow[]
         const regularsOnly = sorted.filter(p => !guestNames.has(p.player_name))
         setTopScorers([...regularsOnly].sort((a, b) => b.goals_total - a.goals_total).slice(0, 5))
-        setTopAssists([...sorted].sort((a, b) => b.assists_total - a.assists_total).slice(0, 5))
-        setTopAttendance([...sorted].sort((a, b) => b.attendance_total - a.attendance_total).slice(0, 5))
+        setTopAssists([...regularsOnly].sort((a, b) => b.assists_total - a.assists_total).slice(0, 5))
+        setTopAttendance([...regularsOnly].sort((a, b) => b.attendance_total - a.attendance_total).slice(0, 5))
       } else {
         setTopScorers([])
         setTopAssists([])

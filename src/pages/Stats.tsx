@@ -19,8 +19,15 @@ export default function Stats() {
   async function loadData() {
     setLoading(true)
     const tables = getTableNames(season)
-    const { data } = await supabase.from(tables.playerStats).select('*')
-    setPlayers((data || []) as PlayerStatRow[])
+    const [{ data }, { data: playersList }] = await Promise.all([
+      supabase.from(tables.playerStats).select('*'),
+      supabase.from('players').select('name, player_type'),
+    ])
+    const guestNames = new Set(
+      (playersList || []).filter(p => p.player_type === 'guest').map(p => p.name)
+    )
+    const regulars = ((data || []) as PlayerStatRow[]).filter(p => !guestNames.has(p.player_name))
+    setPlayers(regulars)
     setLoading(false)
   }
 
