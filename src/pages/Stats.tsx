@@ -6,11 +6,15 @@ import type { PlayerStatRow } from '../lib/types'
 type Board = 'attendance' | 'goals' | 'assists'
 type SubType = 'total' | 'internal' | 'external'
 
+type PlayerFilter = 'regular' | 'guest' | 'all'
+
 export default function Stats() {
   const { season } = useSeason()
-  const [players, setPlayers] = useState<PlayerStatRow[]>([])
+  const [allPlayers, setAllPlayers] = useState<PlayerStatRow[]>([])
+  const [guestNames, setGuestNames] = useState<Set<string>>(new Set())
   const [board, setBoard] = useState<Board>('attendance')
   const [subType, setSubType] = useState<SubType>('total')
+  const [playerFilter, setPlayerFilter] = useState<PlayerFilter>('regular')
   const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc')
   const [loading, setLoading] = useState(true)
 
@@ -23,11 +27,11 @@ export default function Stats() {
       supabase.from(tables.playerStats).select('*'),
       supabase.from('players').select('name, player_type'),
     ])
-    const guestNames = new Set(
+    const guests = new Set(
       (playersList || []).filter(p => p.player_type === 'guest').map(p => p.name)
     )
-    const regulars = ((data || []) as PlayerStatRow[]).filter(p => !guestNames.has(p.player_name))
-    setPlayers(regulars)
+    setGuestNames(guests)
+    setAllPlayers((data || []) as PlayerStatRow[])
     setLoading(false)
   }
 
@@ -36,7 +40,13 @@ export default function Stats() {
     return (p[key] as number) || 0
   }
 
-  const sorted = [...players]
+  const filtered = allPlayers.filter(p => {
+    if (playerFilter === 'regular') return !guestNames.has(p.player_name)
+    if (playerFilter === 'guest') return guestNames.has(p.player_name)
+    return true
+  })
+
+  const sorted = [...filtered]
     .filter(p => getValue(p) > 0 || board === 'attendance')
     .sort((a, b) => sortDir === 'desc' ? getValue(b) - getValue(a) : getValue(a) - getValue(b))
 
@@ -65,8 +75,8 @@ export default function Stats() {
         ))}
       </div>
 
-      {/* Sub-type tabs */}
-      <div className="flex justify-center gap-2">
+      {/* Sub-type tabs + player filter */}
+      <div className="flex flex-wrap justify-center gap-2">
         {(Object.keys(subLabels) as SubType[]).map(st => (
           <button
             key={st}
@@ -76,6 +86,18 @@ export default function Stats() {
             }`}
           >
             {subLabels[st]}
+          </button>
+        ))}
+        <span className="text-gray-300 mx-1">|</span>
+        {([['regular', '主力'], ['guest', '外援'], ['all', '全部']] as [PlayerFilter, string][]).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setPlayerFilter(key)}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
+              playerFilter === key ? 'bg-amber-100 text-amber-700' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+            }`}
+          >
+            {label}
           </button>
         ))}
       </div>
