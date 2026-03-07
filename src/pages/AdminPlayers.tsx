@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, getTableNames } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
+import { useSeason } from '../contexts/SeasonContext'
 import { Search, UserPlus, ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import type { Player } from '../lib/types'
 
 export default function AdminPlayers() {
   const { session } = useAuth()
+  const { season } = useSeason()
   const navigate = useNavigate()
   const [players, setPlayers] = useState<Player[]>([])
+  const [seasonPlayerNames, setSeasonPlayerNames] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState<'all' | 'regular' | 'guest'>('all')
+  const [seasonFilter, setSeasonFilter] = useState<'season' | 'all'>('season')
   const [loading, setLoading] = useState(true)
   const [expandedId, setExpandedId] = useState<number | null>(null)
 
@@ -27,12 +31,17 @@ export default function AdminPlayers() {
   useEffect(() => {
     if (!session) { navigate('/login'); return }
     loadPlayers()
-  }, [session])
+  }, [session, season])
 
   async function loadPlayers() {
     setLoading(true)
-    const { data } = await supabase.from('players').select('*').eq('is_active', true).order('name')
+    const tables = getTableNames(season)
+    const [{ data }, { data: statsData }] = await Promise.all([
+      supabase.from('players').select('*').eq('is_active', true).order('name'),
+      supabase.from(tables.playerStats).select('player_name'),
+    ])
     setPlayers((data || []) as Player[])
+    setSeasonPlayerNames(new Set((statsData || []).map(r => r.player_name)))
     setLoading(false)
   }
 
@@ -85,6 +94,7 @@ export default function AdminPlayers() {
   }
 
   const filtered = players
+    .filter(p => seasonFilter === 'all' || seasonPlayerNames.has(p.name))
     .filter(p => filterType === 'all' || p.player_type === filterType)
     .filter(p => {
       if (!search) return true
@@ -93,8 +103,9 @@ export default function AdminPlayers() {
         (p.aliases || []).some(a => a.toLowerCase().includes(q))
     })
 
-  const regularCount = players.filter(p => p.player_type === 'regular').length
-  const guestCount = players.filter(p => p.player_type === 'guest').length
+  const seasonPlayers = players.filter(p => seasonFilter === 'all' || seasonPlayerNames.has(p.name))
+  const regularCount = seasonPlayers.filter(p => p.player_type === 'regular').length
+  const guestCount = seasonPlayers.filter(p => p.player_type === 'guest').length
 
   if (loading) return <div className="text-center py-20 text-gray-500">加载中...</div>
 
@@ -111,8 +122,8 @@ export default function AdminPlayers() {
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white rounded-xl p-3 shadow-sm text-center">
-          <div className="text-xs text-gray-500">总球员</div>
-          <div className="text-xl font-bold text-blue-600">{players.length}</div>
+          <div className="text-xs text-gray-500">{seasonFilter === 'season' ? `${season}赛季` : '全部'}球员</div>
+          <div className="text-xl font-bold text-blue-600">{seasonPlayers.length}</div>
         </div>
         <div className="bg-white rounded-xl p-3 shadow-sm text-center">
           <div className="text-xs text-gray-500">主力</div>
@@ -132,6 +143,15 @@ export default function AdminPlayers() {
             placeholder="搜索球员或别名..." className="flex-1 text-sm outline-none" />
         </div>
         <div className="flex gap-1.5">
+          {([['season', `${season}赛季`], ['all', '全部球员']] as ['season' | 'all', string][]).map(([key, label]) => (
+            <button key={key} onClick={() => setSeasonFilter(key)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
+                seasonFilter === key ? 'bg-green-100 text-green-700' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'
+              }`}>
+              {label}
+            </button>
+          ))}
+          <span className="text-gray-300">|</span>
           {([['all', '全部'], ['regular', '主力'], ['guest', '外援']] as ['all' | 'regular' | 'guest', string][]).map(([key, label]) => (
             <button key={key} onClick={() => setFilterType(key)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition ${
