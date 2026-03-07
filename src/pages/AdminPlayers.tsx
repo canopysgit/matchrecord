@@ -72,6 +72,18 @@ export default function AdminPlayers() {
     setSaving(null)
   }
 
+  async function removeAlias(player: Player, alias: string) {
+    const newAliases = (player.aliases || []).filter(a => a !== alias)
+    setSaving(player.id)
+    const { error } = await supabase.from('players')
+      .update({ aliases: newAliases })
+      .eq('id', player.id)
+    if (!error) {
+      setPlayers(prev => prev.map(p => p.id === player.id ? { ...p, aliases: newAliases } : p))
+    }
+    setSaving(null)
+  }
+
   async function addNewPlayer() {
     const name = newName.trim()
     if (!name) return
@@ -199,7 +211,12 @@ export default function AdminPlayers() {
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {(player.aliases || []).map(alias => (
-                    <span key={alias} className="px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-600">{alias}</span>
+                    <span key={alias} className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-600">
+                      {alias}
+                      <button onClick={() => removeAlias(player, alias)}
+                        disabled={saving === player.id}
+                        className="text-gray-400 hover:text-red-500 ml-0.5">&times;</button>
+                    </span>
                   ))}
                   {(!player.aliases || player.aliases.length === 0) && (
                     <span className="text-xs text-gray-300">无别名</span>
