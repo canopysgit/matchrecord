@@ -7,6 +7,7 @@ import WinRate from './pages/WinRate'
 import Login from './pages/Login'
 import MatchSignup from './pages/MatchSignup'
 import MatchRecord from './pages/MatchRecord'
+import AdminPlayers from './pages/AdminPlayers'
 import Archive from './pages/Archive'
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="admin/signup" element={<MatchSignup />} />
         <Route path="admin/record" element={<MatchRecord />} />
+        <Route path="admin/players" element={<AdminPlayers />} />
       </Route>
     </Routes>
   )

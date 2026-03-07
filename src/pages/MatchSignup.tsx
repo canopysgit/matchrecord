@@ -32,10 +32,13 @@ export default function MatchSignup() {
   const [blueCaptain, setBlueCaptain] = useState('')
   const [airDropPlayers, setAirDropPlayers] = useState<string[]>([])
 
-  // New player dialog
+  // New player dialogs
   const [showNewPlayer, setShowNewPlayer] = useState(false)
   const [newPlayerName, setNewPlayerName] = useState('')
   const [newPlayerType, setNewPlayerType] = useState<'regular' | 'guest'>('guest')
+  const [showNewPlayersConfirm, setShowNewPlayersConfirm] = useState(false)
+  const [pendingNewPlayers, setPendingNewPlayers] = useState<string[]>([])
+  const [addingNewPlayers, setAddingNewPlayers] = useState(false)
 
   useEffect(() => {
     if (!session) { navigate('/login'); return }
@@ -70,7 +73,14 @@ export default function MatchSignup() {
       setWhiteCaptain(data.whiteCaptain || '')
       setBlueCaptain(data.blueCaptain || '')
       setAirDropPlayers(data.airDropPlayers || [])
-      setUnknownPlayers(data.unknownPlayers || [])
+
+      // Detect new players not in database
+      const unknown = data.unknownPlayers || []
+      setUnknownPlayers(unknown)
+      if (unknown.length > 0) {
+        setPendingNewPlayers(unknown)
+        setShowNewPlayersConfirm(true)
+      }
     } catch (err) {
       setError(`AI解析失败: ${err instanceof Error ? err.message : '未知错误'}`)
     } finally {
@@ -93,6 +103,24 @@ export default function MatchSignup() {
     await loadPlayers()
     setShowNewPlayer(false)
     setNewPlayerName('')
+  }
+
+  async function confirmAddNewPlayers() {
+    if (pendingNewPlayers.length === 0) return
+    setAddingNewPlayers(true)
+    const rows = pendingNewPlayers.map(name => ({
+      name, player_type: 'guest' as const, is_active: true, aliases: [],
+    }))
+    const { error } = await supabase.from('players').insert(rows)
+    if (error) {
+      setError(`批量添加球员失败: ${error.message}`)
+    } else {
+      await loadPlayers()
+      setUnknownPlayers([])
+    }
+    setAddingNewPlayers(false)
+    setShowNewPlayersConfirm(false)
+    setPendingNewPlayers([])
   }
 
   async function handleSave() {
@@ -306,7 +334,7 @@ export default function MatchSignup() {
         </div>
       )}
 
-      {/* New player dialog */}
+      {/* Single new player dialog */}
       {showNewPlayer && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 max-w-sm w-full">
@@ -323,6 +351,34 @@ export default function MatchSignup() {
             <div className="flex gap-3 justify-end mt-4">
               <button onClick={() => setShowNewPlayer(false)} className="px-4 py-2 rounded-lg border">取消</button>
               <button onClick={addNewPlayer} className="px-4 py-2 rounded-lg bg-blue-600 text-white">添加</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Batch new players confirmation dialog */}
+      {showNewPlayersConfirm && pendingNewPlayers.length > 0 && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+            <h3 className="text-lg font-bold mb-2">发现新球员</h3>
+            <p className="text-sm text-gray-500 mb-4">以下球员不在数据库中，确认添加为外援？</p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {pendingNewPlayers.map(name => (
+                <span key={name} className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-sm text-amber-800">
+                  {name}
+                  <button onClick={() => setPendingNewPlayers(prev => prev.filter(n => n !== name))}
+                    className="text-amber-400 hover:text-red-500 ml-0.5">&times;</button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => { setShowNewPlayersConfirm(false); setPendingNewPlayers([]) }}
+                className="px-4 py-2 rounded-lg border text-sm">跳过</button>
+              <button onClick={confirmAddNewPlayers} disabled={addingNewPlayers}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 disabled:bg-gray-400 transition flex items-center gap-1.5">
+                <UserPlus className="w-4 h-4" />
+                {addingNewPlayers ? '添加中...' : `确认添加 ${pendingNewPlayers.length} 名球员`}
+              </button>
             </div>
           </div>
         </div>
