@@ -169,11 +169,16 @@ export default function Results() {
 }
 
 function TeamRoster({ label, players, captain }: { label: string; players: MatchPlayer[]; captain?: string }) {
+  const sorted = [...players].sort((a, b) => {
+    if (a.player_name === captain) return -1
+    if (b.player_name === captain) return 1
+    return 0
+  })
   return (
     <div>
       <h4 className="font-semibold text-blue-600 mb-2 text-sm">{label}</h4>
       <div className="flex flex-wrap gap-1.5">
-        {players.map(p => (
+        {sorted.map(p => (
           <span key={p.id} className={`px-3 py-1 rounded-full text-sm shadow-sm border ${
             captain === p.player_name ? 'bg-amber-50 border-amber-300 font-semibold' : 'bg-white'
           }`}>
