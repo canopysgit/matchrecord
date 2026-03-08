@@ -142,8 +142,8 @@ export default function Results() {
               <div className="p-4 border-t">
                 <h3 className="text-center font-semibold text-blue-600 mb-3">数据统计</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <TeamStats label="白队" stats={whiteStats} />
-                  <TeamStats label="蓝队" stats={blueStats} />
+                  <TeamStats label="白队" stats={whiteStats} score={match.white_score} />
+                  <TeamStats label="蓝队" stats={blueStats} score={match.blue_score} />
                 </div>
               </div>
             )}
@@ -191,9 +191,11 @@ function TeamRoster({ label, players, captain }: { label: string; players: Match
   )
 }
 
-function TeamStats({ label, stats }: { label: string; stats: MatchStat[] }) {
+function TeamStats({ label, stats, score }: { label: string; stats: MatchStat[]; score: number }) {
   const goals = stats.filter(s => s.goals > 0).sort((a, b) => b.goals - a.goals)
   const assists = stats.filter(s => s.assists > 0).sort((a, b) => b.assists - a.assists)
+  const recordedGoals = goals.reduce((sum, s) => sum + s.goals, 0)
+  const ownGoals = score - recordedGoals
   return (
     <div className="bg-gray-50 rounded-lg p-3">
       <h4 className="font-semibold text-blue-600 mb-2 text-sm">{label}数据</h4>
@@ -206,6 +208,12 @@ function TeamStats({ label, stats }: { label: string; stats: MatchStat[] }) {
               <span className="text-blue-600 font-semibold">{s.goals}球</span>
             </div>
           )) : <div className="text-sm text-gray-400">无</div>}
+          {ownGoals > 0 && (
+            <div className="flex justify-between text-sm py-0.5 text-orange-600">
+              <span>乌龙球</span>
+              <span className="font-semibold">{ownGoals}球</span>
+            </div>
+          )}
         </div>
         <div>
           <div className="text-xs text-gray-500 mb-1">助攻</div>
