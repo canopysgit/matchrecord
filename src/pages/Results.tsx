@@ -74,7 +74,7 @@ export default function Results() {
   if (loading) return <div className="text-center py-20 text-gray-500">加载中...</div>
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <h1 className="text-2xl font-bold text-gray-800">{season}年比赛结果</h1>
       {matches.length === 0 && (
         <div className="text-center py-12 text-gray-400 bg-white rounded-xl">暂无比赛记录</div>
@@ -117,7 +117,7 @@ export default function Results() {
             </div>
 
             {/* Score */}
-            <div className="flex items-center justify-center gap-8 py-6 bg-gray-50">
+            <div className="flex items-center justify-center gap-8 py-6">
               <div className="text-center">
                 <div className="text-sm text-gray-500 mb-1">白队</div>
                 <div className="text-4xl font-bold text-blue-600">{match.white_score}</div>
@@ -131,21 +131,34 @@ export default function Results() {
               </div>
             </div>
 
+            {/* Divider: 阵容 */}
+            <div className="flex items-center gap-3 px-4">
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-xs text-gray-400 font-medium">阵容</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+
             {/* Players */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50/50">
-              <TeamRoster label="白队阵容" players={whitePlayers} captain={whiteCaptain} />
-              <TeamRoster label="蓝队阵容" players={bluePlayers} captain={blueCaptain} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+              <TeamRoster label="白队" players={whitePlayers} captain={whiteCaptain} count={whitePlayers.length} />
+              <TeamRoster label="蓝队" players={bluePlayers} captain={blueCaptain} count={bluePlayers.length} />
             </div>
 
             {/* Stats */}
             {(whiteStats.length > 0 || blueStats.length > 0) && (
-              <div className="p-4 border-t">
-                <h3 className="text-center font-semibold text-blue-600 mb-3">数据统计</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <TeamStats label="白队" stats={whiteStats} score={match.white_score} />
-                  <TeamStats label="蓝队" stats={blueStats} score={match.blue_score} />
+              <>
+                <div className="flex items-center gap-3 px-4">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <span className="text-xs text-gray-400 font-medium">数据统计</span>
+                  <div className="flex-1 h-px bg-gray-200" />
                 </div>
-              </div>
+                <div className="p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <TeamStats label="白队" stats={whiteStats} score={match.white_score} />
+                    <TeamStats label="蓝队" stats={blueStats} score={match.blue_score} />
+                  </div>
+                </div>
+              </>
             )}
           </div>
         )
@@ -168,7 +181,7 @@ export default function Results() {
   )
 }
 
-function TeamRoster({ label, players, captain }: { label: string; players: MatchPlayer[]; captain?: string }) {
+function TeamRoster({ label, players, captain, count }: { label: string; players: MatchPlayer[]; captain?: string; count: number }) {
   const sorted = [...players].sort((a, b) => {
     if (a.player_name === captain) return -1
     if (b.player_name === captain) return 1
@@ -176,11 +189,11 @@ function TeamRoster({ label, players, captain }: { label: string; players: Match
   })
   return (
     <div>
-      <h4 className="font-semibold text-blue-600 mb-2 text-sm">{label}</h4>
+      <h4 className="font-semibold text-blue-600 mb-2 text-sm">{label} <span className="text-gray-400 font-normal">({count}人)</span></h4>
       <div className="flex flex-wrap gap-1.5">
         {sorted.map(p => (
           <span key={p.id} className={`px-3 py-1 rounded-full text-sm shadow-sm border ${
-            captain === p.player_name ? 'bg-amber-50 border-amber-300 font-semibold' : 'bg-white'
+            captain === p.player_name ? 'bg-amber-50 border-amber-300 font-semibold' : 'bg-gray-50 border-gray-200'
           }`}>
             {captain === p.player_name && <span className="text-amber-500 font-bold text-xs mr-1">C</span>}
             {p.player_name}
