@@ -262,6 +262,13 @@ export default function Home() {
 
       {/* Top 5 boards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <RankCard title="出勤榜 TOP5" icon={<Users className="w-5 h-5" />} link="/stats">
+          {topAttendance.map((p, i) => (
+            <RankRow key={p.player_name} rank={i + 1} name={p.player_name} value={`${p.attendance_total}场`} />
+          ))}
+          {topAttendance.length === 0 && <EmptyRank />}
+        </RankCard>
+
         <RankCard title="射手榜 TOP5" icon={<Target className="w-5 h-5" />} link="/stats">
           {topScorers.map((p, i) => (
             <RankRow key={p.player_name} rank={i + 1} name={p.player_name} value={`${p.goals_total}球`} />
@@ -274,13 +281,6 @@ export default function Home() {
             <RankRow key={p.player_name} rank={i + 1} name={p.player_name} value={`${p.assists_total}次`} />
           ))}
           {topAssists.length === 0 && <EmptyRank />}
-        </RankCard>
-
-        <RankCard title="出勤榜 TOP5" icon={<Users className="w-5 h-5" />} link="/stats">
-          {topAttendance.map((p, i) => (
-            <RankRow key={p.player_name} rank={i + 1} name={p.player_name} value={`${p.attendance_total}场`} />
-          ))}
-          {topAttendance.length === 0 && <EmptyRank />}
         </RankCard>
 
         <RankCard title="胜率榜 TOP5（3场以上）" icon={<TrendingUp className="w-5 h-5" />} link="/winrate">
