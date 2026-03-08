@@ -185,7 +185,17 @@ export default function MatchRecord() {
       const statsMap: Record<string, { player_name: string; team: string; goals: number; assists: number }> = {}
 
       for (const event of events) {
-        if (event.isOwnGoal) continue // Skip own goals for player stats
+        if (event.isOwnGoal) {
+          // Save own goal as special stat entry with "OG:" prefix
+          // team is flipped: scorer's team committed the OG, opposite team benefits
+          const benefitTeam = event.team === 'white' ? 'blue' : 'white'
+          const ogKey = `OG:${event.scorer}_${benefitTeam}`
+          if (!statsMap[ogKey]) {
+            statsMap[ogKey] = { player_name: `OG:${event.scorer}`, team: benefitTeam, goals: 0, assists: 0 }
+          }
+          statsMap[ogKey].goals++
+          continue
+        }
 
         const scorerKey = `${event.scorer}_${event.team}`
         if (!statsMap[scorerKey]) {
@@ -468,7 +478,7 @@ export default function MatchRecord() {
                     ev.isOwnGoal ? 'bg-red-50' : ev.team === 'white' ? 'bg-gray-50' : 'bg-blue-50'
                   }`}>
                     <div className="text-gray-400">{i + 1}</div>
-                    <div className="font-medium">{ev.isOwnGoal ? '乌龙球' : ev.scorer}</div>
+                    <div className="font-medium">{ev.isOwnGoal ? `乌龙(${ev.scorer})` : ev.scorer}</div>
                     <div className="text-gray-500">{ev.assister || '-'}</div>
                     <div>
                       <span className={`px-2 py-0.5 rounded-full text-xs ${
