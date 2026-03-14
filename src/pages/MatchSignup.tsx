@@ -77,6 +77,19 @@ export default function MatchSignup() {
       // Detect new players not in database
       const unknown = data.unknownPlayers || []
       setUnknownPlayers(unknown)
+
+      // Safeguard: ensure unknown players are in their team arrays
+      // AI might only put them in unknownPlayers but not in whiteTeam/blueTeam
+      const wt = data.whiteTeam || []
+      const bt = data.blueTeam || []
+      const allTeamNames = new Set([...wt, ...bt])
+      const missingFromTeams = unknown.filter((n: string) => !allTeamNames.has(n))
+      if (missingFromTeams.length > 0) {
+        // Try to figure out which team they belong to from the original text
+        // For safety, just add them - user can move them between teams in the UI
+        setWhiteTeam(prev => [...prev, ...missingFromTeams])
+      }
+
       if (unknown.length > 0) {
         setPendingNewPlayers(unknown)
         setShowNewPlayersConfirm(true)

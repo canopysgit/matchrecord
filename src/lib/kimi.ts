@@ -62,7 +62,7 @@ export async function parseRosterText(
 
 规则:
 1. 球员名称必须转换为标准名（通过别名映射）
-2. 如果球员名称无法匹配任何已知球员或别名，放入unknownPlayers
+2. 如果球员名称无法匹配任何已知球员或别名，用原始名称放入对应的whiteTeam或blueTeam中，同时也放入unknownPlayers。unknownPlayers里的球员必须同时出现在whiteTeam或blueTeam中
 3. 队长通常标注在队名旁边，如"一陶（白）"表示一陶是白队队长
 4. 日期格式可能是20260110这样的，转成2026-01-10
 5. 场地如"南楼"应理解为"机场南楼"
