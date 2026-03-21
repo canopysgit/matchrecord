@@ -6,7 +6,7 @@ import { useSeason } from '../contexts/SeasonContext'
 import { parseResultText } from '../lib/kimi'
 import { buildAliasMap } from '../lib/playerMatcher'
 import { recalculateStats, recalculateWinRate } from '../lib/statsCalculator'
-import { Sparkles, AlertCircle, Check, Edit3, UserPlus } from 'lucide-react'
+import { Sparkles, AlertCircle, Check, Edit3, UserPlus, Plus, Trash2 } from 'lucide-react'
 import type { Match, MatchPlayer, Player, ParsedGoalEvent } from '../lib/types'
 
 export default function MatchRecord() {
@@ -32,6 +32,7 @@ export default function MatchRecord() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [manualMode, setManualMode] = useState(false)
 
   // Roster editing
   const [editingRoster, setEditingRoster] = useState(false)
@@ -67,6 +68,7 @@ export default function MatchRecord() {
     setBlueScore(0)
     setWhiteOwnGoals(0)
     setBlueOwnGoals(0)
+    setManualMode(false)
 
     const tables = getTableNames(season)
     const { data } = await supabase.from(tables.matchPlayers).select('*')
@@ -181,10 +183,13 @@ export default function MatchRecord() {
     try {
       const tables = getTableNames(season)
 
+      // Filter out events with empty scorer
+      const validEvents = events.filter(ev => ev.scorer.trim())
+
       // Aggregate goals and assists per player per team
       const statsMap: Record<string, { player_name: string; team: string; goals: number; assists: number }> = {}
 
-      for (const event of events) {
+      for (const event of validEvents) {
         if (event.isOwnGoal) {
           // Save own goal as special stat entry with "OG:" prefix
           // team is flipped: scorer's team committed the OG, opposite team benefits
@@ -248,6 +253,7 @@ export default function MatchRecord() {
       setSelectedMatch(null)
       setEvents([])
       setRawText('')
+      setManualMode(false)
       loadData()
     } catch (err) {
       setError(`保存失败: ${err instanceof Error ? err.message : '未知错误'}`)
@@ -258,6 +264,22 @@ export default function MatchRecord() {
 
   const whitePlayers = matchPlayers.filter(p => p.team === 'white')
   const bluePlayers = matchPlayers.filter(p => p.team === 'blue')
+  const allPlayerNames = [...new Set([
+    ...whitePlayers.map(p => p.player_name),
+    ...bluePlayers.map(p => p.player_name),
+  ])]
+
+  function updateEvent(index: number, updates: Partial<ParsedGoalEvent>) {
+    setEvents(prev => prev.map((ev, i) => i === index ? { ...ev, ...updates } : ev))
+  }
+
+  function deleteEvent(index: number) {
+    setEvents(prev => prev.filter((_, i) => i !== index))
+  }
+
+  function addEvent() {
+    setEvents(prev => [...prev, { scorer: '', assister: null, team: 'white', isOwnGoal: false }])
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -302,7 +324,7 @@ export default function MatchRecord() {
                     <Edit3 className="w-3.5 h-3.5" /> 编辑名单
                   </button>
                 )}
-                <button onClick={() => { setSelectedMatch(null); setEvents([]); setEditingRoster(false) }}
+                <button onClick={() => { setSelectedMatch(null); setEvents([]); setEditingRoster(false); setManualMode(false) }}
                   className="text-sm text-blue-600 hover:text-blue-800">返回列表</button>
               </div>
             </div>
@@ -419,14 +441,23 @@ export default function MatchRecord() {
               placeholder={"粘贴比赛结果，例如:\n蓝9:7白\n白\n马指进球\n井助攻，一陶进球\n蓝\n霏赫助攻，小段进球"}
               className="w-full h-40 p-3 border rounded-lg text-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
             />
-            <button
-              onClick={handleAIParse}
-              disabled={parsing || !rawText.trim()}
-              className="mt-3 px-6 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-400 transition flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4" />
-              {parsing ? 'AI解析中...' : 'AI智能解析'}
-            </button>
+            <div className="flex gap-3 mt-3">
+              <button
+                onClick={handleAIParse}
+                disabled={parsing || !rawText.trim()}
+                className="px-6 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-400 transition flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                {parsing ? 'AI解析中...' : 'AI智能解析'}
+              </button>
+              <button
+                onClick={() => setManualMode(true)}
+                className="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition flex items-center gap-2"
+              >
+                <Edit3 className="w-4 h-4" />
+                手动录入
+              </button>
+            </div>
           </div>
 
           {/* Errors / Success */}
@@ -442,7 +473,7 @@ export default function MatchRecord() {
           )}
 
           {/* Parsed results */}
-          {events.length > 0 && (
+          {(events.length > 0 || manualMode) && (
             <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
               <h2 className="font-semibold text-gray-700">确认比赛结果</h2>
 
@@ -468,28 +499,76 @@ export default function MatchRecord() {
                 </div>
               )}
 
-              {/* Events table */}
+              {/* Events table - editable */}
               <div className="space-y-1">
-                <div className="grid grid-cols-[40px_1fr_1fr_60px] text-xs text-gray-500 font-medium px-2">
-                  <div>#</div><div>进球</div><div>助攻</div><div>队伍</div>
+                <div className="grid grid-cols-[32px_1fr_1fr_52px_36px_36px] text-xs text-gray-500 font-medium px-2">
+                  <div>#</div><div>进球</div><div>助攻</div><div>队伍</div><div>乌龙</div><div></div>
                 </div>
                 {events.map((ev, i) => (
-                  <div key={i} className={`grid grid-cols-[40px_1fr_1fr_60px] items-center px-2 py-2 rounded-lg text-sm ${
+                  <div key={i} className={`grid grid-cols-[32px_1fr_1fr_52px_36px_36px] items-center px-2 py-1.5 rounded-lg text-sm ${
                     ev.isOwnGoal ? 'bg-red-50' : ev.team === 'white' ? 'bg-gray-50' : 'bg-blue-50'
                   }`}>
                     <div className="text-gray-400">{i + 1}</div>
-                    <div className="font-medium">{ev.isOwnGoal ? `乌龙(${ev.scorer})` : ev.scorer}</div>
-                    <div className="text-gray-500">{ev.assister || '-'}</div>
                     <div>
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${
-                        ev.team === 'white' ? 'bg-gray-200' : 'bg-blue-200'
-                      }`}>
+                      <input
+                        type="text"
+                        list="match-players-list"
+                        value={ev.scorer}
+                        onChange={e => updateEvent(i, { scorer: e.target.value })}
+                        placeholder="球员"
+                        className="w-full px-1.5 py-0.5 border rounded text-sm bg-white outline-none focus:ring-1 focus:ring-blue-400"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        list="match-players-list"
+                        value={ev.assister || ''}
+                        onChange={e => updateEvent(i, { assister: e.target.value || null })}
+                        placeholder="无"
+                        className="w-full px-1.5 py-0.5 border rounded text-sm bg-white outline-none focus:ring-1 focus:ring-blue-400"
+                      />
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => updateEvent(i, { team: ev.team === 'white' ? 'blue' : 'white' })}
+                        className={`px-2 py-0.5 rounded-full text-xs font-medium transition ${
+                          ev.team === 'white' ? 'bg-gray-200 text-gray-700' : 'bg-blue-200 text-blue-700'
+                        }`}
+                      >
                         {ev.team === 'white' ? '白' : '蓝'}
-                      </span>
+                      </button>
+                    </div>
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={ev.isOwnGoal}
+                        onChange={e => updateEvent(i, { isOwnGoal: e.target.checked })}
+                        className="w-4 h-4 accent-red-500"
+                      />
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => deleteEvent(i)}
+                        className="text-gray-400 hover:text-red-500 transition"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </div>
                 ))}
+                <datalist id="match-players-list">
+                  {allPlayerNames.map(name => <option key={name} value={name} />)}
+                </datalist>
               </div>
+
+              {/* Add event button */}
+              <button
+                onClick={addEvent}
+                className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 transition px-2"
+              >
+                <Plus className="w-4 h-4" /> 添加进球事件
+              </button>
 
               <button
                 onClick={handleSave}
