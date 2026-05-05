@@ -166,8 +166,8 @@ export default function MatchSignup() {
 
       if (matchErr) throw matchErr
 
-      // Insert players
-      const airDropSet = new Set(airDropPlayers)
+      // Insert players — derive airdrop from actual intersection of both teams
+      const airDropSet = new Set(whiteTeam.filter(n => blueTeam.includes(n)))
       const playerRows = [
         ...whiteTeam.map(name => ({
           match_id: match.id, player_name: name, team: 'white',
@@ -305,37 +305,45 @@ export default function MatchSignup() {
           </div>
 
           {/* Teams */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <TeamEditor
-              label="白队"
-              team={whiteTeam}
-              setTeam={setWhiteTeam}
-              captain={whiteCaptain}
-              setCaptain={setWhiteCaptain}
-              players={players}
-              season={season}
-            />
-            <TeamEditor
-              label="蓝队"
-              team={blueTeam}
-              setTeam={setBlueTeam}
-              captain={blueCaptain}
-              setCaptain={setBlueCaptain}
-              players={players}
-              season={season}
-            />
-          </div>
-
-          {airDropPlayers.length > 0 && (
-            <div className="bg-amber-50 rounded-lg p-3">
-              <div className="text-sm font-medium text-amber-700">空降球员（两队都打）：</div>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {airDropPlayers.map(n => (
-                  <span key={n} className="px-3 py-1 bg-amber-100 rounded-full text-sm">{n}</span>
-                ))}
-              </div>
-            </div>
-          )}
+          {(() => {
+            const airDropComputed = whiteTeam.filter(n => blueTeam.includes(n))
+            return (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <TeamEditor
+                    label="白队"
+                    team={whiteTeam}
+                    setTeam={setWhiteTeam}
+                    captain={whiteCaptain}
+                    setCaptain={setWhiteCaptain}
+                    players={players}
+                    season={season}
+                    airDropNames={airDropComputed}
+                  />
+                  <TeamEditor
+                    label="蓝队"
+                    team={blueTeam}
+                    setTeam={setBlueTeam}
+                    captain={blueCaptain}
+                    setCaptain={setBlueCaptain}
+                    players={players}
+                    season={season}
+                    airDropNames={airDropComputed}
+                  />
+                </div>
+                {airDropComputed.length > 0 && (
+                  <div className="bg-purple-50 rounded-lg p-3">
+                    <div className="text-sm font-medium text-purple-700">空降球员（蓝白各踢一节，出勤计算、进球助攻计算，胜率不计）：</div>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {airDropComputed.map(n => (
+                        <span key={n} className="px-3 py-1 bg-purple-100 rounded-full text-sm text-purple-800">{n}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )
+          })()}
 
           <button
             onClick={handleSave}
@@ -400,10 +408,10 @@ export default function MatchSignup() {
   )
 }
 
-function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season }: {
+function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season, airDropNames = [] }: {
   label: string; team: string[]; setTeam: (t: string[]) => void
   captain: string; setCaptain: (c: string) => void
-  players: Player[]; season: number
+  players: Player[]; season: number; airDropNames?: string[]
 }) {
   const [search, setSearch] = useState('')
   const [showPicker, setShowPicker] = useState(false)
@@ -460,14 +468,18 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
 
       {/* Current team */}
       <div className="flex flex-wrap gap-1.5 mb-2">
-        {team.map(name => (
-          <span key={name} className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 rounded-full text-sm">
-            {captain === name && <span className="text-amber-500 font-bold text-xs">C</span>}
-            {name}
-            <button onClick={() => { setTeam(team.filter(n => n !== name)); if (captain === name) setCaptain('') }}
-              className="text-gray-400 hover:text-red-500 ml-1">&times;</button>
-          </span>
-        ))}
+        {team.map(name => {
+          const isAirDrop = airDropNames.includes(name)
+          return (
+            <span key={name} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm ${isAirDrop ? 'bg-purple-100' : 'bg-blue-50'}`}>
+              {captain === name && <span className="text-amber-500 font-bold text-xs">C</span>}
+              {isAirDrop && <span className="text-purple-600 font-semibold text-[10px]">空降</span>}
+              {name}
+              <button onClick={() => { setTeam(team.filter(n => n !== name)); if (captain === name) setCaptain('') }}
+                className="text-gray-400 hover:text-red-500 ml-1">&times;</button>
+            </span>
+          )
+        })}
       </div>
 
       {/* Captain selector */}

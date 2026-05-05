@@ -264,6 +264,7 @@ export default function MatchRecord() {
 
   const whitePlayers = matchPlayers.filter(p => p.team === 'white')
   const bluePlayers = matchPlayers.filter(p => p.team === 'blue')
+  const airDropInEdit = new Set(editWhiteTeam.filter(n => editBlueTeam.includes(n)))
   const allPlayerNames = [...new Set([
     ...whitePlayers.map(p => p.player_name),
     ...bluePlayers.map(p => p.player_name),
@@ -336,7 +337,10 @@ export default function MatchRecord() {
                   <div className="text-xs text-blue-600 mb-1">白队（{whitePlayers.length}人）</div>
                   <div className="flex flex-wrap gap-1">
                     {whitePlayers.map(p => (
-                      <span key={p.id} className="px-2 py-0.5 bg-white rounded-full text-xs">{p.player_name}</span>
+                      <span key={p.id} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${p.is_airdrop ? 'bg-purple-100' : 'bg-white'}`}>
+                        {p.player_name}
+                        {p.is_airdrop && <span className="text-purple-600 font-semibold text-[10px]">空降</span>}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -344,7 +348,10 @@ export default function MatchRecord() {
                   <div className="text-xs text-blue-600 mb-1">蓝队（{bluePlayers.length}人）</div>
                   <div className="flex flex-wrap gap-1">
                     {bluePlayers.map(p => (
-                      <span key={p.id} className="px-2 py-0.5 bg-white rounded-full text-xs">{p.player_name}</span>
+                      <span key={p.id} className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${p.is_airdrop ? 'bg-purple-100' : 'bg-white'}`}>
+                        {p.player_name}
+                        {p.is_airdrop && <span className="text-purple-600 font-semibold text-[10px]">空降</span>}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -360,7 +367,8 @@ export default function MatchRecord() {
                     <div className="text-xs font-semibold text-gray-600 mb-2">白队（{editWhiteTeam.length}人）</div>
                     <div className="flex flex-wrap gap-1 mb-2 min-h-[32px]">
                       {editWhiteTeam.map(name => (
-                        <span key={name} className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+                        <span key={name} className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs ${airDropInEdit.has(name) ? 'bg-purple-100' : 'bg-gray-100'}`}>
+                          {airDropInEdit.has(name) && <span className="text-purple-600 font-semibold text-[10px]">空降</span>}
                           {name}
                           <button onClick={() => setEditWhiteTeam(prev => prev.filter(n => n !== name))}
                             className="text-gray-400 hover:text-red-500">&times;</button>
@@ -373,7 +381,8 @@ export default function MatchRecord() {
                     <div className="text-xs font-semibold text-blue-600 mb-2">蓝队（{editBlueTeam.length}人）</div>
                     <div className="flex flex-wrap gap-1 mb-2 min-h-[32px]">
                       {editBlueTeam.map(name => (
-                        <span key={name} className="inline-flex items-center gap-0.5 px-2 py-0.5 bg-blue-50 rounded-full text-xs">
+                        <span key={name} className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs ${airDropInEdit.has(name) ? 'bg-purple-100' : 'bg-blue-50'}`}>
+                          {airDropInEdit.has(name) && <span className="text-purple-600 font-semibold text-[10px]">空降</span>}
                           {name}
                           <button onClick={() => setEditBlueTeam(prev => prev.filter(n => n !== name))}
                             className="text-blue-400 hover:text-red-500">&times;</button>
@@ -390,23 +399,35 @@ export default function MatchRecord() {
                   <div className="max-h-40 overflow-y-auto">
                     <div className="flex flex-wrap gap-1">
                       {allPlayers
-                        .filter(p => !editWhiteTeam.includes(p.name) && !editBlueTeam.includes(p.name))
+                        .filter(p => !(editWhiteTeam.includes(p.name) && editBlueTeam.includes(p.name)))
                         .filter(p => !rosterSearch || p.name.includes(rosterSearch) || (p.aliases || []).some(a => a.includes(rosterSearch)))
-                        .map(p => (
-                          <span key={p.id} className="inline-flex items-center gap-1 text-xs">
-                            <button onClick={() => setEditWhiteTeam(prev => [...prev, p.name])}
-                              className="px-2 py-1 bg-gray-50 hover:bg-gray-200 rounded-l-full transition" title="加入白队">
-                              白
-                            </button>
-                            <span className="px-1 py-1 bg-gray-50 text-gray-700">{p.name}</span>
-                            <button onClick={() => setEditBlueTeam(prev => [...prev, p.name])}
-                              className="px-2 py-1 bg-blue-50 hover:bg-blue-200 rounded-r-full transition" title="加入蓝队">
-                              蓝
-                            </button>
-                          </span>
-                        ))}
+                        .map(p => {
+                          const inWhite = editWhiteTeam.includes(p.name)
+                          const inBlue = editBlueTeam.includes(p.name)
+                          return (
+                            <span key={p.id} className="inline-flex items-center gap-0.5 text-xs">
+                              {!inWhite && (
+                                <button onClick={() => setEditWhiteTeam(prev => [...prev, p.name])}
+                                  className="px-2 py-1 bg-gray-50 hover:bg-gray-200 rounded-l-full transition" title="加入白队">
+                                  白
+                                </button>
+                              )}
+                              <span className={`px-1 py-1 bg-gray-50 ${inWhite || inBlue ? 'text-purple-600 font-medium' : 'text-gray-700'}`}>
+                                {p.name}
+                                {inWhite && !inBlue && <span className="text-gray-400 font-normal ml-0.5 text-[10px]">白</span>}
+                                {inBlue && !inWhite && <span className="text-gray-400 font-normal ml-0.5 text-[10px]">蓝</span>}
+                              </span>
+                              {!inBlue && (
+                                <button onClick={() => setEditBlueTeam(prev => [...prev, p.name])}
+                                  className="px-2 py-1 bg-blue-50 hover:bg-blue-200 rounded-r-full transition" title="加入蓝队">
+                                  蓝
+                                </button>
+                              )}
+                            </span>
+                          )
+                        })}
                     </div>
-                    {allPlayers.filter(p => !editWhiteTeam.includes(p.name) && !editBlueTeam.includes(p.name)).length === 0 && (
+                    {allPlayers.filter(p => !(editWhiteTeam.includes(p.name) && editBlueTeam.includes(p.name))).length === 0 && (
                       <div className="text-xs text-gray-400 text-center py-2">所有球员已分配</div>
                     )}
                   </div>
