@@ -5,32 +5,38 @@ import { useAuth } from '../contexts/AuthContext'
 import { useSeason } from '../contexts/SeasonContext'
 import { parseRosterText } from '../lib/kimi'
 import { buildAliasMap } from '../lib/playerMatcher'
-import { Sparkles, AlertCircle, Check, UserPlus } from 'lucide-react'
+import { Sparkles, AlertCircle, Check, UserPlus, Search, Users } from 'lucide-react'
 import type { Player, ParsedRoster } from '../lib/types'
+
+type Tab = 'manual' | 'ai'
 
 export default function MatchSignup() {
   const { session } = useAuth()
   const { season } = useSeason()
   const navigate = useNavigate()
   const [players, setPlayers] = useState<Player[]>([])
-  const [rawText, setRawText] = useState('')
-  const [parsed, setParsed] = useState<ParsedRoster | null>(null)
-  const [unknownPlayers, setUnknownPlayers] = useState<string[]>([])
-  const [parsing, setParsing] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
+  const [tab, setTab] = useState<Tab>('manual')
 
-  // Editable fields (can override AI result)
+  // Shared state for both modes
   const [date, setDate] = useState('')
-  const [time, setTime] = useState('2-4')
+  const [time, setTime] = useState('8-10')
   const [venue, setVenue] = useState('机场南楼')
   const [matchType, setMatchType] = useState('内战')
   const [whiteTeam, setWhiteTeam] = useState<string[]>([])
   const [blueTeam, setBlueTeam] = useState<string[]>([])
   const [whiteCaptain, setWhiteCaptain] = useState('')
   const [blueCaptain, setBlueCaptain] = useState('')
-  const [airDropPlayers, setAirDropPlayers] = useState<string[]>([])
+
+  // AI mode state
+  const [rawText, setRawText] = useState('')
+  const [parsed, setParsed] = useState<ParsedRoster | null>(null)
+  const [unknownPlayers, setUnknownPlayers] = useState<string[]>([])
+  const [parsing, setParsing] = useState(false)
+
+  // Shared state
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
 
   // New player dialogs
   const [showNewPlayer, setShowNewPlayer] = useState(false)
@@ -50,6 +56,93 @@ export default function MatchSignup() {
     setPlayers((data || []) as Player[])
   }
 
+  // --- Manual mode: simple text parse (no AI) ---
+  function handleManualParse(text: string) {
+    // Try to parse format like:
+    // 20260516：晚上南楼
+    // 袁祎（白）：旭东 广文 王磊 ...
+    // 邵林（蓝）：朱瑞 井 阿曼 ...
+    const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean)
+    if (lines.length === 0) return
+
+    // Line 1: date + venue
+    const firstLine = lines[0]
+    const dateMatch = firstLine.match(/(\d{8})/)
+    if (dateMatch) {
+      const d = dateMatch[1]
+      setDate(`${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`)
+    }
+    // Detect time
+    if (firstLine.includes('晚')) setTime('8-10')
+    else if (firstLine.includes('下午')) setTime('2-4')
+    // Detect venue
+    if (firstLine.includes('南楼')) setVenue('机场南楼')
+
+    // Remaining lines: team rosters
+    const aliasMap = buildAliasMap(players)
+    const playerNames = players.map(p => p.name)
+    const allKnown = new Set(playerNames)
+    // Also add aliases
+    for (const [alias, realName] of Object.entries(aliasMap)) {
+      allKnown.add(alias)
+    }
+
+    let white: string[] = []
+    let blue: string[] = []
+    let wCaptain = ''
+    let bCaptain = ''
+    const unknown: string[] = []
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i]
+      // Detect team color
+      const isWhite = /白/.test(line)
+      const isBlue = /蓝/.test(line)
+      if (!isWhite && !isBlue) continue
+
+      // Extract captain from pattern like 袁祎（白）or 邵林（蓝）
+      const captainMatch = line.match(/^(\S+?)[\s（(]*(白|蓝)/)
+      const captainName = captainMatch ? captainMatch[1] : ''
+
+      // Get all names: split by space, colon, comma etc
+      const afterColon = line.replace(/^[^：:]*[：:]/, '').trim()
+      const names = afterColon.split(/[\s,，、]+/).filter(Boolean)
+
+      // Add captain to front if not already in list
+      const allNames = captainName && !names.includes(captainName) ? [captainName, ...names] : names
+
+      // Resolve aliases
+      const resolved = allNames.map(n => aliasMap[n] || n)
+
+      // Detect unknowns
+      for (const n of resolved) {
+        if (!playerNames.includes(n) && !unknown.includes(n)) {
+          unknown.push(n)
+        }
+      }
+
+      if (isWhite) {
+        white = resolved
+        if (captainName) wCaptain = aliasMap[captainName] || captainName
+      } else {
+        blue = resolved
+        if (captainName) bCaptain = aliasMap[captainName] || captainName
+      }
+    }
+
+    if (white.length > 0) setWhiteTeam(white)
+    if (blue.length > 0) setBlueTeam(blue)
+    if (wCaptain) setWhiteCaptain(wCaptain)
+    if (bCaptain) setBlueCaptain(bCaptain)
+
+    if (unknown.length > 0) {
+      setUnknownPlayers(unknown)
+      setPendingNewPlayers(unknown)
+      setShowNewPlayersConfirm(true)
+    }
+  }
+
+  // --- AI mode ---
   async function handleAIParse() {
     if (!rawText.trim()) return
     setParsing(true)
@@ -58,8 +151,6 @@ export default function MatchSignup() {
       const aliasMap = buildAliasMap(players)
       const playerNames = players.map(p => p.name)
       const result = await parseRosterText(rawText, playerNames, aliasMap)
-
-      // Parse JSON from AI response
       const jsonStr = result.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
       const data = JSON.parse(jsonStr)
 
@@ -72,21 +163,15 @@ export default function MatchSignup() {
       setBlueTeam(data.blueTeam || [])
       setWhiteCaptain(data.whiteCaptain || '')
       setBlueCaptain(data.blueCaptain || '')
-      setAirDropPlayers(data.airDropPlayers || [])
 
-      // Detect new players not in database
       const unknown = data.unknownPlayers || []
       setUnknownPlayers(unknown)
 
-      // Safeguard: ensure unknown players are in their team arrays
-      // AI might only put them in unknownPlayers but not in whiteTeam/blueTeam
       const wt = data.whiteTeam || []
       const bt = data.blueTeam || []
       const allTeamNames = new Set([...wt, ...bt])
       const missingFromTeams = unknown.filter((n: string) => !allTeamNames.has(n))
       if (missingFromTeams.length > 0) {
-        // Try to figure out which team they belong to from the original text
-        // For safety, just add them - user can move them between teams in the UI
         setWhiteTeam(prev => [...prev, ...missingFromTeams])
       }
 
@@ -145,13 +230,10 @@ export default function MatchSignup() {
     setError('')
     try {
       const tables = getTableNames(season)
-
-      // Count existing matches for match number
       const { count } = await supabase.from(tables.matches)
         .select('*', { count: 'exact', head: true })
       const matchNumber = (count || 0) + 1
 
-      // Create match
       const { data: match, error: matchErr } = await supabase.from(tables.matches).insert({
         match_date: date,
         match_time: time,
@@ -166,32 +248,26 @@ export default function MatchSignup() {
 
       if (matchErr) throw matchErr
 
-      // Insert players — derive airdrop from actual intersection of both teams
       const airDropSet = new Set(whiteTeam.filter(n => blueTeam.includes(n)))
       const playerRows = [
         ...whiteTeam.map(name => ({
           match_id: match.id, player_name: name, team: 'white',
           is_airdrop: airDropSet.has(name),
         })),
-        ...blueTeam.map(name => ({
+        ...blueTeam.filter(n => !airDropSet.has(n)).map(name => ({
           match_id: match.id, player_name: name, team: 'blue',
-          is_airdrop: airDropSet.has(name),
+          is_airdrop: false,
+        })),
+        // Airdrop players get a blue team row too
+        ...[...airDropSet].map(name => ({
+          match_id: match.id, player_name: name, team: 'blue',
+          is_airdrop: true,
         })),
       ]
-      // Add air-drop players to the team they're not already in
-      for (const name of airDropPlayers) {
-        if (!whiteTeam.includes(name)) {
-          playerRows.push({ match_id: match.id, player_name: name, team: 'white', is_airdrop: true })
-        }
-        if (!blueTeam.includes(name)) {
-          playerRows.push({ match_id: match.id, player_name: name, team: 'blue', is_airdrop: true })
-        }
-      }
 
       const { error: playerErr } = await supabase.from(tables.matchPlayers).insert(playerRows)
       if (playerErr) throw playerErr
 
-      // Insert captains
       const captainRows = []
       if (whiteCaptain) captainRows.push({ match_id: match.id, team: 'white', captain_name: whiteCaptain })
       if (blueCaptain) captainRows.push({ match_id: match.id, team: 'blue', captain_name: blueCaptain })
@@ -204,6 +280,9 @@ export default function MatchSignup() {
       setParsed(null)
       setWhiteTeam([])
       setBlueTeam([])
+      setWhiteCaptain('')
+      setBlueCaptain('')
+      setDate('')
     } catch (err) {
       setError(`保存失败: ${err instanceof Error ? err.message : '未知错误'}`)
     } finally {
@@ -211,32 +290,75 @@ export default function MatchSignup() {
     }
   }
 
+  const showForm = tab === 'manual' || parsed || date
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold text-gray-800">比赛报名</h1>
 
-      {/* AI Input */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-5 h-5 text-purple-500" />
-          <h2 className="font-semibold text-gray-700">AI智能解析</h2>
-        </div>
-        <p className="text-sm text-gray-500 mb-3">粘贴分组名单文字，AI自动识别日期、场地、两队球员、队长</p>
-        <textarea
-          value={rawText}
-          onChange={e => setRawText(e.target.value)}
-          placeholder={"例如:\n20260110：下午南楼\n蓝 霏赫 广文 张健 孙路...\n白 罗霄 尚枫 井 小鹤..."}
-          className="w-full h-32 p-3 border rounded-lg text-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-        />
+      {/* Tab Switcher */}
+      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
         <button
-          onClick={handleAIParse}
-          disabled={parsing || !rawText.trim()}
-          className="mt-3 px-6 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-400 transition flex items-center gap-2"
+          onClick={() => setTab('manual')}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'manual' ? 'bg-white shadow text-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
         >
-          <Sparkles className="w-4 h-4" />
-          {parsing ? 'AI解析中...' : 'AI智能解析'}
+          <Users className="w-4 h-4 inline mr-1.5" />
+          手工录入
+        </button>
+        <button
+          onClick={() => setTab('ai')}
+          className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === 'ai' ? 'bg-white shadow text-purple-600' : 'text-gray-600 hover:text-gray-800'}`}
+        >
+          <Sparkles className="w-4 h-4 inline mr-1.5" />
+          AI智能解析
         </button>
       </div>
+
+      {/* Manual Mode: Quick Paste */}
+      {tab === 'manual' && (
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h2 className="font-semibold text-gray-700 mb-2">快速粘贴分组</h2>
+          <p className="text-sm text-gray-500 mb-3">粘贴分组文本后点击"解析"，自动填充下方表单。也可跳过直接手动选人。</p>
+          <textarea
+            value={rawText}
+            onChange={e => setRawText(e.target.value)}
+            placeholder={"例如:\n20260516：晚上南楼\n袁祎（白）：旭东 广文 王磊 刘杰...\n邵林（蓝）：朱瑞 井 阿曼 赵之宇..."}
+            className="w-full h-28 p-3 border rounded-lg text-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+          />
+          <button
+            onClick={() => handleManualParse(rawText)}
+            disabled={!rawText.trim()}
+            className="mt-3 px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:bg-gray-300 transition"
+          >
+            解析文本
+          </button>
+        </div>
+      )}
+
+      {/* AI Mode */}
+      {tab === 'ai' && (
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-purple-500" />
+            <h2 className="font-semibold text-gray-700">AI智能解析</h2>
+          </div>
+          <p className="text-sm text-gray-500 mb-3">粘贴分组名单文字，AI自动识别日期、场地、两队球员、队长</p>
+          <textarea
+            value={rawText}
+            onChange={e => setRawText(e.target.value)}
+            placeholder={"例如:\n20260110：下午南楼\n蓝 霏赫 广文 张健 孙路...\n白 罗霄 尚枫 井 小鹤..."}
+            className="w-full h-32 p-3 border rounded-lg text-sm resize-none focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+          />
+          <button
+            onClick={handleAIParse}
+            disabled={parsing || !rawText.trim()}
+            className="mt-3 px-6 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-400 transition flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" />
+            {parsing ? 'AI解析中...' : 'AI智能解析'}
+          </button>
+        </div>
+      )}
 
       {/* Errors / Success */}
       {error && (
@@ -266,10 +388,10 @@ export default function MatchSignup() {
         </div>
       )}
 
-      {/* Editable form */}
-      {(parsed || date) && (
+      {/* Editable Form - always show in manual mode, or after AI parse */}
+      {showForm && (
         <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
-          <h2 className="font-semibold text-gray-700">确认比赛信息</h2>
+          <h2 className="font-semibold text-gray-700">比赛信息</h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div>
@@ -319,6 +441,7 @@ export default function MatchSignup() {
                     players={players}
                     season={season}
                     airDropNames={airDropComputed}
+                    defaultOpen={tab === 'manual'}
                   />
                   <TeamEditor
                     label="蓝队"
@@ -329,6 +452,7 @@ export default function MatchSignup() {
                     players={players}
                     season={season}
                     airDropNames={airDropComputed}
+                    defaultOpen={tab === 'manual'}
                   />
                 </div>
                 {airDropComputed.length > 0 && (
@@ -408,13 +532,14 @@ export default function MatchSignup() {
   )
 }
 
-function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season, airDropNames = [] }: {
+function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season, airDropNames = [], defaultOpen = false }: {
   label: string; team: string[]; setTeam: (t: string[]) => void
   captain: string; setCaptain: (c: string) => void
   players: Player[]; season: number; airDropNames?: string[]
+  defaultOpen?: boolean
 }) {
   const [search, setSearch] = useState('')
-  const [showPicker, setShowPicker] = useState(false)
+  const [showPicker, setShowPicker] = useState(defaultOpen)
   const [attendance, setAttendance] = useState<Record<string, number>>({})
 
   useEffect(() => {
@@ -431,14 +556,11 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
     }
   }
 
-  // Sort: active season players first (by attendance desc), then rest
   const sortedPlayers = [...players].sort((a, b) => {
     const aAtt = attendance[a.name] || 0
     const bAtt = attendance[b.name] || 0
-    // Players with attendance this season come first
     if (aAtt > 0 && bAtt === 0) return -1
     if (aAtt === 0 && bAtt > 0) return 1
-    // Then by attendance desc
     if (aAtt !== bAtt) return bAtt - aAtt
     return a.name.localeCompare(b.name)
   })
@@ -447,31 +569,30 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
     .filter(p => !team.includes(p.name))
     .filter(p => !search || p.name.includes(search) || (p.aliases || []).some(a => a.includes(search)))
 
-  const regularPlayers = filteredPlayers.filter(p => p.player_type === 'regular')
-  const guestPlayers = filteredPlayers.filter(p => p.player_type === 'guest')
+  const activeRegulars = filteredPlayers.filter(p => p.player_type === 'regular' && (attendance[p.name] || 0) > 0)
+  const activeGuests = filteredPlayers.filter(p => p.player_type === 'guest' && (attendance[p.name] || 0) > 0)
+  const inactiveRegulars = filteredPlayers.filter(p => p.player_type === 'regular' && (attendance[p.name] || 0) === 0)
+  const inactiveGuests = filteredPlayers.filter(p => p.player_type === 'guest' && (attendance[p.name] || 0) === 0)
 
-  // Only show regulars who have attendance this season, or all if no season data
-  const activeRegulars = regularPlayers.filter(p => (attendance[p.name] || 0) > 0)
-  const inactiveRegulars = regularPlayers.filter(p => (attendance[p.name] || 0) === 0)
-  const activeGuests = guestPlayers.filter(p => (attendance[p.name] || 0) > 0)
-  const inactiveGuests = guestPlayers.filter(p => (attendance[p.name] || 0) === 0)
+  const isWhite = label.includes('白')
 
   return (
-    <div className="border rounded-lg p-3">
+    <div className={`border-2 rounded-lg p-3 ${isWhite ? 'border-gray-300' : 'border-blue-300'}`}>
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-blue-600">{label}（{team.length}人）</h3>
+        <h3 className={`font-semibold ${isWhite ? 'text-gray-700' : 'text-blue-600'}`}>{label}（{team.length}人）</h3>
         <button onClick={() => setShowPicker(!showPicker)}
           className="text-sm text-blue-600 hover:text-blue-800">
-          {showPicker ? '收起' : '+ 添加球员'}
+          {showPicker ? '收起选人' : '+ 选人'}
         </button>
       </div>
 
       {/* Current team */}
-      <div className="flex flex-wrap gap-1.5 mb-2">
+      <div className="flex flex-wrap gap-1.5 mb-2 min-h-[32px]">
+        {team.length === 0 && <span className="text-sm text-gray-400">点击下方球员添加到此队</span>}
         {team.map(name => {
           const isAirDrop = airDropNames.includes(name)
           return (
-            <span key={name} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm ${isAirDrop ? 'bg-purple-100' : 'bg-blue-50'}`}>
+            <span key={name} className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-sm ${isAirDrop ? 'bg-purple-100' : isWhite ? 'bg-gray-100' : 'bg-blue-50'}`}>
               {captain === name && <span className="text-amber-500 font-bold text-xs">C</span>}
               {isAirDrop && <span className="text-purple-600 font-semibold text-[10px]">空降</span>}
               {name}
@@ -497,9 +618,12 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
       {/* Player picker */}
       {showPicker && (
         <div className="border-t pt-2 mt-2">
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="搜索球员..." className="w-full px-3 py-1.5 border rounded-lg text-sm mb-2" />
-          <div className="max-h-48 overflow-y-auto space-y-2">
+          <div className="relative mb-2">
+            <Search className="w-4 h-4 absolute left-2.5 top-2 text-gray-400" />
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="搜索球员..." className="w-full pl-8 pr-3 py-1.5 border rounded-lg text-sm" />
+          </div>
+          <div className="max-h-52 overflow-y-auto space-y-2">
             {activeRegulars.length > 0 && (
               <div>
                 <div className="text-xs text-gray-400 mb-1">常规球员（本赛季活跃）</div>
@@ -507,7 +631,7 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
                   {activeRegulars.map(p => (
                     <button key={p.id} onClick={() => setTeam([...team, p.name])}
                       className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 rounded-full text-xs transition">
-                      {p.name} <span className="text-gray-400">({attendance[p.name]}场)</span>
+                      {p.name} <span className="text-gray-400">({attendance[p.name]})</span>
                     </button>
                   ))}
                 </div>
@@ -520,7 +644,7 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
                   {activeGuests.map(p => (
                     <button key={p.id} onClick={() => setTeam([...team, p.name])}
                       className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 rounded-full text-xs transition">
-                      {p.name} <span className="text-gray-400">({attendance[p.name]}场)</span>
+                      {p.name} <span className="text-gray-400">({attendance[p.name]})</span>
                     </button>
                   ))}
                 </div>
@@ -552,10 +676,12 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
                 </div>
               </div>
             )}
+            {filteredPlayers.length === 0 && (
+              <div className="text-sm text-gray-400 text-center py-2">没有找到球员</div>
+            )}
           </div>
         </div>
       )}
     </div>
   )
 }
-
