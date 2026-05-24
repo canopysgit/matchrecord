@@ -49,7 +49,7 @@ export async function parseRosterText(
 请严格按照以下JSON格式返回，不要包含其他文字：
 {
   "date": "YYYY-MM-DD",
-  "time": "时间段，如2-4、4-6、8-10",
+  "time": "时间段，如14:00-16:00、16:00-18:00、18:00-20:00、20:00-22:00",
   "venue": "场地名称",
   "matchType": "内战或外战",
   "whiteTeam": ["球员标准名1", "球员标准名2"],

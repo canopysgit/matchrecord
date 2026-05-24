@@ -19,7 +19,7 @@ export default function MatchSignup() {
 
   // Shared state for both modes
   const [date, setDate] = useState('')
-  const [time, setTime] = useState('8-10')
+  const [time, setTime] = useState('18:00-20:00')
   const [venue, setVenue] = useState('机场南楼')
   const [matchType, setMatchType] = useState('内战')
   const [whiteTeam, setWhiteTeam] = useState<string[]>([])
@@ -73,8 +73,8 @@ export default function MatchSignup() {
       setDate(`${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`)
     }
     // Detect time
-    if (firstLine.includes('晚')) setTime('8-10')
-    else if (firstLine.includes('下午')) setTime('2-4')
+    if (firstLine.includes('晚')) setTime('18:00-20:00')
+    else if (firstLine.includes('下午')) setTime('14:00-16:00')
     // Detect venue
     if (firstLine.includes('南楼')) setVenue('机场南楼')
 
@@ -156,7 +156,7 @@ export default function MatchSignup() {
 
       setParsed(data)
       setDate(data.date || '')
-      setTime(data.time || '2-4')
+      setTime(data.time || '18:00-20:00')
       setVenue(data.venue || '机场南楼')
       setMatchType(data.matchType || '内战')
       setWhiteTeam(data.whiteTeam || [])
@@ -403,9 +403,10 @@ export default function MatchSignup() {
               <label className="block text-sm text-gray-600 mb-1">时间段</label>
               <select value={time} onChange={e => setTime(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg text-sm">
-                <option value="2-4">下午 2-4</option>
-                <option value="4-6">下午 4-6</option>
-                <option value="8-10">晚上 8-10</option>
+                <option value="14:00-16:00">14:00-16:00</option>
+                <option value="16:00-18:00">16:00-18:00</option>
+                <option value="18:00-20:00">18:00-20:00</option>
+                <option value="20:00-22:00">20:00-22:00</option>
               </select>
             </div>
             <div>
