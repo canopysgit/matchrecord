@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase, getTableNames } from '../lib/supabase'
 import { useSeason } from '../contexts/SeasonContext'
+import { recalculateStats, recalculateWinRate } from '../lib/statsCalculator'
 import type { PlayerStatRow } from '../lib/types'
 
 type Board = 'attendance' | 'goals' | 'assists'
@@ -17,8 +18,22 @@ export default function Stats() {
   const [playerFilter, setPlayerFilter] = useState<PlayerFilter>('regular')
   const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc')
   const [loading, setLoading] = useState(true)
+  const [recalcing, setRecalcing] = useState(false)
 
   useEffect(() => { loadData() }, [season])
+
+  async function handleRecalc() {
+    setRecalcing(true)
+    try {
+      await recalculateStats(season)
+      await recalculateWinRate(season)
+      await loadData()
+    } catch (e) {
+      console.error(e)
+      alert('重算失败: ' + (e as Error).message)
+    }
+    setRecalcing(false)
+  }
 
   async function loadData() {
     setLoading(true)
@@ -58,7 +73,16 @@ export default function Stats() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold text-gray-800">{season}年数据统计</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-800">{season}年数据统计</h1>
+        <button
+          onClick={handleRecalc}
+          disabled={recalcing}
+          className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition disabled:opacity-50"
+        >
+          {recalcing ? '计算中...' : '重新计算'}
+        </button>
+      </div>
 
       {/* Board tabs */}
       <div className="flex justify-center gap-2">
