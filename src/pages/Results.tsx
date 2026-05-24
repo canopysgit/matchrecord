@@ -24,7 +24,7 @@ export default function Results() {
     const yearEnd = `${season + 1}-01-01`
 
     let q = supabase.from(tables.matches).select('*')
-      .eq('status', 'completed').order('match_date', { ascending: false })
+      .eq('status', 'completed').order('match_date', { ascending: false }).order('year_match_number', { ascending: false })
     if (season === 2025) {
       q = q.gte('match_date', yearStart).lt('match_date', yearEnd)
     }
