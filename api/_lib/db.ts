@@ -13,8 +13,9 @@ let cached: Db | null = null
 
 export function getDb(): Db {
   if (cached) return cached
-  const url = process.env.DATABASE_URL
-  if (!url) throw new Error('缺少 DATABASE_URL 环境变量')
+  // 优先 NEON_DATABASE_URL，避免和项目里遗留的旧 DATABASE_URL 冲突
+  const url = process.env.NEON_DATABASE_URL || process.env.DATABASE_URL
+  if (!url) throw new Error('缺少 NEON_DATABASE_URL 环境变量')
   const sql = neon(url)
   cached = {
     query: (text, params = []) => sql.query(text, params) as Promise<Record<string, unknown>[]>,

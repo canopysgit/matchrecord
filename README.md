@@ -13,8 +13,8 @@ React + Vite 前端，Vercel Serverless Functions（`/api`）+ Neon Postgres。
 
 ## 常用命令
 ```bash
-npm run dev:api & npm run dev       # 本地开发（无 DATABASE_URL 时用内存 Postgres + 2026 数据）
-DATABASE_URL=... npm run db:import  # 建表并导入 2026 数据（加 -- --reset 先清空）
+npm run dev:api & npm run dev       # 本地开发（无 NEON_DATABASE_URL 时用内存 Postgres + 2026 数据）
+NEON_DATABASE_URL=... npm run db:import  # 建表并导入 2026 数据（加 -- --reset 先清空）
 npm run test:local                  # 本地自测
 ```
 

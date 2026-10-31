@@ -1,5 +1,5 @@
 // 本地开发用：用 PGlite 模拟数据库，跑 /api/* 函数（端口 8787），vite 把 /api 代理过来。
-// 用法: npx tsx scripts/dev-api.ts   （若设置了 DATABASE_URL 则直接连 Neon）
+// 用法: npx tsx scripts/dev-api.ts   （若设置了 NEON_DATABASE_URL 则直接连 Neon）
 import { createServer } from 'node:http'
 import { PGlite } from '@electric-sql/pglite'
 import { setDb, type Db } from '../api/_lib/db.js'
@@ -9,7 +9,7 @@ process.env.AUTH_SECRET ||= 'dev-secret'
 process.env.ADMIN_EMAIL ||= 'admin@example.com'
 process.env.ADMIN_PASSWORD ||= 'dev-password'
 
-if (!process.env.DATABASE_URL) {
+if (!process.env.NEON_DATABASE_URL && !process.env.DATABASE_URL) {
   const pg = new PGlite({ parsers: { 1082: (v: string) => v } })
   const db: Db = {
     query: async (t, p = []) => (await pg.query(t, p)).rows as Record<string, unknown>[],

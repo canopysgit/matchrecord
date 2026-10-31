@@ -1,5 +1,5 @@
 // 建表 + 导入 2026 赛季数据到 Neon
-// 用法: DATABASE_URL='postgres://...' npx tsx scripts/import-2026.ts [--reset]
+// 用法: NEON_DATABASE_URL='postgres://...' npx tsx scripts/import-2026.ts [--reset]
 import { readFileSync } from 'node:fs'
 import { getDb, type Db } from '../api/_lib/db.js'
 import { recordMatch, type MatchInput } from '../api/_lib/record.js'
