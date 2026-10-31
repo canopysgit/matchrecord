@@ -108,17 +108,17 @@
    "aliases": []
   },
   {
-   "name": "金威威",
-   "player_type": "regular",
-   "aliases": [
-    "威威"
-   ]
-  },
-  {
    "name": "康进",
    "player_type": "regular",
    "aliases": [
     "康大牌"
+   ]
+  },
+  {
+   "name": "金威威",
+   "player_type": "regular",
+   "aliases": [
+    "威威"
    ]
   },
   {
@@ -129,10 +129,10 @@
    ]
   },
   {
-   "name": "赵琪",
+   "name": "赵祺",
    "player_type": "regular",
    "aliases": [
-    "赵祺",
+    "赵琪",
     "赵老师"
    ]
   },
@@ -159,6 +159,11 @@
    ]
   },
   {
+   "name": "黄鹏",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
    "name": "邵琳",
    "player_type": "regular",
    "aliases": [
@@ -166,11 +171,6 @@
     "邵林",
     "邵队"
    ]
-  },
-  {
-   "name": "黄鹏",
-   "player_type": "regular",
-   "aliases": []
   },
   {
    "name": "张健",
@@ -204,16 +204,16 @@
    ]
   },
   {
+   "name": "罗霄",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
    "name": "冯旭东",
    "player_type": "regular",
    "aliases": [
     "旭东"
    ]
-  },
-  {
-   "name": "罗霄",
-   "player_type": "regular",
-   "aliases": []
   },
   {
    "name": "尚枫",
@@ -368,12 +368,12 @@
    "aliases": []
   },
   {
-   "name": "忠宝",
+   "name": "刘振",
    "player_type": "guest",
    "aliases": []
   },
   {
-   "name": "刘振",
+   "name": "忠宝",
    "player_type": "guest",
    "aliases": []
   },
@@ -393,12 +393,12 @@
    "aliases": []
   },
   {
-   "name": "夏俊豪",
+   "name": "好",
    "player_type": "guest",
    "aliases": []
   },
   {
-   "name": "好",
+   "name": "夏俊豪",
    "player_type": "guest",
    "aliases": []
   },
@@ -423,12 +423,19 @@
    "aliases": []
   },
   {
-   "name": "王朝辉",
+   "name": "王亚楠",
+   "player_type": "guest",
+   "aliases": [
+    "亚楠"
+   ]
+  },
+  {
+   "name": "李长夙",
    "player_type": "guest",
    "aliases": []
   },
   {
-   "name": "李长夙",
+   "name": "王朝辉",
    "player_type": "guest",
    "aliases": []
   },
@@ -438,34 +445,7 @@
    "aliases": []
   },
   {
-   "name": "王亚楠",
-   "player_type": "guest",
-   "aliases": [
-    "亚楠"
-   ]
-  },
-  {
    "name": "银河",
-   "player_type": "guest",
-   "aliases": []
-  },
-  {
-   "name": "毕姥爷",
-   "player_type": "guest",
-   "aliases": []
-  },
-  {
-   "name": "闫磊",
-   "player_type": "guest",
-   "aliases": []
-  },
-  {
-   "name": "杨峰",
-   "player_type": "guest",
-   "aliases": []
-  },
-  {
-   "name": "梓涵",
    "player_type": "guest",
    "aliases": []
   },
@@ -475,12 +455,32 @@
    "aliases": []
   },
   {
-   "name": "安哥",
+   "name": "杨峰",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "闫磊",
    "player_type": "guest",
    "aliases": []
   },
   {
    "name": "刘欣",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "安哥",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "毕姥爷",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "梓涵",
    "player_type": "guest",
    "aliases": []
   },
@@ -493,6 +493,13 @@
    "name": "阿桑",
    "player_type": "guest",
    "aliases": []
+  },
+  {
+   "name": "大龙宝",
+   "player_type": "guest",
+   "aliases": [
+    "大龙宝（大志）"
+   ]
   },
   {
    "name": "谭笑",
@@ -513,13 +520,6 @@
    "name": "崇昱",
    "player_type": "guest",
    "aliases": []
-  },
-  {
-   "name": "大龙宝",
-   "player_type": "guest",
-   "aliases": [
-    "大龙宝（大志）"
-   ]
   }
  ],
  "matches": [
@@ -1296,7 +1296,7 @@
    "white": [
     "谢先文",
     "马晓航",
-    "赵琪",
+    "赵祺",
     "王磊",
     "罗霄",
     "解小鹤",
@@ -1422,7 +1422,7 @@
    "white": [
     "张霏赫",
     "黄鹏",
-    "赵琪",
+    "赵祺",
     "张潇艺",
     "袁祎",
     "金威威",
@@ -1629,7 +1629,7 @@
    "white": [
     "袁祎",
     "孙路",
-    "赵琪",
+    "赵祺",
     "李蒙",
     "贾键雄",
     "赵之宇",
@@ -1884,7 +1884,7 @@
     "蒋广文",
     "王磊",
     "刘杰",
-    "赵琪",
+    "赵祺",
     "赵朋",
     "张霏赫",
     "马晓航"
@@ -1921,7 +1921,7 @@
     {
      "team": "blue",
      "own_goal": true,
-     "by": "赵琪"
+     "by": "赵祺"
     },
     {
      "team": "blue",
@@ -1948,7 +1948,7 @@
     "朱瑞",
     "贺楠",
     "蒋广文",
-    "赵琪",
+    "赵祺",
     "马晓航",
     "张健",
     "张霏赫",
@@ -2017,7 +2017,7 @@
     "张健",
     "解小鹤",
     "陈宣宇",
-    "赵琪",
+    "赵祺",
     "蒋广文",
     "金昊"
    ],
@@ -2136,7 +2136,7 @@
     "金昊",
     "康进",
     "杨立勋",
-    "赵琪",
+    "赵祺",
     "赵军",
     "赵之宇",
     "赵朋"
@@ -2176,7 +2176,7 @@
     {
      "team": "blue",
      "scorer": "赵之宇",
-     "assist": "赵琪"
+     "assist": "赵祺"
     },
     {
      "team": "blue",
@@ -2195,11 +2195,11 @@
    "white_own_goals": 0,
    "blue_own_goals": 0,
    "captains": {
-    "white": "赵琪",
+    "white": "赵祺",
     "blue": "孙路"
    },
    "white": [
-    "赵琪",
+    "赵祺",
     "朱瑞",
     "蒋广文",
     "贺楠",
@@ -2350,7 +2350,7 @@
     "邵琳",
     "袁祎",
     "解小鹤",
-    "赵琪",
+    "赵祺",
     "陈教练",
     "王一陶",
     "康进",
@@ -2458,7 +2458,7 @@
     "陈宣宇",
     "王一陶",
     "赵之宇",
-    "赵琪"
+    "赵祺"
    ],
    "airdrop": [],
    "goals": [
@@ -2520,7 +2520,7 @@
     "解小鹤",
     "朱丹",
     "赵朋",
-    "赵琪",
+    "赵祺",
     "吴浩杰",
     "赵之宇"
    ],
@@ -2809,7 +2809,7 @@
     "朱瑞",
     "金威威",
     "乔晨",
-    "赵琪",
+    "赵祺",
     "赵朋",
     "谢先文",
     "刘杰"
@@ -2836,7 +2836,7 @@
     {
      "team": "blue",
      "scorer": "冯尊",
-     "assist": "赵琪"
+     "assist": "赵祺"
     },
     {
      "team": "blue",
@@ -2877,7 +2877,7 @@
     "王一陶",
     "赵军",
     "乔晨",
-    "赵琪",
+    "赵祺",
     "陈宣宇"
    ],
    "blue": [
@@ -3054,7 +3054,7 @@
     "贾键雄",
     "冯尊",
     "袁祎",
-    "赵琪",
+    "赵祺",
     "黄鹏",
     "金威威",
     "井荣山",
@@ -3145,7 +3145,7 @@
     "贾键雄",
     "乔晨",
     "井荣山",
-    "赵琪",
+    "赵祺",
     "金威威"
    ],
    "blue": [
@@ -3319,7 +3319,7 @@
     "邵琳",
     "朱瑞",
     "陈宣宇",
-    "赵琪",
+    "赵祺",
     "杨超",
     "解小鹤",
     "康进",
@@ -3415,7 +3415,7 @@
     "陈宣宇",
     "马晓航",
     "杨超",
-    "赵琪",
+    "赵祺",
     "解小鹤",
     "胡赫"
    ],
@@ -3477,7 +3477,7 @@
     "黄鹏",
     "张霏赫",
     "谢先文",
-    "赵琪",
+    "赵祺",
     "王磊",
     "解小鹤",
     "赵朋",
