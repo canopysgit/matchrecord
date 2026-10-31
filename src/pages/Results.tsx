@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useSeason } from '../contexts/SeasonContext'
 import { useAuth } from '../contexts/AuthContext'
 import { Trash2 } from 'lucide-react'
@@ -23,7 +23,7 @@ export default function Results() {
     const yearStart = `${season}-01-01`
     const yearEnd = `${season + 1}-01-01`
 
-    let q = supabase.from(tables.matches).select('*')
+    let q = db.from(tables.matches).select('*')
       .eq('status', 'completed').order('match_date', { ascending: false }).order('year_match_number', { ascending: false })
     if (season === 2025) {
       q = q.gte('match_date', yearStart).lt('match_date', yearEnd)
@@ -34,9 +34,9 @@ export default function Results() {
 
     if (allMatches.length) {
       const ids = allMatches.map(m => m.id)
-      const { data: players } = await supabase.from(tables.matchPlayers).select('*').in('match_id', ids)
-      const { data: stats } = await supabase.from(tables.matchStats).select('*').in('match_id', ids)
-      const { data: captains } = await supabase.from(tables.matchCaptains).select('*').in('match_id', ids)
+      const { data: players } = await db.from(tables.matchPlayers).select('*').in('match_id', ids)
+      const { data: stats } = await db.from(tables.matchStats).select('*').in('match_id', ids)
+      const { data: captains } = await db.from(tables.matchCaptains).select('*').in('match_id', ids)
 
       const pMap: Record<string, MatchPlayer[]> = {}
       const sMap: Record<string, MatchStat[]> = {}
@@ -63,10 +63,10 @@ export default function Results() {
   async function handleDelete() {
     if (!deleteId) return
     const tables = getTableNames(season)
-    await supabase.from(tables.matchStats).delete().eq('match_id', deleteId)
-    await supabase.from(tables.matchPlayers).delete().eq('match_id', deleteId)
-    await supabase.from(tables.matchCaptains).delete().eq('match_id', deleteId)
-    await supabase.from(tables.matches).delete().eq('id', deleteId)
+    await db.from(tables.matchStats).delete().eq('match_id', deleteId)
+    await db.from(tables.matchPlayers).delete().eq('match_id', deleteId)
+    await db.from(tables.matchCaptains).delete().eq('match_id', deleteId)
+    await db.from(tables.matches).delete().eq('id', deleteId)
     setDeleteId(null)
     loadData()
   }

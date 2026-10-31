@@ -1,23 +1,16 @@
-const KIMI_API_KEY = 'sk-k8rA168bRacxAM8aDbOZGpcke0jPsX2SgRwV5i0DzCqMDkpj'
-const KIMI_BASE_URL = 'https://api.moonshot.cn/v1'
+import { authHeaders } from './db'
 
 interface KimiMessage {
   role: 'system' | 'user' | 'assistant'
   content: string
 }
 
+// 通过服务端 /api/kimi 代理调用，key 不再放在前端
 export async function callKimi(messages: KimiMessage[]): Promise<string> {
-  const response = await fetch(`${KIMI_BASE_URL}/chat/completions`, {
+  const response = await fetch('/api/kimi', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${KIMI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'moonshot-v1-8k',
-      messages,
-      temperature: 0.1,
-    }),
+    headers: { 'Content-Type': 'application/json', ...authHeaders() },
+    body: JSON.stringify({ messages }),
   })
 
   if (!response.ok) {
@@ -26,7 +19,7 @@ export async function callKimi(messages: KimiMessage[]): Promise<string> {
   }
 
   const data = await response.json()
-  return data.choices[0].message.content
+  return data.content
 }
 
 export async function parseRosterText(

@@ -1,0 +1,3522 @@
+{
+ "season": 2026,
+ "source": "2026年技术统计.txt",
+ "players": [
+  {
+   "name": "张霏赫",
+   "player_type": "regular",
+   "aliases": [
+    "菲赫",
+    "霏指",
+    "霏赫",
+    "飞鹤"
+   ]
+  },
+  {
+   "name": "谢先文",
+   "player_type": "regular",
+   "aliases": [
+    "阿曼"
+   ]
+  },
+  {
+   "name": "蒋广文",
+   "player_type": "regular",
+   "aliases": [
+    "广文"
+   ]
+  },
+  {
+   "name": "马晓航",
+   "player_type": "regular",
+   "aliases": [
+    "马指"
+   ]
+  },
+  {
+   "name": "解小鹤",
+   "player_type": "regular",
+   "aliases": [
+    "小贺",
+    "小鹤"
+   ]
+  },
+  {
+   "name": "井荣山",
+   "player_type": "regular",
+   "aliases": [
+    "井"
+   ]
+  },
+  {
+   "name": "冯尊",
+   "player_type": "regular",
+   "aliases": [
+    "小 Z",
+    "小Z",
+    "小z"
+   ]
+  },
+  {
+   "name": "袁祎",
+   "player_type": "regular",
+   "aliases": [
+    "袁一"
+   ]
+  },
+  {
+   "name": "王一陶",
+   "player_type": "regular",
+   "aliases": [
+    "一淘",
+    "一陶"
+   ]
+  },
+  {
+   "name": "王磊",
+   "player_type": "regular",
+   "aliases": [
+    "磊磊"
+   ]
+  },
+  {
+   "name": "朱瑞",
+   "player_type": "regular",
+   "aliases": [
+    "朱指导",
+    "朱门",
+    "老朱"
+   ]
+  },
+  {
+   "name": "赵之宇",
+   "player_type": "regular",
+   "aliases": [
+    "赵哥"
+   ]
+  },
+  {
+   "name": "贾键雄",
+   "player_type": "regular",
+   "aliases": [
+    "大雄"
+   ]
+  },
+  {
+   "name": "孙路",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "金威威",
+   "player_type": "regular",
+   "aliases": [
+    "威威"
+   ]
+  },
+  {
+   "name": "康进",
+   "player_type": "regular",
+   "aliases": [
+    "康大牌"
+   ]
+  },
+  {
+   "name": "陈宣宇",
+   "player_type": "regular",
+   "aliases": [
+    "宣宇"
+   ]
+  },
+  {
+   "name": "赵琪",
+   "player_type": "regular",
+   "aliases": [
+    "赵祺",
+    "赵老师"
+   ]
+  },
+  {
+   "name": "杨立勋",
+   "player_type": "regular",
+   "aliases": [
+    "勋",
+    "勋哥"
+   ]
+  },
+  {
+   "name": "张嘉磊",
+   "player_type": "regular",
+   "aliases": [
+    "嘉磊"
+   ]
+  },
+  {
+   "name": "赵朋",
+   "player_type": "regular",
+   "aliases": [
+    "扇子"
+   ]
+  },
+  {
+   "name": "邵琳",
+   "player_type": "regular",
+   "aliases": [
+    "少林",
+    "邵林",
+    "邵队"
+   ]
+  },
+  {
+   "name": "黄鹏",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "张健",
+   "player_type": "regular",
+   "aliases": [
+    "健哥"
+   ]
+  },
+  {
+   "name": "乔晨",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "赵军",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "常鹏宇",
+   "player_type": "regular",
+   "aliases": [
+    "小常"
+   ]
+  },
+  {
+   "name": "张潇艺",
+   "player_type": "regular",
+   "aliases": [
+    "毛毛"
+   ]
+  },
+  {
+   "name": "冯旭东",
+   "player_type": "regular",
+   "aliases": [
+    "旭东"
+   ]
+  },
+  {
+   "name": "罗霄",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "尚枫",
+   "player_type": "regular",
+   "aliases": [
+    "尙枫"
+   ]
+  },
+  {
+   "name": "杜思禹",
+   "player_type": "regular",
+   "aliases": [
+    "思禹",
+    "杜思雨"
+   ]
+  },
+  {
+   "name": "小段",
+   "player_type": "regular",
+   "aliases": [
+    "段"
+   ]
+  },
+  {
+   "name": "朱丹",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "孟机长",
+   "player_type": "regular",
+   "aliases": [
+    "孟",
+    "孟乘务长",
+    "孟机",
+    "孟长",
+    "蒙"
+   ]
+  },
+  {
+   "name": "杨超",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "蔡洪波",
+   "player_type": "regular",
+   "aliases": [
+    "洪波"
+   ]
+  },
+  {
+   "name": "贺楠",
+   "player_type": "regular",
+   "aliases": []
+  },
+  {
+   "name": "张扬",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "李彬",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "王樯",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "刘杰",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "王宇青",
+   "player_type": "guest",
+   "aliases": [
+    "王雨青"
+   ]
+  },
+  {
+   "name": "林氏",
+   "player_type": "guest",
+   "aliases": [
+    "小林"
+   ]
+  },
+  {
+   "name": "金昊",
+   "player_type": "guest",
+   "aliases": [
+    "球霸"
+   ]
+  },
+  {
+   "name": "肖凯",
+   "player_type": "guest",
+   "aliases": [
+    "凯叔"
+   ]
+  },
+  {
+   "name": "johnny孔",
+   "player_type": "guest",
+   "aliases": [
+    "Johnny孔",
+    "孔Johnny",
+    "孔哥"
+   ]
+  },
+  {
+   "name": "胡赫",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "刘添琦",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "袁茂然",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "鲍力",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "李蒙",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "田爽",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "陈教练",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "路遥",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "忠宝",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "刘振",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "王杰",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "国米",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "郝",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "夏俊豪",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "好",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "张越",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "哞哞",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "吴浩杰",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "郭威",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "王朝辉",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "李长夙",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "张雷",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "王亚楠",
+   "player_type": "guest",
+   "aliases": [
+    "亚楠"
+   ]
+  },
+  {
+   "name": "银河",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "毕姥爷",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "闫磊",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "杨峰",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "梓涵",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "欧阳",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "安哥",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "刘欣",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "阿啸",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "阿桑",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "谭笑",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "韦",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "吴海涛",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "崇昱",
+   "player_type": "guest",
+   "aliases": []
+  },
+  {
+   "name": "大龙宝",
+   "player_type": "guest",
+   "aliases": [
+    "大龙宝（大志）"
+   ]
+  }
+ ],
+ "matches": [
+  {
+   "date": "2026-01-10",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 7,
+   "blue_score": 9,
+   "white_own_goals": 2,
+   "blue_own_goals": 0,
+   "captains": {},
+   "white": [
+    "罗霄",
+    "尚枫",
+    "井荣山",
+    "解小鹤",
+    "赵军",
+    "黄鹏",
+    "冯尊",
+    "邵琳",
+    "马晓航",
+    "王一陶"
+   ],
+   "blue": [
+    "张霏赫",
+    "蒋广文",
+    "张健",
+    "孙路",
+    "小段",
+    "杨立勋",
+    "冯旭东",
+    "杜思禹",
+    "王宇青",
+    "常鹏宇",
+    "谢先文"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "井荣山"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "黄鹏"
+    },
+    {
+     "team": "white",
+     "scorer": "尚枫",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "blue",
+     "scorer": "常鹏宇",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "张霏赫",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "own_goal": true,
+     "by": "未知"
+    },
+    {
+     "team": "blue",
+     "own_goal": true,
+     "by": "未知"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "蒋广文"
+    }
+   ]
+  },
+  {
+   "date": "2026-01-17",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 5,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {},
+   "white": [
+    "罗霄",
+    "张潇艺",
+    "冯旭东",
+    "朱丹",
+    "乔晨",
+    "解小鹤",
+    "杨立勋",
+    "金威威",
+    "赵之宇",
+    "井荣山"
+   ],
+   "blue": [
+    "马晓航",
+    "张霏赫",
+    "小段",
+    "冯尊",
+    "蒋广文",
+    "林氏",
+    "杜思禹",
+    "邵琳",
+    "袁祎",
+    "康进"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "罗霄"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "小段"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "杜思禹"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "冯尊"
+    }
+   ]
+  },
+  {
+   "date": "2026-01-24",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 4,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {},
+   "white": [
+    "谢先文",
+    "林氏",
+    "尚枫",
+    "蒋广文",
+    "张健",
+    "张扬",
+    "常鹏宇",
+    "孙路",
+    "孟机长",
+    "王磊",
+    "罗霄",
+    "邵琳"
+   ],
+   "blue": [
+    "张嘉磊",
+    "朱瑞",
+    "朱丹",
+    "黄鹏",
+    "井荣山",
+    "赵之宇",
+    "张霏赫",
+    "小段",
+    "冯尊",
+    "乔晨",
+    "解小鹤",
+    "马晓航"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": "罗霄"
+    },
+    {
+     "team": "white",
+     "scorer": "蒋广文",
+     "assist": "孙路"
+    },
+    {
+     "team": "white",
+     "scorer": "尚枫",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "常鹏宇",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "小段"
+    },
+    {
+     "team": "blue",
+     "scorer": "解小鹤",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "马晓航"
+    }
+   ]
+  },
+  {
+   "date": "2026-01-31",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 8,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {},
+   "white": [
+    "谢先文",
+    "乔晨",
+    "孟机长",
+    "罗霄",
+    "王杰",
+    "金昊",
+    "李彬",
+    "常鹏宇",
+    "冯尊",
+    "马晓航",
+    "邵琳"
+   ],
+   "blue": [
+    "王一陶",
+    "孙路",
+    "杨立勋",
+    "井荣山",
+    "尚枫",
+    "张嘉磊",
+    "张霏赫",
+    "黄鹏",
+    "王磊",
+    "解小鹤",
+    "肖凯"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "常鹏宇"
+    },
+    {
+     "team": "white",
+     "scorer": "常鹏宇",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "金昊",
+     "assist": "常鹏宇"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "金昊"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "杨立勋",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "张霏赫",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "井荣山"
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": "肖凯"
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "尚枫"
+    },
+    {
+     "team": "blue",
+     "scorer": "尚枫",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-02-07",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 3,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "王一陶",
+    "blue": "解小鹤"
+   },
+   "white": [
+    "王一陶",
+    "张霏赫",
+    "袁祎",
+    "冯尊",
+    "王磊",
+    "林氏",
+    "杜思禹",
+    "蒋广文",
+    "王宇青"
+   ],
+   "blue": [
+    "解小鹤",
+    "朱瑞",
+    "黄鹏",
+    "赵之宇",
+    "康进",
+    "邵琳",
+    "罗霄",
+    "金威威",
+    "尚枫"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "林氏"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "林氏"
+    },
+    {
+     "team": "white",
+     "scorer": "袁祎",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "冯尊"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "解小鹤",
+     "assist": "尚枫"
+    },
+    {
+     "team": "blue",
+     "scorer": "金威威",
+     "assist": "赵之宇"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "罗霄"
+    }
+   ]
+  },
+  {
+   "date": "2026-03-01",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 5,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "王一陶",
+    "blue": "谢先文"
+   },
+   "white": [
+    "王一陶",
+    "鲍力",
+    "尚枫",
+    "国米",
+    "孙路",
+    "冯尊",
+    "马晓航",
+    "黄鹏",
+    "解小鹤"
+   ],
+   "blue": [
+    "谢先文",
+    "杜思禹",
+    "蒋广文",
+    "小段",
+    "张霏赫",
+    "张嘉磊",
+    "王磊",
+    "朱瑞",
+    "邵琳"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "张嘉磊"
+    },
+    {
+     "team": "blue",
+     "scorer": "张嘉磊",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "张霏赫",
+     "assist": "张嘉磊"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "张嘉磊"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "孙路"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "国米"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "尚枫",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-03-07",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 3,
+   "blue_score": 7,
+   "white_own_goals": 1,
+   "blue_own_goals": 0,
+   "captains": {},
+   "white": [
+    "谢先文",
+    "王磊",
+    "罗霄",
+    "王一陶",
+    "袁祎",
+    "尚枫",
+    "金威威",
+    "冯旭东",
+    "鲍力",
+    "李彬",
+    "张潇艺"
+   ],
+   "blue": [
+    "朱瑞",
+    "常鹏宇",
+    "马晓航",
+    "赵朋",
+    "冯尊",
+    "张霏赫",
+    "黄鹏",
+    "康进",
+    "赵军",
+    "杜思禹",
+    "张潇艺"
+   ],
+   "airdrop": [
+    "张潇艺"
+   ],
+   "goals": [
+    {
+     "team": "blue",
+     "own_goal": true,
+     "by": "鲍力"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "杜思禹",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "康进"
+    },
+    {
+     "team": "blue",
+     "scorer": "杜思禹",
+     "assist": "康进"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "康进"
+    },
+    {
+     "team": "blue",
+     "scorer": "张霏赫",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "鲍力",
+     "assist": "金威威"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "王一陶"
+    }
+   ]
+  },
+  {
+   "date": "2026-03-14",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 8,
+   "blue_score": 5,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "朱瑞",
+    "white": "谢先文"
+   },
+   "white": [
+    "谢先文",
+    "马晓航",
+    "罗霄",
+    "王一陶",
+    "孙路",
+    "王磊",
+    "赵军",
+    "乔晨",
+    "张霏赫",
+    "李彬",
+    "johnny孔"
+   ],
+   "blue": [
+    "朱瑞",
+    "黄鹏",
+    "蒋广文",
+    "冯尊",
+    "张健",
+    "解小鹤",
+    "肖凯",
+    "陈宣宇",
+    "杜思禹",
+    "郝",
+    "杨立勋"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "肖凯"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "黄鹏"
+    },
+    {
+     "team": "blue",
+     "scorer": "杨立勋",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "张霏赫",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "李彬"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "张霏赫",
+     "assist": "孙路"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "张霏赫",
+     "assist": "马晓航"
+    }
+   ]
+  },
+  {
+   "date": "2026-03-21",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 12,
+   "blue_score": 4,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "谢先文",
+    "blue": "蒋广文"
+   },
+   "white": [
+    "谢先文",
+    "马晓航",
+    "赵琪",
+    "王磊",
+    "罗霄",
+    "解小鹤",
+    "尚枫",
+    "孟机长",
+    "朱丹",
+    "夏俊豪",
+    "好",
+    "赵军"
+   ],
+   "blue": [
+    "蒋广文",
+    "王一陶",
+    "张霏赫",
+    "张健",
+    "赵之宇",
+    "袁祎",
+    "陈宣宇",
+    "井荣山",
+    "肖凯",
+    "乔晨",
+    "金威威",
+    "小段",
+    "johnny孔"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "罗霄",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "夏俊豪",
+     "assist": "好"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "夏俊豪"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "尚枫",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "朱丹",
+     "assist": "王磊"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "blue",
+     "scorer": "小段",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "王一陶"
+    }
+   ]
+  },
+  {
+   "date": "2026-03-28",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 10,
+   "blue_score": 1,
+   "white_own_goals": 0,
+   "blue_own_goals": 1,
+   "captains": {
+    "white": "张霏赫",
+    "blue": "谢先文"
+   },
+   "white": [
+    "张霏赫",
+    "黄鹏",
+    "赵琪",
+    "张潇艺",
+    "袁祎",
+    "金威威",
+    "康进",
+    "孙路",
+    "冯旭东",
+    "杜思禹",
+    "王宇青",
+    "李彬"
+   ],
+   "blue": [
+    "谢先文",
+    "王磊",
+    "朱瑞",
+    "张健",
+    "赵之宇",
+    "解小鹤",
+    "尚枫",
+    "井荣山",
+    "冯尊",
+    "蒋广文",
+    "孟机长"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": "黄鹏"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "孙路"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "李彬"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "金威威",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "张霏赫",
+     "assist": "杜思禹"
+    },
+    {
+     "team": "white",
+     "own_goal": true,
+     "by": "未知"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "杜思禹"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "冯尊"
+    }
+   ]
+  },
+  {
+   "date": "2026-04-11",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 8,
+   "blue_score": 5,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "张霏赫",
+    "blue": "王磊"
+   },
+   "white": [
+    "张霏赫",
+    "袁祎",
+    "马晓航",
+    "谢先文",
+    "张潇艺",
+    "孙路",
+    "常鹏宇",
+    "贾键雄",
+    "陈宣宇",
+    "金威威"
+   ],
+   "blue": [
+    "王磊",
+    "黄鹏",
+    "解小鹤",
+    "张健",
+    "赵军",
+    "井荣山",
+    "王一陶",
+    "尚枫",
+    "康进",
+    "赵之宇",
+    "冯尊",
+    "johnny孔"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "常鹏宇",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "常鹏宇",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "常鹏宇",
+     "assist": "孙路"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "解小鹤"
+    },
+    {
+     "team": "blue",
+     "scorer": "康进",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-04-25",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 3,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "袁祎",
+    "blue": "张霏赫"
+   },
+   "white": [
+    "袁祎",
+    "孙路",
+    "赵琪",
+    "李蒙",
+    "贾键雄",
+    "赵之宇",
+    "蒋广文",
+    "张嘉磊",
+    "井荣山",
+    "陈宣宇"
+   ],
+   "blue": [
+    "张霏赫",
+    "解小鹤",
+    "谢先文",
+    "赵朋",
+    "冯尊",
+    "马晓航",
+    "赵军",
+    "常鹏宇",
+    "王磊",
+    "朱丹"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "李蒙",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孙路",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "blue",
+     "scorer": "常鹏宇",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "张霏赫"
+    }
+   ]
+  },
+  {
+   "date": "2026-05-05",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 1,
+   "blue_score": 11,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "康进",
+    "blue": "邵琳"
+   },
+   "white": [
+    "康进",
+    "陈宣宇",
+    "蒋广文",
+    "赵朋",
+    "杨超",
+    "赵之宇",
+    "杜思禹",
+    "张潇艺",
+    "张霏赫",
+    "杨立勋",
+    "常鹏宇"
+   ],
+   "blue": [
+    "邵琳",
+    "冯旭东",
+    "朱丹",
+    "王一陶",
+    "乔晨",
+    "马晓航",
+    "王樯",
+    "袁祎",
+    "谢先文",
+    "金威威",
+    "常鹏宇"
+   ],
+   "airdrop": [
+    "常鹏宇"
+   ],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "金威威",
+     "assist": "朱丹"
+    },
+    {
+     "team": "blue",
+     "scorer": "常鹏宇",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "谢先文",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "朱丹",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "朱丹"
+    },
+    {
+     "team": "blue",
+     "scorer": "朱丹",
+     "assist": "王樯"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "蒋广文",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-05-10",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 3,
+   "blue_score": 2,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "常鹏宇",
+    "white": "邵琳"
+   },
+   "white": [
+    "邵琳",
+    "谢先文",
+    "王樯",
+    "杨立勋",
+    "陈宣宇",
+    "王一陶",
+    "张健",
+    "冯旭东",
+    "井荣山",
+    "张霏赫",
+    "冯尊",
+    "赵之宇",
+    "康进"
+   ],
+   "blue": [
+    "常鹏宇",
+    "马晓航",
+    "张嘉磊",
+    "解小鹤",
+    "贾键雄",
+    "赵朋",
+    "朱瑞",
+    "赵军",
+    "孙路",
+    "王磊",
+    "贺楠",
+    "蒋广文"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "张霏赫",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "陈宣宇"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "贺楠",
+     "assist": "赵朋"
+    },
+    {
+     "team": "blue",
+     "scorer": "常鹏宇",
+     "assist": "孙路"
+    }
+   ]
+  },
+  {
+   "date": "2026-05-16",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 2,
+   "blue_score": 3,
+   "white_own_goals": 1,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "袁祎",
+    "blue": "邵琳"
+   },
+   "white": [
+    "袁祎",
+    "冯旭东",
+    "蒋广文",
+    "王磊",
+    "刘杰",
+    "赵琪",
+    "赵朋",
+    "张霏赫",
+    "马晓航"
+   ],
+   "blue": [
+    "邵琳",
+    "朱瑞",
+    "井荣山",
+    "谢先文",
+    "赵之宇",
+    "康进",
+    "孙路",
+    "张嘉磊",
+    "乔晨",
+    "解小鹤"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "蒋广文",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "张嘉磊"
+    },
+    {
+     "team": "blue",
+     "own_goal": true,
+     "by": "赵琪"
+    },
+    {
+     "team": "blue",
+     "scorer": "解小鹤",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-05-23",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 2,
+   "blue_score": 2,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "邵琳",
+    "white": "井荣山"
+   },
+   "white": [
+    "井荣山",
+    "朱瑞",
+    "贺楠",
+    "蒋广文",
+    "赵琪",
+    "马晓航",
+    "张健",
+    "张霏赫",
+    "贾键雄",
+    "胡赫",
+    "赵军"
+   ],
+   "blue": [
+    "邵琳",
+    "谢先文",
+    "冯旭东",
+    "赵朋",
+    "常鹏宇",
+    "杨立勋",
+    "张嘉磊",
+    "袁祎",
+    "罗霄",
+    "赵之宇",
+    "赵军"
+   ],
+   "airdrop": [
+    "赵军"
+   ],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "贺楠",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "张嘉磊",
+     "assist": "常鹏宇"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-05-30",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 7,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "孙路",
+    "white": "井荣山"
+   },
+   "white": [
+    "井荣山",
+    "贾键雄",
+    "马晓航",
+    "邵琳",
+    "冯旭东",
+    "张健",
+    "解小鹤",
+    "陈宣宇",
+    "赵琪",
+    "蒋广文",
+    "金昊"
+   ],
+   "blue": [
+    "孙路",
+    "谢先文",
+    "袁祎",
+    "金威威",
+    "康进",
+    "常鹏宇",
+    "张霏赫",
+    "赵军",
+    "张嘉磊",
+    "王磊",
+    "冯尊",
+    "乔晨",
+    "金昊"
+   ],
+   "airdrop": [
+    "金昊"
+   ],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "金昊",
+     "assist": "马晓航"
+    },
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "常鹏宇"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "康进",
+     "assist": "袁祎"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "金威威"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "张嘉磊",
+     "assist": "王磊"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-06",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 3,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "冯尊",
+    "blue": "冯旭东"
+   },
+   "white": [
+    "冯尊",
+    "朱瑞",
+    "张霏赫",
+    "孟机长",
+    "王磊",
+    "谢先文",
+    "贺楠",
+    "袁祎",
+    "金威威",
+    "解小鹤",
+    "蒋广文",
+    "张健",
+    "井荣山",
+    "贾键雄"
+   ],
+   "blue": [
+    "冯旭东",
+    "邵琳",
+    "马晓航",
+    "李蒙",
+    "田爽",
+    "张嘉磊",
+    "金昊",
+    "康进",
+    "杨立勋",
+    "赵琪",
+    "赵军",
+    "赵之宇",
+    "赵朋"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "孟机长"
+    },
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": "冯尊"
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": "张健"
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "金昊",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "赵琪"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "杨立勋"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-13",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 7,
+   "blue_score": 11,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "赵琪",
+    "blue": "孙路"
+   },
+   "white": [
+    "赵琪",
+    "朱瑞",
+    "蒋广文",
+    "贺楠",
+    "张嘉磊",
+    "陈教练",
+    "王磊",
+    "解小鹤",
+    "赵之宇",
+    "金威威",
+    "马晓航"
+   ],
+   "blue": [
+    "孙路",
+    "井荣山",
+    "张霏赫",
+    "谢先文",
+    "贾键雄",
+    "赵朋",
+    "孟机长",
+    "陈宣宇",
+    "张潇艺",
+    "袁祎",
+    "张健"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "孟机长",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "袁祎",
+     "assist": "谢先文"
+    },
+    {
+     "team": "blue",
+     "scorer": "贾键雄",
+     "assist": "孟机长"
+    },
+    {
+     "team": "blue",
+     "scorer": "陈宣宇",
+     "assist": "谢先文"
+    },
+    {
+     "team": "blue",
+     "scorer": "陈宣宇",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "贾键雄",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "张健",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "袁祎",
+     "assist": "孟机长"
+    },
+    {
+     "team": "blue",
+     "scorer": "孟机长",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "谢先文",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "张嘉磊"
+    },
+    {
+     "team": "white",
+     "scorer": "陈教练",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "陈教练",
+     "assist": "解小鹤"
+    },
+    {
+     "team": "white",
+     "scorer": "陈教练",
+     "assist": "张嘉磊"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-20",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 9,
+   "blue_score": 3,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "冯尊",
+    "blue": "赵军"
+   },
+   "white": [
+    "冯尊",
+    "哞哞",
+    "蒋广文",
+    "张霏赫",
+    "张嘉磊",
+    "谢先文",
+    "张越",
+    "张健",
+    "刘杰",
+    "王磊",
+    "陈宣宇",
+    "朱瑞"
+   ],
+   "blue": [
+    "赵军",
+    "邵琳",
+    "袁祎",
+    "解小鹤",
+    "赵琪",
+    "陈教练",
+    "王一陶",
+    "康进",
+    "赵朋",
+    "赵之宇",
+    "井荣山"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": "陈宣宇"
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "张越"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "刘杰",
+     "assist": "张嘉磊"
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "刘杰",
+     "assist": "朱瑞"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": "陈教练"
+    },
+    {
+     "team": "blue",
+     "scorer": "陈教练",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "赵之宇",
+     "assist": "王一陶"
+    }
+   ]
+  },
+  {
+   "date": "2026-06-27",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 2,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "孙路",
+    "blue": "冯尊"
+   },
+   "white": [
+    "孙路",
+    "谢先文",
+    "杨立勋",
+    "马晓航",
+    "张嘉磊",
+    "井荣山",
+    "康进",
+    "乔晨",
+    "邵琳",
+    "常鹏宇",
+    "张健"
+   ],
+   "blue": [
+    "冯尊",
+    "贾键雄",
+    "张霏赫",
+    "王磊",
+    "小段",
+    "解小鹤",
+    "陈宣宇",
+    "王一陶",
+    "赵之宇",
+    "赵琪"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": "孙路"
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "杨立勋",
+     "assist": "马晓航"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-04",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 3,
+   "blue_score": 7,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "金威威",
+    "blue": "乔晨"
+   },
+   "white": [
+    "金威威",
+    "张潇艺",
+    "张嘉磊",
+    "袁祎",
+    "解小鹤",
+    "朱丹",
+    "赵朋",
+    "赵琪",
+    "吴浩杰",
+    "赵之宇"
+   ],
+   "blue": [
+    "乔晨",
+    "张霏赫",
+    "王一陶",
+    "贾键雄",
+    "谢先文",
+    "马晓航",
+    "刘添琦",
+    "井荣山",
+    "蒋广文",
+    "杨超",
+    "杨立勋"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "蒋广文",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "blue",
+     "scorer": "杨超",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "杨立勋",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "贾键雄",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "杨立勋",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": "谢先文"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "解小鹤"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "解小鹤"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-07-18",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 7,
+   "blue_score": 9,
+   "white_own_goals": 0,
+   "blue_own_goals": 1,
+   "captains": {
+    "white": "乔晨",
+    "blue": "孙路"
+   },
+   "white": [
+    "乔晨",
+    "贾键雄",
+    "蒋广文",
+    "贺楠",
+    "康进",
+    "朱瑞",
+    "罗霄",
+    "孟机长",
+    "赵之宇",
+    "小段",
+    "杨立勋"
+   ],
+   "blue": [
+    "孙路",
+    "谢先文",
+    "张霏赫",
+    "井荣山",
+    "王磊",
+    "赵朋",
+    "金威威",
+    "王一陶",
+    "袁祎",
+    "张健"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "own_goal": true,
+     "by": "未知"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": "小段"
+    },
+    {
+     "team": "white",
+     "scorer": "赵之宇",
+     "assist": "孟机长"
+    },
+    {
+     "team": "white",
+     "scorer": "贺楠",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "white",
+     "scorer": "小段",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "孟机长",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": "井荣山"
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": "赵朋"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": "井荣山"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "赵朋"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": "井荣山"
+    },
+    {
+     "team": "blue",
+     "scorer": "王磊",
+     "assist": "井荣山"
+    },
+    {
+     "team": "blue",
+     "scorer": "谢先文",
+     "assist": "赵朋"
+    }
+   ]
+  },
+  {
+   "date": "2026-07-25",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 1,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "黄鹏",
+    "blue": "贾键雄"
+   },
+   "white": [
+    "黄鹏",
+    "张霏赫",
+    "蒋广文",
+    "朱瑞",
+    "王磊",
+    "井荣山",
+    "金威威",
+    "郭威",
+    "张扬",
+    "刘杰"
+   ],
+   "blue": [
+    "贾键雄",
+    "冯尊",
+    "王一陶",
+    "蔡洪波",
+    "马晓航",
+    "路遥",
+    "朱丹",
+    "解小鹤",
+    "康进",
+    "赵之宇"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "朱丹"
+    },
+    {
+     "team": "white",
+     "scorer": "刘杰",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "刘杰",
+     "assist": "井荣山"
+    },
+    {
+     "team": "white",
+     "scorer": "刘杰",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "刘杰",
+     "assist": "金威威"
+    }
+   ]
+  },
+  {
+   "date": "2026-08-08",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 1,
+   "blue_score": 6,
+   "white_own_goals": 1,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "王一陶",
+    "white": "张霏赫"
+   },
+   "white": [
+    "张霏赫",
+    "袁祎",
+    "蒋广文",
+    "刘添琦",
+    "张扬",
+    "解小鹤",
+    "赵之宇",
+    "蔡洪波",
+    "刘杰"
+   ],
+   "blue": [
+    "王一陶",
+    "冯尊",
+    "朱瑞",
+    "金威威",
+    "乔晨",
+    "赵琪",
+    "赵朋",
+    "谢先文",
+    "刘杰"
+   ],
+   "airdrop": [
+    "刘杰"
+   ],
+   "goals": [
+    {
+     "team": "blue",
+     "own_goal": true,
+     "by": "未知"
+    },
+    {
+     "team": "blue",
+     "scorer": "刘杰",
+     "assist": "乔晨"
+    },
+    {
+     "team": "blue",
+     "scorer": "刘杰",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "赵琪"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "王一陶"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "蔡洪波",
+     "assist": "蒋广文"
+    }
+   ]
+  },
+  {
+   "date": "2026-08-22",
+   "time": "18:00-20:00",
+   "venue": "酒仙桥",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 4,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "孙路",
+    "white": "赵朋"
+   },
+   "white": [
+    "赵朋",
+    "杨立勋",
+    "贾键雄",
+    "冯尊",
+    "康进",
+    "王一陶",
+    "赵军",
+    "乔晨",
+    "赵琪",
+    "陈宣宇"
+   ],
+   "blue": [
+    "孙路",
+    "马晓航",
+    "张霏赫",
+    "袁茂然",
+    "袁祎",
+    "蒋广文",
+    "张嘉磊",
+    "井荣山",
+    "朱瑞",
+    "陈宣宇"
+   ],
+   "airdrop": [
+    "陈宣宇"
+   ],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "张嘉磊",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "blue",
+     "scorer": "朱瑞",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "马晓航",
+     "assist": "袁祎"
+    },
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "冯尊",
+     "assist": "赵朋"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "乔晨"
+    },
+    {
+     "team": "white",
+     "scorer": "陈宣宇",
+     "assist": "赵军"
+    },
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-08-29",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 4,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "黄鹏",
+    "blue": "赵朋"
+   },
+   "white": [
+    "黄鹏",
+    "朱瑞",
+    "张霏赫",
+    "张扬",
+    "张嘉磊",
+    "井荣山",
+    "陈宣宇",
+    "金威威",
+    "张潇艺",
+    "蒋广文",
+    "杨立勋"
+   ],
+   "blue": [
+    "赵朋",
+    "解小鹤",
+    "王一陶",
+    "康进",
+    "胡赫",
+    "冯尊",
+    "贾键雄",
+    "马晓航",
+    "袁茂然",
+    "谢先文",
+    "蔡洪波"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "贾键雄",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": "谢先文"
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "张嘉磊",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "white",
+     "scorer": "陈宣宇",
+     "assist": "朱瑞"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "杨立勋",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-09-05",
+   "time": "14:00-16:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 8,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {},
+   "white": [
+    "马晓航",
+    "王一陶",
+    "张霏赫",
+    "张嘉磊",
+    "谢先文",
+    "刘添琦",
+    "杨超",
+    "蔡洪波",
+    "蒋广文",
+    "路遥"
+   ],
+   "blue": [
+    "陈宣宇",
+    "孙路",
+    "贾键雄",
+    "冯尊",
+    "袁祎",
+    "赵琪",
+    "黄鹏",
+    "金威威",
+    "井荣山",
+    "朱瑞"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "孙路"
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": "冯尊"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "张霏赫",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "蔡洪波",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "张霏赫"
+    }
+   ]
+  },
+  {
+   "date": "2026-09-12",
+   "time": "18:00-20:00",
+   "venue": "机场南楼",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 6,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "赵朋",
+    "white": "陈宣宇"
+   },
+   "white": [
+    "陈宣宇",
+    "蔡洪波",
+    "王一陶",
+    "袁祎",
+    "贾键雄",
+    "乔晨",
+    "井荣山",
+    "赵琪",
+    "金威威"
+   ],
+   "blue": [
+    "赵朋",
+    "杨立勋",
+    "孙路",
+    "蒋广文",
+    "袁茂然",
+    "张霏赫",
+    "冯尊",
+    "马晓航",
+    "谢先文",
+    "杨超"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "袁祎",
+     "assist": "乔晨"
+    },
+    {
+     "team": "white",
+     "scorer": "袁祎",
+     "assist": "王一陶"
+    },
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "陈宣宇",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "赵朋",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "杨立勋",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "杨立勋",
+     "assist": "马晓航"
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": "蒋广文"
+    },
+    {
+     "team": "blue",
+     "scorer": "孙路",
+     "assist": "马晓航"
+    }
+   ]
+  },
+  {
+   "date": "2026-09-27",
+   "time": "18:00-20:00",
+   "venue": "朝体",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 3,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "张霏赫",
+    "blue": "杨超"
+   },
+   "white": [
+    "张霏赫",
+    "贾键雄",
+    "马晓航",
+    "张潇艺",
+    "袁祎",
+    "陈宣宇",
+    "朱瑞",
+    "谢先文",
+    "刘振",
+    "王亚楠",
+    "银河",
+    "李长夙"
+   ],
+   "blue": [
+    "杨超",
+    "黄鹏",
+    "冯尊",
+    "王樯",
+    "杨立勋",
+    "田爽",
+    "解小鹤",
+    "蒋广文",
+    "王朝辉",
+    "张雷",
+    "邵琳",
+    "忠宝"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": "刘振"
+    },
+    {
+     "team": "white",
+     "scorer": "朱瑞",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "杨立勋"
+    },
+    {
+     "team": "blue",
+     "scorer": "冯尊",
+     "assist": "张雷"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-10-06",
+   "time": "14:00-16:00",
+   "venue": "朝体",
+   "type": "内战",
+   "white_score": 4,
+   "blue_score": 3,
+   "white_own_goals": 0,
+   "blue_own_goals": 1,
+   "captains": {
+    "blue": "张霏赫",
+    "white": "赵朋"
+   },
+   "white": [
+    "赵朋",
+    "贾键雄",
+    "马晓航",
+    "邵琳",
+    "朱瑞",
+    "陈宣宇",
+    "赵琪",
+    "杨超",
+    "解小鹤",
+    "康进",
+    "安哥",
+    "欧阳"
+   ],
+   "blue": [
+    "张霏赫",
+    "王一陶",
+    "杨立勋",
+    "黄鹏",
+    "王磊",
+    "金威威",
+    "王樯",
+    "杨峰",
+    "梓涵",
+    "刘欣",
+    "毕姥爷",
+    "闫磊"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": "陈宣宇"
+    },
+    {
+     "team": "white",
+     "scorer": "贾键雄",
+     "assist": "康进"
+    },
+    {
+     "team": "white",
+     "own_goal": true,
+     "by": "张霏赫"
+    },
+    {
+     "team": "white",
+     "scorer": "马晓航",
+     "assist": "康进"
+    },
+    {
+     "team": "blue",
+     "scorer": "黄鹏",
+     "assist": "金威威"
+    },
+    {
+     "team": "blue",
+     "scorer": "未知",
+     "assist": "闫磊"
+    },
+    {
+     "team": "blue",
+     "scorer": "王一陶",
+     "assist": null
+    }
+   ]
+  },
+  {
+   "date": "2026-10-24",
+   "time": "18:00-20:00",
+   "venue": "朝体",
+   "type": "内战",
+   "white_score": 5,
+   "blue_score": 2,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "blue": "朱瑞",
+    "white": "冯尊"
+   },
+   "white": [
+    "冯尊",
+    "谢先文",
+    "贾键雄",
+    "阿啸",
+    "张嘉磊",
+    "黄鹏",
+    "袁祎",
+    "王磊",
+    "张潇艺",
+    "井荣山",
+    "杨立勋",
+    "阿桑"
+   ],
+   "blue": [
+    "朱瑞",
+    "张霏赫",
+    "蒋广文",
+    "康进",
+    "赵之宇",
+    "陈宣宇",
+    "马晓航",
+    "杨超",
+    "赵琪",
+    "解小鹤",
+    "胡赫"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "杨立勋",
+     "assist": null
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "井荣山"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "王磊",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "white",
+     "scorer": "黄鹏",
+     "assist": "贾键雄"
+    },
+    {
+     "team": "blue",
+     "scorer": "陈宣宇",
+     "assist": null
+    },
+    {
+     "team": "blue",
+     "scorer": "杨超",
+     "assist": "胡赫"
+    }
+   ]
+  },
+  {
+   "date": "2026-10-31",
+   "time": "14:00-16:00",
+   "venue": "朝体",
+   "type": "内战",
+   "white_score": 2,
+   "blue_score": 1,
+   "white_own_goals": 0,
+   "blue_own_goals": 0,
+   "captains": {
+    "white": "王一陶",
+    "blue": "孙路"
+   },
+   "white": [
+    "王一陶",
+    "冯尊",
+    "黄鹏",
+    "张霏赫",
+    "谢先文",
+    "赵琪",
+    "王磊",
+    "解小鹤",
+    "赵朋",
+    "蒋广文",
+    "大龙宝",
+    "韦"
+   ],
+   "blue": [
+    "孙路",
+    "袁祎",
+    "贾键雄",
+    "崇昱",
+    "吴海涛",
+    "陈宣宇",
+    "井荣山",
+    "忠宝",
+    "蔡洪波",
+    "刘振",
+    "谭笑",
+    "张潇艺"
+   ],
+   "airdrop": [],
+   "goals": [
+    {
+     "team": "white",
+     "scorer": "王一陶",
+     "assist": "王磊"
+    },
+    {
+     "team": "white",
+     "scorer": "赵朋",
+     "assist": "大龙宝"
+    },
+    {
+     "team": "blue",
+     "scorer": "贾键雄",
+     "assist": null
+    }
+   ]
+  }
+ ]
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useSeason } from '../contexts/SeasonContext'
 import { recalculateStats, recalculateWinRate } from '../lib/statsCalculator'
 import type { PlayerStatRow } from '../lib/types'
@@ -39,8 +39,8 @@ export default function Stats() {
     setLoading(true)
     const tables = getTableNames(season)
     const [{ data }, { data: playersList }] = await Promise.all([
-      supabase.from(tables.playerStats).select('*'),
-      supabase.from('players').select('name, player_type'),
+      db.from(tables.playerStats).select('*'),
+      db.from('players').select('name, player_type'),
     ])
     const guests = new Set(
       (playersList || []).filter(p => p.player_type === 'guest').map(p => p.name)
@@ -80,7 +80,7 @@ export default function Stats() {
           disabled={recalcing}
           className="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition disabled:opacity-50"
         >
-          {recalcing ? '计算中...' : '重新计算'}
+          {recalcing ? '刷新中...' : '刷新'}
         </button>
       </div>
 

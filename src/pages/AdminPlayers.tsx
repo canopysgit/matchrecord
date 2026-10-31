@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useAuth } from '../contexts/AuthContext'
 import { useSeason } from '../contexts/SeasonContext'
 import { Search, UserPlus, ChevronDown, ChevronUp, Plus } from 'lucide-react'
@@ -37,8 +37,8 @@ export default function AdminPlayers() {
     setLoading(true)
     const tables = getTableNames(season)
     const [{ data }, { data: statsData }] = await Promise.all([
-      supabase.from('players').select('*').eq('is_active', true).order('name'),
-      supabase.from(tables.playerStats).select('player_name'),
+      db.from('players').select('*').eq('is_active', true).order('name'),
+      db.from(tables.playerStats).select('player_name'),
     ])
     setPlayers((data || []) as Player[])
     setSeasonPlayerNames(new Set((statsData || []).map(r => r.player_name)))
@@ -48,7 +48,7 @@ export default function AdminPlayers() {
   async function togglePlayerType(player: Player) {
     const newType = player.player_type === 'regular' ? 'guest' : 'regular'
     setSaving(player.id)
-    const { error } = await supabase.from('players')
+    const { error } = await db.from('players')
       .update({ player_type: newType })
       .eq('id', player.id)
     if (!error) {
@@ -62,7 +62,7 @@ export default function AdminPlayers() {
     if (!alias) return
     const newAliases = [...(player.aliases || []), alias]
     setSaving(player.id)
-    const { error } = await supabase.from('players')
+    const { error } = await db.from('players')
       .update({ aliases: newAliases })
       .eq('id', player.id)
     if (!error) {
@@ -75,7 +75,7 @@ export default function AdminPlayers() {
   async function removeAlias(player: Player, alias: string) {
     const newAliases = (player.aliases || []).filter(a => a !== alias)
     setSaving(player.id)
-    const { error } = await supabase.from('players')
+    const { error } = await db.from('players')
       .update({ aliases: newAliases })
       .eq('id', player.id)
     if (!error) {
@@ -93,7 +93,7 @@ export default function AdminPlayers() {
       setAddError('该球员已存在')
       return
     }
-    const { error } = await supabase.from('players').insert({
+    const { error } = await db.from('players').insert({
       name, player_type: newType, is_active: true, aliases: [],
     })
     if (error) {

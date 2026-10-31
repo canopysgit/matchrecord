@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useSeason } from '../contexts/SeasonContext'
 import type { WinRateRow } from '../lib/types'
 
@@ -19,7 +19,7 @@ export default function WinRate() {
   async function loadData() {
     setLoading(true)
     const tables = getTableNames(season)
-    const { data: rows } = await supabase.from(tables.playerWinrate).select('*')
+    const { data: rows } = await db.from(tables.playerWinrate).select('*')
     setData((rows || []) as WinRateRow[])
     setLoading(false)
   }

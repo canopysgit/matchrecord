@@ -8,7 +8,6 @@ import Login from './pages/Login'
 import MatchSignup from './pages/MatchSignup'
 import MatchRecord from './pages/MatchRecord'
 import AdminPlayers from './pages/AdminPlayers'
-import Archive from './pages/Archive'
 
 export default function App() {
   return (
@@ -18,7 +17,6 @@ export default function App() {
         <Route path="results" element={<Results />} />
         <Route path="stats" element={<Stats />} />
         <Route path="winrate" element={<WinRate />} />
-        <Route path="archive" element={<Archive />} />
         <Route path="login" element={<Login />} />
         <Route path="admin/signup" element={<MatchSignup />} />
         <Route path="admin/record" element={<MatchRecord />} />

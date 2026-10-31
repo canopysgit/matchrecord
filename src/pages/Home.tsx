@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useSeason } from '../contexts/SeasonContext'
 import { Target, Handshake, Users, TrendingUp } from 'lucide-react'
 import type { Match, MatchPlayer, MatchStat, MatchCaptain, PlayerStatRow, WinRateRow } from '../lib/types'
@@ -30,7 +30,7 @@ export default function Home() {
       // Latest match
       const yearStart = `${season}-01-01`
       const yearEnd = `${season + 1}-01-01`
-      let matchQ = supabase.from(tables.matches).select('*')
+      let matchQ = db.from(tables.matches).select('*')
         .eq('status', 'completed').order('match_date', { ascending: false }).limit(1)
       if (season === 2025) {
         matchQ = matchQ.gte('match_date', yearStart).lt('match_date', yearEnd)
@@ -41,9 +41,9 @@ export default function Home() {
         setLatestMatch(match)
         // Load players, stats, captains for the latest match
         const [{ data: mp }, { data: ms }, { data: mc }] = await Promise.all([
-          supabase.from(tables.matchPlayers).select('*').eq('match_id', match.id),
-          supabase.from(tables.matchStats).select('*').eq('match_id', match.id),
-          supabase.from(tables.matchCaptains).select('*').eq('match_id', match.id),
+          db.from(tables.matchPlayers).select('*').eq('match_id', match.id),
+          db.from(tables.matchStats).select('*').eq('match_id', match.id),
+          db.from(tables.matchCaptains).select('*').eq('match_id', match.id),
         ])
         setLatestPlayers((mp || []) as MatchPlayer[])
         setLatestStats((ms || []) as MatchStat[])
@@ -56,7 +56,7 @@ export default function Home() {
       }
 
       // Match count
-      let countQ = supabase.from(tables.matches).select('*', { count: 'exact', head: true })
+      let countQ = db.from(tables.matches).select('*', { count: 'exact', head: true })
         .eq('status', 'completed')
       if (season === 2025) {
         countQ = countQ.gte('match_date', yearStart).lt('match_date', yearEnd)
@@ -66,8 +66,8 @@ export default function Home() {
 
       // Player stats + player types for filtering
       const [{ data: stats }, { data: playersList }] = await Promise.all([
-        supabase.from(tables.playerStats).select('*'),
-        supabase.from('players').select('name, player_type'),
+        db.from(tables.playerStats).select('*'),
+        db.from('players').select('name, player_type'),
       ])
       const guestNames = new Set(
         (playersList || []).filter(p => p.player_type === 'guest').map(p => p.name)
@@ -85,7 +85,7 @@ export default function Home() {
       }
 
       // Win rate (only regular players on homepage)
-      const { data: winrate } = await supabase.from(tables.playerWinrate).select('*')
+      const { data: winrate } = await db.from(tables.playerWinrate).select('*')
         .eq('player_type', 'regular')
         .gte('total_matches', 3)
         .order('win_rate', { ascending: false }).limit(5)

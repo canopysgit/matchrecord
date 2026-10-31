@@ -1,6 +1,10 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
-import { supabase } from '../lib/supabase'
-import type { Session } from '@supabase/supabase-js'
+import { createContext, useContext, useState, type ReactNode } from 'react'
+import { getToken, setToken } from '../lib/db'
+
+interface Session {
+  user: { email: string }
+  token: string
+}
 
 interface AuthCtx {
   session: Session | null
@@ -16,32 +20,44 @@ const AuthContext = createContext<AuthCtx>({
   signOut: async () => {},
 })
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+// token 形如 base64url(payload).签名，前端只读取过期时间和邮箱，真正校验在服务端
+function sessionFromToken(token: string | null): Session | null {
+  if (!token) return null
+  try {
+    const payload = JSON.parse(atob(token.split('.')[0].replace(/-/g, '+').replace(/_/g, '/')))
+    if (typeof payload.exp !== 'number' || payload.exp < Date.now()) return null
+    return { user: { email: String(payload.sub) }, token }
+  } catch {
+    return null
+  }
+}
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-    })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [session, setSession] = useState<Session | null>(() => {
+    const s = sessionFromToken(getToken())
+    if (!s) setToken(null)
+    return s
+  })
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) throw error
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    const json = await res.json().catch(() => ({}))
+    if (!res.ok || !json.token) throw new Error(json.error || '登录失败')
+    setToken(json.token)
+    setSession(sessionFromToken(json.token))
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    setToken(null)
+    setSession(null)
   }
 
   return (
-    <AuthContext.Provider value={{ session, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ session, loading: false, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )

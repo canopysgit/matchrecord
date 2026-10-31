@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useAuth } from '../contexts/AuthContext'
 import { useSeason } from '../contexts/SeasonContext'
 import { parseRosterText } from '../lib/kimi'
@@ -52,7 +52,7 @@ export default function MatchSignup() {
   }, [session])
 
   async function loadPlayers() {
-    const { data } = await supabase.from('players').select('*').eq('is_active', true).order('name')
+    const { data } = await db.from('players').select('*').eq('is_active', true).order('name')
     setPlayers((data || []) as Player[])
   }
 
@@ -188,7 +188,7 @@ export default function MatchSignup() {
 
   async function addNewPlayer() {
     if (!newPlayerName.trim()) return
-    const { error } = await supabase.from('players').insert({
+    const { error } = await db.from('players').insert({
       name: newPlayerName.trim(),
       player_type: newPlayerType,
       is_active: true,
@@ -209,7 +209,7 @@ export default function MatchSignup() {
     const rows = pendingNewPlayers.map(name => ({
       name, player_type: 'guest' as const, is_active: true, aliases: [],
     }))
-    const { error } = await supabase.from('players').insert(rows)
+    const { error } = await db.from('players').insert(rows)
     if (error) {
       setError(`批量添加球员失败: ${error.message}`)
     } else {
@@ -230,11 +230,11 @@ export default function MatchSignup() {
     setError('')
     try {
       const tables = getTableNames(season)
-      const { count } = await supabase.from(tables.matches)
+      const { count } = await db.from(tables.matches)
         .select('*', { count: 'exact', head: true })
       const matchNumber = (count || 0) + 1
 
-      const { data: match, error: matchErr } = await supabase.from(tables.matches).insert({
+      const { data: match, error: matchErr } = await db.from(tables.matches).insert({
         match_date: date,
         match_time: time,
         match_type: matchType,
@@ -265,14 +265,14 @@ export default function MatchSignup() {
         })),
       ]
 
-      const { error: playerErr } = await supabase.from(tables.matchPlayers).insert(playerRows)
+      const { error: playerErr } = await db.from(tables.matchPlayers).insert(playerRows)
       if (playerErr) throw playerErr
 
       const captainRows = []
       if (whiteCaptain) captainRows.push({ match_id: match.id, team: 'white', captain_name: whiteCaptain })
       if (blueCaptain) captainRows.push({ match_id: match.id, team: 'blue', captain_name: blueCaptain })
       if (captainRows.length) {
-        await supabase.from(tables.matchCaptains).insert(captainRows)
+        await db.from(tables.matchCaptains).insert(captainRows)
       }
 
       setSuccess('比赛报名已创建！现在可以去"比赛记录"页面录入比赛结果。')
@@ -549,7 +549,7 @@ function TeamEditor({ label, team, setTeam, captain, setCaptain, players, season
 
   async function loadAttendance() {
     const tables = getTableNames(season)
-    const { data } = await supabase.from(tables.playerStats).select('player_name, attendance_total')
+    const { data } = await db.from(tables.playerStats).select('player_name, attendance_total')
     if (data) {
       const map: Record<string, number> = {}
       for (const row of data) map[row.player_name] = row.attendance_total || 0

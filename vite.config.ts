@@ -8,5 +8,7 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 5173,
     allowedHosts: true,
+    // 本地开发：/api 转给 scripts/dev-api.ts
+    proxy: { '/api': 'http://localhost:8787' },
   },
 })

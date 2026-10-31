@@ -9,13 +9,13 @@ interface SeasonCtx {
 const SeasonContext = createContext<SeasonCtx>({
   season: 2026,
   setSeason: () => {},
-  availableSeasons: [2025, 2026],
+  availableSeasons: [2026],
 })
 
 export function SeasonProvider({ children }: { children: ReactNode }) {
   const [season, setSeason] = useState(2026)
   return (
-    <SeasonContext.Provider value={{ season, setSeason, availableSeasons: [2025, 2026] }}>
+    <SeasonContext.Provider value={{ season, setSeason, availableSeasons: [2026] }}>
       {children}
     </SeasonContext.Provider>
   )

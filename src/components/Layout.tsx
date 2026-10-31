@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home, Trophy, BarChart3, Percent, LogIn, LogOut, Menu, X, ClipboardList, FileEdit, Archive, Users } from 'lucide-react'
+import { Home, Trophy, BarChart3, Percent, LogIn, LogOut, Menu, X, ClipboardList, FileEdit, Users } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 const publicLinks = [
@@ -8,7 +8,6 @@ const publicLinks = [
   { to: '/results', label: '比赛结果', icon: Trophy },
   { to: '/stats', label: '球员统计', icon: BarChart3 },
   { to: '/winrate', label: '胜率统计', icon: Percent },
-  { to: '/archive', label: '历史赛季', icon: Archive },
 ]
 
 const adminLinks = [

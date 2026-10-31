@@ -7,10 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "dev:api": "tsx scripts/dev-api.ts",
+    "db:import": "tsx scripts/import-2026.ts",
+    "test:local": "tsx scripts/test-local.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.98.0",
+    "@neondatabase/serverless": "^1.2.0",
     "@tailwindcss/vite": "^4.2.1",
     "lucide-react": "^0.577.0",
     "react": "^19.2.0",
@@ -19,15 +22,18 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vercel/node": "^29.0.1",
     "@vitejs/plugin-react": "^5.1.4",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.48.0",
     "vite": "^7.3.1"

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase, getTableNames } from '../lib/supabase'
+import { db, getTableNames } from '../lib/db'
 import { useAuth } from '../contexts/AuthContext'
 import { useSeason } from '../contexts/SeasonContext'
 import { parseResultText } from '../lib/kimi'
@@ -54,11 +54,11 @@ export default function MatchRecord() {
 
   async function loadData() {
     const tables = getTableNames(season)
-    const { data: matches } = await supabase.from(tables.matches).select('*')
+    const { data: matches } = await db.from(tables.matches).select('*')
       .eq('status', 'pending').order('match_date', { ascending: false })
     setPendingMatches((matches || []) as Match[])
 
-    const { data: players } = await supabase.from('players').select('*').eq('is_active', true)
+    const { data: players } = await db.from('players').select('*').eq('is_active', true)
     setAllPlayers((players || []) as Player[])
   }
 
@@ -75,7 +75,7 @@ export default function MatchRecord() {
     setRawText('')
 
     const tables = getTableNames(season)
-    const { data } = await supabase.from(tables.matchPlayers).select('*')
+    const { data } = await db.from(tables.matchPlayers).select('*')
       .eq('match_id', match.id)
     setMatchPlayers((data || []) as MatchPlayer[])
   }
@@ -201,7 +201,7 @@ export default function MatchRecord() {
     setError('')
     try {
       const tables = getTableNames(season)
-      const { error: delErr } = await supabase.from(tables.matchPlayers)
+      const { error: delErr } = await db.from(tables.matchPlayers)
         .delete().eq('match_id', selectedMatch.id)
       if (delErr) throw delErr
 
@@ -224,10 +224,10 @@ export default function MatchRecord() {
         })),
       ]
 
-      const { error: insErr } = await supabase.from(tables.matchPlayers).insert(rows)
+      const { error: insErr } = await db.from(tables.matchPlayers).insert(rows)
       if (insErr) throw insErr
 
-      const { data } = await supabase.from(tables.matchPlayers).select('*')
+      const { data } = await db.from(tables.matchPlayers).select('*')
         .eq('match_id', selectedMatch.id)
       setMatchPlayers((data || []) as MatchPlayer[])
       setEditingRoster(false)
@@ -245,11 +245,11 @@ export default function MatchRecord() {
     const rows = pendingNewPlayers.map(name => ({
       name, player_type: 'guest' as const, is_active: true, aliases: [],
     }))
-    const { error: err } = await supabase.from('players').insert(rows)
+    const { error: err } = await db.from('players').insert(rows)
     if (err) {
       setError(`添加球员失败: ${err.message}`)
     } else {
-      const { data: players } = await supabase.from('players').select('*').eq('is_active', true)
+      const { data: players } = await db.from('players').select('*').eq('is_active', true)
       setAllPlayers((players || []) as Player[])
     }
     setAddingNewPlayers(false)
@@ -300,11 +300,11 @@ export default function MatchRecord() {
       }))
 
       if (statRows.length > 0) {
-        const { error: statsErr } = await supabase.from(tables.matchStats).insert(statRows)
+        const { error: statsErr } = await db.from(tables.matchStats).insert(statRows)
         if (statsErr) throw statsErr
       }
 
-      const { error: matchErr } = await supabase.from(tables.matches)
+      const { error: matchErr } = await db.from(tables.matches)
         .update({
           white_score: whiteScore,
           blue_score: blueScore,
