@@ -224,7 +224,7 @@
   },
   {
    "name": "杜思禹",
-   "player_type": "regular",
+   "player_type": "guest",
    "aliases": [
     "思禹",
     "杜思雨"
@@ -232,7 +232,7 @@
   },
   {
    "name": "小段",
-   "player_type": "regular",
+   "player_type": "guest",
    "aliases": [
     "段"
    ]
@@ -244,7 +244,7 @@
   },
   {
    "name": "孟机长",
-   "player_type": "regular",
+   "player_type": "guest",
    "aliases": [
     "孟",
     "孟乘务长",
@@ -260,7 +260,7 @@
   },
   {
    "name": "蔡洪波",
-   "player_type": "regular",
+   "player_type": "guest",
    "aliases": [
     "洪波"
    ]
@@ -2948,8 +2948,8 @@
    "time": "18:00-20:00",
    "venue": "机场南楼",
    "type": "内战",
-   "white_score": 4,
-   "blue_score": 4,
+   "white_score": 5,
+   "blue_score": 6,
    "white_own_goals": 0,
    "blue_own_goals": 0,
    "captains": {
