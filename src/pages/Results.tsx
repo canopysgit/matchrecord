@@ -210,7 +210,8 @@ function TeamStats({ label, stats, score }: { label: string; stats: MatchStat[];
   const goals = regularStats.filter(s => s.goals > 0).sort((a, b) => b.goals - a.goals)
   const assists = regularStats.filter(s => s.assists > 0).sort((a, b) => b.assists - a.assists)
   const recordedGoals = goals.reduce((sum, s) => sum + s.goals, 0) + ogStats.reduce((sum, s) => sum + s.goals, 0)
-  const ownGoalsDiff = score - recordedGoals
+  // 乌龙球单独记录，比分多出明细的部分是点球大战进球
+  const penaltyGoals = score - recordedGoals
   return (
     <div className="bg-gray-50 rounded-lg p-3">
       <h4 className="font-semibold text-blue-600 mb-2 text-sm">{label}数据</h4>
@@ -229,10 +230,10 @@ function TeamStats({ label, stats, score }: { label: string; stats: MatchStat[];
               <span className="font-semibold">{s.goals}球</span>
             </div>
           ))}
-          {ownGoalsDiff > 0 && ogStats.length === 0 && (
-            <div className="flex justify-between text-sm py-0.5 text-orange-600">
-              <span>乌龙球</span>
-              <span className="font-semibold">{ownGoalsDiff}球</span>
+          {penaltyGoals > 0 && (
+            <div className="flex justify-between text-sm py-0.5 text-green-600">
+              <span>点球</span>
+              <span className="font-semibold">{penaltyGoals}球</span>
             </div>
           )}
         </div>

@@ -130,7 +130,8 @@ export default function Home() {
           const ogStats = stats.filter(s => s.player_name.startsWith('OG:'))
           const goals = regularStats.filter(s => s.goals > 0).sort((a, b) => b.goals - a.goals)
           const recordedGoals = goals.reduce((sum, s) => sum + s.goals, 0) + ogStats.reduce((sum, s) => sum + s.goals, 0)
-          const ownGoalsDiff = score - recordedGoals
+          // 乌龙球单独记录，比分多出明细的部分是点球大战进球
+          const penaltyGoals = score - recordedGoals
           return (
             <>
               {goals.map(s => (
@@ -139,8 +140,8 @@ export default function Home() {
               {ogStats.map(s => (
                 <span key={s.id} className="text-xs text-orange-300">乌龙球({s.player_name.replace('OG:', '')}) {s.goals}球</span>
               ))}
-              {ownGoalsDiff > 0 && ogStats.length === 0 && (
-                <span className="text-xs text-orange-300">乌龙球 {ownGoalsDiff}球</span>
+              {penaltyGoals > 0 && (
+                <span className="text-xs text-green-300">点球 {penaltyGoals}球</span>
               )}
             </>
           )
